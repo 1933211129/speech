@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传文件</title>
+    <link href="{% static 'css/upload_style.css' %}" rel="stylesheet">
+</head>
+<body>
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h1>上传文本文件测试</h1>
+        <input type="file" name="file"><br>
+        演讲主题<input type='text' name='topic', placeholder='演讲主题'><br>
+        <input type="submit" value="上传">
+        <br>
+    </form>
+    <div class="center">
+        <a href="TextAnalyse">
+            <button>分析</button>
+        </a>
+        {% if upload_success %}
+            <p>上传成功</p>
+        {% endif %}
+    </div>
+</body>
+</html>

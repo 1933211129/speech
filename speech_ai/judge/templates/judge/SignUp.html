@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>赛事报名</title>
+
+<style type="text/css">
+	form{width: 500px;overflow: hidden;margin: 50px auto;}
+	div{line-height: 40px;}
+	input{width: 250px;padding-left: 10px;height: 30px;
+	line-height: 30px;color: #333;font-size: 14px;
+	border: 1px solid #666;outline: none;margin-bottom: 10px;display: inline-block;}
+	span{display: inline-block;float: left;}
+	.submit{width: 120px;background: #666;color: #fff;margin-left: 70px;cursor: pointer;}
+</style>
+
+</head>
+<body>
+
+<form action="" method="post" class="form" onsubmit="return check(this)">
+	<div><span>赛事：</span><input type="text" name="content" id="content" placeholder="输入RCE开头的赛事id" /><br /></div>
+	<div><span>姓名：</span><input type="text" name="name" id="name" placeholder="真实姓名" /><br /></div>
+	<div><span>性别：</span><input type="text" name="sex" id="sex" placeholder="性别" /><br /></div>
+	<div><span>电话：</span><input type="text" name="phone" id="phone" placeholder="个人手机号码" /><br /></div>			
+	<div><span>邮箱：</span><input type="text" name="email" id="email" placeholder="个人邮箱" /><br /></div>
+	<div><span>单位：</span><input type="text" name="address" id="address" placeholder="所在单位" /><br /></div>
+	<div><span>视频：</span><input type="file" name="video" id="video" placeholder="上传演讲MP4视频" accept="video/mp4" /><br /></div>
+	<input type="submit" value="报名" class="submit" />
+</form>
+
+<script type="text/javascript">
+function check(){
+        {#姓名#}
+		let name = document.getElementById("name");
+		if(name.value===''){
+			alert('姓名不能为空');
+			name.focus();
+			return false;
+		}else{
+			var vname=(/^[a-zA-Z\u4e00-\u9fa5]{2,10}$/);
+			if (!vname.test(name.value)) {
+				alert('姓名2-10个字，只能是中文或英文');
+				name.focus();
+				return false; 
+			}
+		}					 					
+	
+        {#电话#}
+		let phone = document.getElementById('phone');
+		if(phone.value===''){
+			alert('电话不能为空');
+			phone.focus();
+			return false;
+		}else{
+			let phone_reg = /^13[0-9]{1}[0-9]{8}$|15[0-9]{1}[0-9]{8}$|18[0-9]{1}[0-9]{8}|17[0-9]{1}[0-9]{8}$|14[0-9]{1}[0-9]{8}/;
+			let tel_reg = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+			if(!phone_reg.test(phone.value) && !tel_reg.test(phone.value)){
+				alert('手机或电话号码格式不正确。如果是固定电话，必须形如(xxxx-xxxxxxxx)');
+				phone.focus();
+				return false;
+			}
+		}
+		
+	
+        {#邮箱#}
+		var email = document.getElementById('email');
+		if(email.value===''){
+			alert('邮箱不能为空');
+			email.focus();
+			return false;
+		}else{
+			let vemail = /^[0-9a-zA-Z]+(?:[\_\.\-][a-z0-9\-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\.[a-zA-Z]+$/i;
+			if(!vemail.test(email.value)){
+				alert('邮箱格式错误');
+				email.focus();
+				return false;
+			}
+		}
+        {#地址#}
+		let address = document.getElementById('address');
+		if(address.value===''){
+			alert('地址不能为空');
+			address.focus();
+			return false;
+		}else{
+			if(address.value.length<8){
+				alert('不能少于8个字');
+				address.focus();
+				return false;
+			}
+		}
+		
+}
+	
+</script>
+
+<div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';">
+
+</div>
+</body>
+</html>

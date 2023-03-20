@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="icon" href="/static/favicon/face.png">
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+
+<title>演讲评分</title>
+<script>
+var Tips='请点击在线录制(需要授予录制权限)、本地视频、文本评测'+unescape("😎");
+console.log(Tips);
+</script>
+
+
+<!--
+【1】引入框架文件，注意自己使用时应当自己把源码clone下来，然后通过src="/src/recorder-core.js"引入，这里为了方便copy文件测试起见，使用了JsDelivr CDN。
+另外：[1.1]、[1.2]可以合并为使用"/recorder.mp3.min.js"，这个文件为压缩版大幅减小文件体积，已经包含了这3个源码文件
+-->
+
+<!-- 【1.1】引入核心文件 -->
+<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/src/recorder-core.js"></script>
+
+<!-- 【1.2】引入相应格式支持文件；如果需要多个格式支持，把这些格式的编码引擎js文件放到后面统统加载进来即可 -->
+<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/src/engine/mp3.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/src/engine/mp3-engine.js"></script>
+
+<!-- 【1.3】引入可选的扩展支持项，如果不需要这些扩展功能可以不引入 -->
+<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/src/extensions/frequency.histogram.view.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/src/extensions/lib.fft.js"></script>
+
+  <!-- slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.min.css'%}" />
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />
+
+  <!-- fonts style -->
+  <link href="https://fonts.googleapis.com/css?family=Lobster|Poppins:400,600,700&display=swap" rel="stylesheet">
+  <!-- font awesome style -->
+  {% comment %} <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" /> {% endcomment %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css' %}">
+  <!-- Custom styles for this template -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+  <!-- responsive style -->
+  {% comment %} <link href="{% static 'css/responsive.css' %}" rel="stylesheet" /> {% endcomment %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/demo.css' %}">
+  {% comment %} <link rel="stylesheet" href="/static/css/demo.css"> {% endcomment %}
+</head>
+
+<body>
+
+  <div class="hero_area">
+    <!-- header section strats -->
+    <header class="header_section">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg custom_nav-container ">
+          <a class="navbar-brand" href="index.html">
+            <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+              x="0px" y="0px" viewBox="0 0 512.009 512.009" style="enable-background:new 0 0 512.009 512.009;"
+              xml:space="preserve">
+              <g>
+                <g>
+                  <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
+			c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
+			c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
+			l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
+			c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
+			C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
+			c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
+			z" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
+			c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
+			c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
+			C317.364,150.281,317.364,127.092,328.415,113.332z" />
+                </g>
+              </g>
+              <g>
+                <g>
+                  <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
+			c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
+			c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
+			C253.3,150.281,253.3,127.092,264.308,113.332z" />
+                </g>
+              </g>
+
+            </svg>
+            <span>
+              Speech scoring system
+            </span>
+          </a>
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="s-1"> </span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+              <ul class="navbar-nav  ">
+                <li class="nav-item active">
+                  <a class="nav-link" href="/index"> 主页 <span class="sr-only">(current)</span></a>
+                </li>
+
+
+                {% if login_status %}
+
+                <li class="nav-item">
+                  <a class="nav-link" href="result_visualization"> 历史评测 </a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="/login/user/info"> 个人主页 </a>
+                </li>
+
+                  <li class="nav-item">
+                    <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
+                  </li>
+
+                  <li class="nav-item">
+                    {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
+                    <a class="nav-link last_link" href="/login/logout"> 注销 </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a class="nav-link" href="">{{ user_name }}</a>
+                  </li>
+
+                {% else %}
+
+                  <li class="nav-item">
+                    {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
+                    <a class="nav-link last_link" href="/login"> 登录 </a>
+                  </li>
+
+                {% endif %}
+                
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <section class=" slider_section ">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 ">
+            <div class="detail_box">
+              <h1>
+                Welcome to <br>
+                the Speech Scoring System
+              </h1>
+              {% comment %} <p> 欢迎使用演讲评分系统.
+                  点击下方菜单进行评测.</p> {% endcomment %}
+
+               <div class="main">
+
+                    {% comment %} <div class="mainBox">
+                        <!-- 按钮控制区域 -->
+                        <div class="pd btns">
+{#                            <div>#}
+{#                                <button onclick="recOpen()" style="background-color:#356E7F;height:50px;width:200px;margin-right:10px;color: white ">打开录音,请求权限</button>#}
+{#                                <button onclick="recClose()" style="background-color:#356E7F;height:50px;width:200px;margin-right:0;color: white ">关闭录音,释放资源</button>#}
+{#                            </div>#}
+
+                            <button onclick="recStart()" style="background-color:#356E7F;height:50px;width:100px;color: white">录制</button>
+                            <button onclick="recStop()" style="background-color:#356E7F;height:50px;width:100px;color: white ">停止</button>
+
+
+
+                            <span style="...">
+                                <button onclick="aispeach()"  style="background-color:#356E7F;height:50px;width:100px;color: white">开始评测</button>
+                                <button onclick="recPlay()"  style="background-color:#356E7F;height:50px;width:100px;color: white">播放</button>
+                            </span>
+
+
+                        </div>
+                    </div> {% endcomment %}
+
+                    <!-- 日志输出区域 -->
+                    <div class="mainBox">
+                        <div class="reclog"></div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+          </div>
+
+
+          <div class="content">
+
+    
+            <div class="panel" class="img_container">
+
+                {#  recOpen()   打开录音,请求权限 #}
+                {#  recClose()  关闭录音,释放资源 #}
+                {#  recStart()  录制 #}
+                {#  recStop()   停止 #}
+                {#  aispeach()  开始评测 #}
+                {#  recPlay()   播放 #}
+
+              <button class="btn" id="connect" >在线录制</button>
+
+              <button class="btn" id="video-file" >本地视频</button>
+
+                <button class="btn" id="text-file" onclick="window.location.href='/upload/'">文本评测</button>
+
+              <button class="btn" id="disconnect" style="display:none">关闭录制</button>
+
+                <button class="btn" id="startAnalyse" style="display:none">开始评测</button>
+
+              <button class="btn" id="export-btn" style="display:none">视频导出</button>
+
+              <button class="btn" id="video-play" style="display:none">播放并分析</button>
+              <button class="btn" id="video-upload" style="display:none">上传并分析</button>
+
+            <button class="btn" id="result" style="display:none">本次评测结果</button>
+            <button class="btn" id="flush" style="display:none">返回主页</button>
+              
+
+            </div>
+    
+
+            {# 选择摄像头 #}
+           <div class="device-list" id="devices">
+              <ul class="ul"></ul>
+              <button class="btn" id="close">关 闭</button>
+            </div>
+
+            <div id='video'>
+              <video id="vid" style="display:none"></video>
+              <img src="/media/2.png" id="img-temp" alt="摄像头图片" />
+              <canvas id="canvas2" class="canvas2"></canvas>
+              <div></div>
+            </div>
+            
+        </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+  <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>
+  <script type="text/javascript" src="{% static 'js/bootstrap.js'%}"></script>
+  <script type="text/javascript" src="{% static 'js/owl.carousel.min.js'%}"></script>
+  <script src="/static/js/tracking-min.js" type="text/javascript"></script>
+  <script src="/static/js/face-min.js" type="text/javascript"></script>
+
+  {% comment %} <script type="text/javascript" src="{% static 'js/custom.js'%}"></script> {% endcomment %}
+  {% comment %} <script src="/static/js/jquery-3.6.0.min.js"></script> {% endcomment %}
+  {% comment %} <script src="/static/js/camera.js" type="text/javascript"></script> {% endcomment %}
+
+
+<script>
+
+  // reclog("提示信息", 1/2/不写)  1代表红色，2代表绿色，不标是黑色
+  const frame = 30;
+  const video = document.querySelector('video');
+  
+  const deviceList = document.getElementById('devices');
+  const canvas = document.createElement('canvas');
+
+  const ctx = canvas.getContext('2d', {willReadFrequently: true});
+  const vid = document.getElementById('vid');
+  const canvas2 = document.getElementById('canvas2');
+  const ctx2 = canvas2.getContext('2d', {willReadFrequently:true});
+  const tracker = new tracking.ObjectTracker('face');
+
+  const start = document.getElementById('connect');
+  const stop = document.getElementById('disconnect');
+  const exportBtn = document.getElementById('export-btn');  // 导出视频按钮
+  const videoFileBtn = document.getElementById('video-file');
+  const textFileBtn = document.getElementById('text-file');
+
+  const videoPlayBtn = document.getElementById('video-play');
+  const videoUploadBtn = document.getElementById('video-upload');
+  const FlushBtn = document.getElementById('flush');
+  const startAnalyseBth = document.getElementById('startAnalyse');
+  const resultBth = document.getElementById('result');
+
+  const imgTemp = document.getElementById('img-temp');
+  const input = document.createElement('input');
+
+  canvas2.setAttribute('width', 400);
+  canvas2.setAttribute('height', 300);
+
+  {#开始评测按钮#}
+  startAnalyseBth.addEventListener('click', () => {
+      if ( "{{ user_name }}" == ""){
+          alert('您还没有登录，点击确定跳转到登录页面');
+          jump('login', 0);
+
+        }
+
+      else {
+          reclog("开始评测...", 2);
+          aispeach();
+      }
+  });
+
+  {#结果按钮#}
+  resultBth.addEventListener('click', () => {
+    if ( "{{ user_name }}" == ""){
+      alert('您还没有登录，点击确定跳转到登录页面');
+      jump('login', 0);
+
+    }
+  else {
+      reclog("查看单次评测结果...", 2);
+      single_result();
+  }
+
+  });
+
+  {#文本评测 按钮#}
+  textFileBtn.addEventListener('click', () => {
+      {% comment %}
+    if ( "{{ user_name }}" == ""){
+      alert('您还没有登录，点击确定跳转到登录页面');
+      jump('login', 0);
+    }
+    else{
+
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.doc,.docx,.txt,.pdf';
+      input.style.display = 'none';
+      document.body.appendChild(input);
+      input.click();
+
+      start.style.display = 'none';
+      videoFileBtn.style.display = 'none';
+      textFileBtn.style.display = "none";
+
+
+      let param = new FormData();
+      param.append("txt", input.files[0]);
+      param.append("csrfmiddlewaretoken",'{{ csrf_token }}');
+
+      reclog("文本上传分析中...", 2)
+
+      $.ajax({
+
+        {# 需要修改地址 #}
+
+        url: 'upload/',
+        async: false,
+        type: "POST",
+        data: param,
+        processData: false,
+        dataType: "json",
+        cache: false,
+        contentType: false,
+        success: function (ret) {
+            if (ret['status'] == true){
+                reclog("文本上传分析成功", 2)
+            }
+            else{
+              reclog("文本上传成功，分析失败", 1)
+            }
+        },
+        error: function (ret) {
+            console.log('txt文件上传失败', 1);
+            console.log(ret);
+        },
+      });
+    }
+    {% endcomment %}
+  });
+
+
+
+  {#本地视频选择#}
+  videoFileBtn.addEventListener('click', () => {
+    if ( "{{ user_name }}" === ""){
+      alert('您还没有登录，点击确定跳转到登录页面');
+      jump('login', 0);
+    }
+    else{
+
+      input.type = 'file';
+      input.accept = 'video/*';
+      input.style.display = 'none';
+      document.body.appendChild(input);
+
+      input.click();
+      start.style.display = 'none';
+      videoFileBtn.style.display = 'none';
+      textFileBtn.style.display = "none";
+
+      videoPlayBtn.style.display = '';
+      videoUploadBtn.style.display = '';
+    }
+  });
+
+  {#本地视频上传按钮#}
+  {#分析结束后，再出现重新开始按钮 和 评测结果按钮#}
+    {# FlushBtn.style.display = ""; #}
+    {# resultBth.style.display = ''; #}
+  videoUploadBtn.addEventListener('click', async () => {
+
+      let time = new Date().toLocaleString();
+      let flag = true;
+      const file = input.files[0];
+
+      videoUploadFuc();
+
+      // 上传视频
+      videoUpload(file, flag, time);
+
+    {% comment %}
+    let work = new Worker("{% static 'js/aMyWorker.js' %}");
+    let arr = [file, flag, time]
+    work.postMessage(arr, [arr]);
+
+    worker.onmessage = function(e) {
+        console.log(e.data)
+    }
+
+    function stopWorker() {
+        w.terminate();
+    };
+    {% endcomment %}
+
+  });
+
+  function videoUploadFuc(){
+    videoUploadBtn.style.display = 'none';
+    videoPlayBtn.style.display = 'none';
+    FlushBtn.style.display = '';
+
+  };
+
+  {# 视频上传 #}
+  function videoUpload(data, analyseFlag, time) {
+      if (analyseFlag){
+          reclog("视频上传分析中...", 2);
+      }
+      else{
+          reclog("视频上传中...", 2);
+      }
+
+    let param = new FormData();
+    //let blob = new Blob(chunks);
+    let time_temp = time;
+    let flag_temp = analyseFlag;
+
+    if (time_temp == null){
+      time_temp = new Date().toLocaleString();
+    }
+
+    param.append("csrfmiddlewaretoken",'{{ csrf_token }}');
+    param.append("video", data);
+    param.append("user_name", "{{ user_name }}");
+    param.append("time", time_temp);
+    param.append("analyseFlag", flag_temp);
+    console.log(flag_temp);
+
+    $.ajax({
+      url: '/login/video',
+      async: false,
+      type: "POST",
+      data: param,
+      processData: false,
+      dataType: "json",
+      cache: false,
+      contentType: false,
+      success: function (ret) {
+          if (flag_temp){
+              reclog("视频分析结束", 2);
+              resultBth.style.display = "";
+          }
+          else{
+              reclog("视频上传成功", 2);
+          }
+        console.log(ret['tip']);
+
+      },
+      error: function (ret) {
+          if (flag_temp){
+              reclog("视频分析失败", 1);
+          }
+          else{
+              reclog("视频上传失败", 1);
+          }
+      },
+    })
+  }
+
+
+  {#返回主页 按钮#}
+  FlushBtn.addEventListener('click', () => {
+    location.reload();
+
+  });
+
+  {#本地视频播放分析 按钮#}
+  videoPlayBtn.addEventListener('click', () => {
+
+    let time = new Date().toLocaleString();
+    let flag = false;
+    const file = input.files[0];
+
+    {#上传视频#}
+    videoUpload(file, flag, time);
+
+
+    {#播放视频#}
+    videoPlayFuc(file, time);
+
+
+  });
+
+  {#本地视频播放分析 函数#}
+  {#分析结束后，再出现重新开始按钮 和 评测结果按钮#}
+    {# FlushBtn.style.display = ""; #}
+    {# resultBth.style.display = ''; #}
+  async function videoPlayFuc(file, time){
+    vid.style.display = "";
+    imgTemp.style.display = "none";
+    videoUploadBtn.style.display = "none";
+    videoPlayBtn.style.display = "none";
+
+    video.src = URL.createObjectURL(file);
+    await video.play();
+
+    video.onloadedmetadata = function() {
+      function getStyle(obj, attr) {
+          if (obj.currentStyle) {
+              return obj.currentStyle[attr];
+          } else {
+              return getComputedStyle(obj)[attr];
+          }
+      }
+
+      let wid = getStyle(video,'width').slice(0, -2);
+      let hei = getStyle(video,'height').slice(0, -2);
+
+      canvas.setAttribute('width', wid);
+      canvas.setAttribute('height', hei);
+      canvas2.setAttribute('width', wid);
+      canvas2.setAttribute('height', hei);
+    };
+
+
+    {# 成功后出现评测结果 按钮 #}
+    video.addEventListener('pause', function () { //暂停开始执行的函数
+        vid.style.display = "none";
+        resultBth.style.display = '';
+
+        tra.stop();
+
+        ctx2.clearRect(0, 0, 400, 300);
+
+        imgTemp.style.display = "";
+
+        console.log('停止采集');
+
+    });
+
+
+    let sum = 0;
+    let total = 0;
+
+    tracker.setInitialScale(2.8);
+    tracker.setStepSize(1);
+    tracker.setEdgesDensity(0.05);
+    let tra = tracking.track('#vid', tracker);
+
+    tracker.on('track', function (event) {
+        ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        event.data.forEach(function (rect) {
+          ctx2.strokeStyle = '#00FF00'; // 00fe44
+          ctx2.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+          sum += 1;
+
+          if(sum % frame === 0){
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            {#获取该张图片在视频中的时间#}
+            let currentTime = video.currentTime;
+            //console.log(currentTime);
+
+            let imgURL = canvas.toDataURL('image/png', 1);
+            let img = new Image();
+            img.src = imgURL;
+
+            {#图片转成Buffer#}
+            function dataURItoBlob(dataURI) {
+                let byteString = atob(dataURI.split(',')[1]);
+                let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                let ab = new ArrayBuffer(byteString.length);
+                let ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                return new Blob([ab], {type: mimeString});
+            }
+
+            total += 1;
+            let param = new FormData();
+            let blob = dataURItoBlob(imgURL);
+            param.append("speech", blob);
+            param.append("csrfmiddlewaretoken",'{{ csrf_token }}');
+            param.append("time", time);
+            param.append("total", total);
+            param.append("imgTime", currentTime.toString());
+
+            $.ajax({
+              url: '/login/speech',
+              async: false,
+              type: "POST",
+              data: param,
+              processData: false,
+              dataType: "json",
+              cache: false,
+              contentType: false,
+              success: function (ret) {
+                  if (ret['status'] === true){
+                      console.log(ret['eps'])
+
+                    }
+                  else{
+                      console.log(ret)
+                  }
+              },
+              error: function (ret) {
+                  console.log('失败 ！！！');
+                  console.log(ret);
+              },
+
+            });
+
+          }
+
+        });
+
+    });
+  }
+
+  {#开启摄像头#}
+  document.getElementById('connect').onclick = function ()  {
+      navigator.mediaDevices.enumerateDevices().then(function (devices) {
+          if ( "{{ user_name }}" === ""){
+            alert('您还没有登录，点击确定跳转到登录页面');
+            jump('login', 0);
+          }
+          // console.log(devices);
+          const videoInputs = devices.filter(d => d.kind == 'videoinput');
+          if (!videoInputs.length) {
+              alert('请接入摄像头');
+              return;
+          } else if(videoInputs.length == 1){
+
+              connectCamera(videoInputs[0].groupId);
+
+          } else {
+              const lis = videoInputs.map((d, i) => `<li id="${d.groupId}">摄像头${i + 1}</li>`);
+              deviceList.querySelector('ul').innerHTML = lis.join('');
+              deviceList.classList.add('active');
+          }
+        }
+      )
+  };
+
+
+  {#选择摄像头#}
+  deviceList.onclick = function (e) {
+      const t = e.target;
+      if (t.nodeName == 'LI') {
+          connectCamera(t.id);
+          deviceList.classList.remove('active');
+      }
+  };
+
+  {#关闭摄像头选择#}
+  document.getElementById('close').onclick = function () {
+      deviceList.classList.remove('active');
+  };
+
+  function sleep(millisecond) {
+      return new Promise(resolve => {
+          setTimeout(() => {
+              resolve()
+          }, millisecond)
+      })
+  }
+
+  async function jump(key, seconds){
+      await sleep(seconds);
+      window.location.href = '/' + key;
+  }
+
+  {#开始录制#}
+  function connectCamera(groupId) {
+    imgTemp.style.display = "none";
+    start.style.display = "none";
+    videoFileBtn.style.display = "none";
+    textFileBtn.style.display = "none";
+
+    vid.style.display = "";
+    stop.style.display = "";
+
+
+    const videoWidth = 400;
+    const videoHeight = 300;
+    canvas.setAttribute('width', videoWidth);
+    canvas.setAttribute('height', videoHeight);
+    canvas2.setAttribute('width', videoWidth);
+    canvas2.setAttribute('height', videoHeight);
+
+    let time = new Date().toLocaleString();
+    let sum = 0;
+    let total = 0;
+
+    let flag_temp = false;
+    setTimeout(function(){
+      sum = 0;
+      flag_temp = true;
+    }, 3000);
+
+    let chunks = [];  // 存放视频数据
+    let mediaTrack;
+    let audioTrack;
+
+    let mediaRecorder;
+
+    navigator.mediaDevices
+      .getUserMedia({
+          video: { groupId, width: videoWidth, height: videoHeight },
+          audio: { echoCancellation: true }
+      })
+      .then(function (stream) {
+        video.srcObject = stream;
+        video.volume = 0;
+        mediaTrack = stream.getTracks()[0];
+        audioTrack = stream.getTracks()[1];
+        video.onloadedmetadata = function (e) {
+            video.play();
+        };
+
+        {# 音频分析开始 #}
+        recStart();
+
+        {#创建媒体录制#}
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'video/webm'
+        });
+
+        {#console.log('开始采集');#}
+        mediaRecorder.start();
+
+        tracker.setInitialScale(3);
+        tracker.setStepSize(2);
+        tracker.setEdgesDensity(0.1);
+        let tra = tracking.track('#vid', tracker);
+
+        tracker.on('track', function (event) {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            event.data.forEach(function (rect) {
+              ctx2.strokeStyle = '#00fe44';
+              ctx2.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+              sum += 1;
+
+              if(sum % frame === 0 || flag_temp){
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                let imgURL = canvas.toDataURL('image/png', 1);
+                let img = new Image();
+                img.src = imgURL;
+
+                let currentTime = video.currentTime;
+
+                {#图片转成Buffer#}
+                function dataURItoBlob(dataURI) {
+                    let byteString = atob(dataURI.split(',')[1]);
+                    let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                    let ab = new ArrayBuffer(byteString.length);
+                    let ia = new Uint8Array(ab);
+                    for (var i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+                    return new Blob([ab], {type: mimeString});
+                }
+
+                total += 1;
+                let param = new FormData();
+                let blob = dataURItoBlob(imgURL);
+                param.append("speech", blob);
+                param.append("csrfmiddlewaretoken",'{{ csrf_token }}');
+                param.append("time", time);
+                param.append("total", total);
+                param.append("imgTime", currentTime);
+
+                $.ajax({
+                  url: '/login/speech',
+                  async: false,
+                  type: "POST",
+                  data: param,
+                  processData: false,
+                  dataType: "json",
+                  cache: false,
+                  contentType: false,
+                  success: function (ret) {
+                      if (ret['status'] == true){
+                          console.log(ret['eps'])
+                        }
+                      else{
+                          console.log(ret)
+                      }
+                  },
+                  error: function (ret) {
+                      console.log('失败 ！！！');
+                      console.log(ret);
+                  },
+                });
+
+                flag_temp = false;
+                setTimeout(function(){
+                  sum = 0;
+                  flag_temp = true;
+                }, 2000);
+
+              };
+
+            });
+        });
+
+        document.getElementById('disconnect').onclick = function (){
+
+          stop.style.display = "none";
+          vid.style.display = "none";
+
+          imgTemp.style.display = "";
+          exportBtn.style.display = "";
+          startAnalyseBth.style.display = "";
+
+          tra.stop();
+
+          ctx2.clearRect(0, 0, videoWidth, videoHeight);
+
+          mediaRecorder.stop();
+
+          {# 音频分析结束 #}
+          recStop();
+
+          {#收集录制数据#}
+          mediaRecorder.ondataavailable = e => {
+            if (e.data && e.data.size > 0) {
+              chunks.push(e.data);
+
+              {#上传视频#}
+              videoUpload(e.data, false, time);
+            }
+          };
+
+          if (mediaTrack) {
+            mediaTrack.stop();
+          }
+          if (audioTrack) {
+            audioTrack.stop();
+          }
+          video.pause();
+
+          //mediaRecorder = null;
+          //mediaTrack = null;
+          //audioTrack = null;
+          //video.srcObject = null;
+
+          console.log('停止采集');
+        }
+      }).catch(console.log);
+
+      {#导出视频按钮点击#}
+      exportBtn.addEventListener('click', () => {
+
+        let time = new Date().toLocaleString();
+        console.log(time);
+
+        let blob = new Blob(chunks);
+
+        let url = window.URL.createObjectURL(blob);
+        let link = document.createElement("a");
+        link.href = url;
+
+        // ".webm"  ".mp4"
+        link.download = "{{ user_name }}" + "_" + time + ".webm";
+
+        link.style.display = "none";
+
+        link.click();
+        link.remove();
+
+      });
+
+  };
+
+
+  var rec,wave,recBlob;
+
+  function recStart(){
+      {#打开了录音后才能进行start、stop调用#}
+    console.log("已开始录音...")
+        $.ajax({
+            type:"GET",
+            contentType:"application/json;charset=UTF-8",
+            url:"/start_record",
+            success:function(result){
+                console.log("success!")
+            },
+            error:function(e){
+                console.log(e.status);
+                // console.log(e.responseText);
+            }
+        })
+        reclog("已开始录音...");
+
+    };
+
+    function recStop(){
+    console.log("录音结束...")
+    $.ajax({
+            type:"GET",
+            contentType:"application/json;charset=UTF-8",
+            url:"/stop_record",
+            success:function(result){
+                console.log("success!")
+                console.log(result)
+            },
+            error:function(e){
+                console.log(e.status);
+                // console.log(e.responseText);
+            }
+        })
+        recBlob="1"
+        reclog("录音结束...");
+  };
+
+
+    $(".btn-savename").click(function(){
+        $.ajax({
+            type:"GET",
+            contentType:"application/json;charset=UTF-8",
+            url:"/set_name",
+            success:function(result){
+                console.log("success!")
+                console.log(result)
+                alert("设置成功！")
+            },
+            error:function(e){
+            console.log(e.status);
+            console.log(e.responseText);
+            }
+        })
+    })
+
+  function aispeach(){
+    if(!recBlob){
+        reclog("请先录制，然后停止后再评测",1);
+        return;
+  };
+        $.ajax({
+            type:"GET",
+            contentType:"application/json;charset=UTF-8",
+            url:"/evaluation",
+            success:function(result){
+                console.log("success!")
+                console.log(result)
+                reclog("评测完成...",2);
+                resultBth.style.display = ''
+                FlushBtn.style.display = ''
+
+            },
+            error:function(e){
+            console.log(e.status);
+            console.log(e.responseText);
+            reclog("评测失败...",1);
+            }
+        })
+        reclog("正在进行评测...",2);
+        
+    }
+
+
+    function single_result(){
+      if(!recBlob){
+          reclog("请先录制，然后再查看结果",1);
+          return;
+    };
+          jump('one_result',0);
+          reclog("查看评测结果...",2);
+          
+      }
+
+
+
+
+  //recOpen我们可以选择性的弹一个对话框：为了防止移动端浏览器存在第三种情况：用户忽略，并且（或者国产系统UC系）浏览器没有任何回调
+  var showDialog=function(){
+    if(!/mobile/i.test(navigator.userAgent)){
+      return;//只在移动端开启没有权限请求的检测
+    };
+    dialogCancel();
+
+    //显示弹框，应该使用自己的弹框方式
+    var div=document.createElement("div");
+    document.body.appendChild(div);
+    div.innerHTML=(''
+      +'<div class="waitDialog" style="z-index:99999;width:100%;height:100%;top:0;left:0;position:fixed;background:rgba(0,0,0,0.3);">'
+        +'<div style="display:flex;height:100%;align-items:center;">'
+          +'<div style="flex:1;"></div>'
+          +'<div style="width:240px;background:#fff;padding:15px 20px;border-radius: 10px;">'
+            +'<div style="padding-bottom:10px;">录音功能需要麦克风权限，请允许；如果未看到任何请求，请点击忽略~</div>'
+            +'<div style="text-align:center;"><a onclick="waitDialogClick()" style="color:#0B1">忽略</a></div>'
+          +'</div>'
+          +'<div style="flex:1;"></div>'
+        +'</div>'
+      +'</div>');
+  };
+
+  var createDelayDialog=function(){
+    dialogInt=setTimeout(function(){//定时8秒后打开弹窗，用于监测浏览器没有发起权限请求的情况，在open前放置定时器利于收到了回调能及时取消（不管open是同步还是异步回调的）
+      showDialog();
+    },8000);
+  };
+  var dialogInt;
+  var dialogCancel=function(){
+    clearTimeout(dialogInt);
+
+    //关闭弹框，应该使用自己的弹框方式
+    var elems=document.querySelectorAll(".waitDialog");
+    for(var i=0;i<elems.length;i++){
+      elems[i].parentNode.removeChild(elems[i]);
+    };
+  };
+  //recOpen弹框End
+
+</script>
+
+
+
+
+
+<!--以下这坨可以忽略-->
+<script>
+  function reclog(s,color){
+    var now=new Date();
+    var t=("0"+now.getHours()).substr(-2)
+      +":"+("0"+now.getMinutes()).substr(-2)
+      +":"+("0"+now.getSeconds()).substr(-2);
+    var div=document.createElement("div");
+    var elem=document.querySelector(".reclog");
+    elem.insertBefore(div,elem.firstChild);
+
+    div.innerHTML='<div style="color:'+(!color?"":color==1?"red":color==2?"#0b1":color)+'">['+t+']'+s+'</div>';
+  };
+  window.onerror=function(message, url, lineNo, columnNo, error){
+    //https://www.cnblogs.com/xianyulaodi/p/6201829.html
+    reclog('<span style="color:red">【Uncaught Error】'+message+'<pre>'+"at:"+lineNo+":"+columnNo+" url:"+url+"\n"+(error&&error.stack||"不能获得错误堆栈")+'</pre></span>');
+  };
+
+
+  reclog(Tips);
+</script>
+
+<script>
+
+  if(/mobile/i.test(navigator.userAgent)){
+    //移动端加载控制台组件
+    var elem=document.createElement("script");
+    elem.setAttribute("type","text/javascript");
+    elem.setAttribute("src","https://cdn.bootcss.com/eruda/1.5.4/eruda.min.js");
+    document.body.appendChild(elem);
+    elem.onload=function(){
+      eruda.init();
+    };
+  };
+
+</script>
+
+</body>
+
+</html>

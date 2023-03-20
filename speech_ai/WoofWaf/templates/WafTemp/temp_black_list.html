@@ -1,0 +1,65 @@
+{% extends 'WafTemp/layout.html' %}
+{% load static %}
+{% block temp_black_list %}active{% endblock %}
+{% block WBlist %}block{% endblock %}
+
+{% block main_content %}
+                 <div class="section__content section__content--p35">
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE -->
+                                <!-- TABLE TITLE-->
+                                <h3 class="title-5 m-b-35">IP临时黑名单</h3>
+                                <a  style="font-size: 15px">尝试攻击网站的IP请进小黑屋思过</a><br><br>
+
+                                <!-- TABLE TOOL-->
+
+                                <div class="table-responsive m-b-40">
+                                    <table class="table table-borderless table-data3 " id ="ddd">
+                                        <thead>
+                                            <tr>
+                                                <th>序号</th>
+                                                  <th>IP</th>
+                                                <th>封禁日期</th>
+                                                <th>解封时间</th>
+                                                <th>操作</th>
+
+
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                        {% for row in queryset %}
+
+                                                      <td>{{ forloop.counter }}</td>
+                                                <td>{{ row.ip }}</td>
+                                                <td>{{ row.prohibit_time|date:"Y-m-d H:i:s"}}&nbsp;</td>
+                                                <!--60分钟之内绿色-->
+                                                <td class="process">{{ row.access_time|date:"Y-m-d H:i:s"}}&nbsp;</td>
+
+                                             <td>
+                                                    <a class="btn btn-danger" href="#">暂无</a>
+                                                </td>
+
+
+
+                                            </tr>
+
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="copyright">
+                                    <p>Copyright © 2018 Colorlib. All rights reserved. Template by <a href="https://colorlib.com">Colorlib</a>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           {% endblock %}

@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="OrcasThemes">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+
+<title>评委</title>
+<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/screen.css' %}">
+<link rel="stylesheet" href="{% static 'css/animation.css' %}">
+
+<link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+
+<link rel="stylesheet" href="{% static 'css/ie.css' %}" type="text/css" media="screen, projection">
+
+<link href="{% static 'css/lity.css' %}" rel="stylesheet">
+</head>
+<body>
+<style>
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 50px;
+		}
+		.score-form {
+			display: none;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 20px;
+		}
+		.score-form label {
+			margin-bottom: 10px;
+		}
+</style>
+
+<!-- HOME 1 -->
+<div id="home1" class="container-fluid standard-bg">
+ <!-- HEADER -->
+ <div class="row header-top">
+	<div class="col-lg-3 col-md-6 col-sm-5 col-xs-8">
+	   <a class="main-logo" href="#"><img src="{% static 'img/banners/main-logo.png' %}" class="main-logo img-responsive" alt="Muvee Reviews" title="Muvee Reviews"></a>
+	</div>
+	<div class="col-lg-6 hidden-md text-center hidden-sm hidden-xs">
+	   <img src="{% static 'img/banners/3banner-sm.jpg' %}" class="img-responsive" alt="Muvee Reviews Video Magazine HTML5 Bootstrap">
+	</div>
+	<div class="col-lg-3 col-md-6 col-sm-7 hidden-xs">
+	   <div class="right-box">
+		  <button type="button" onclick="window.location.href='/judge/finalScore/'" class="access-btn" data-toggle="modal" data-target="#enquirypopup">查看结果</button>
+	   </div>
+	</div>
+ </div>
+
+ <!-- CORE -->
+ <div class="row">
+	<!-- SIDEBAR -->
+	<div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
+	   <aside class="dark-bg">
+		  <article>
+			 <h2 class="icon"><i class="fa fa-flash" aria-hidden="true"></i>评分</h2>
+			 {% comment %} <ul class="sidebar-links">
+				<li class="fa fa-chevron-right"><a href="#">发音流畅度</a></li>
+				<li class="fa fa-chevron-right"><a href="#">发音准确度</a></li>
+				<li class="fa fa-chevron-right"><a href="#">情感饱和度</a></li>
+				<li class="fa fa-chevron-right"><a href="#">肢体动作适当</a></li>
+				<li class="fa fa-chevron-right"><a href="#">演讲逻辑性</a></li>
+				<li class="fa fa-chevron-right"><a href="#">演讲文采性</a></li>
+				<!-- <li class="fa fa-chevron-right"><a href="#">movies</a><span>15</span></li> -->
+			 </ul> {% endcomment %}
+            <script>
+                function toggleScoreForm(id) {
+                    const scoreForm = document.getElementById(`score-form-${id}`);
+                    scoreForm.style.display = scoreForm.style.display === 'none' ? 'flex' : 'none';
+                }
+            </script>
+            <div class="container">
+                {% for video in video_properties %}
+                    <div>
+                        <span>选手{{ forloop.counter }}</span>
+                        <button onclick="toggleScoreForm({{ forloop.counter }})">▼</button>
+                    </div>
+                    <form class="score-form" id="score-form-{{ forloop.counter }}">
+                        <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ video.Cptr_id }}">
+
+                        <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
+                        <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
+                        <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
+                        <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
+                        <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
+                        <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
+                        <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
+                        <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
+                        <button type="submit">提交</button>
+                    </form>
+                {% endfor %}
+            </div>
+		  </article>
+		  <div class="clearfix spacer"></div>
+	   </aside>
+	</div>
+	<!-- HOME MAIN POSTS -->
+	<div class="col-lg-10 col-md-8">
+	   <section id="home-main">
+		  <h2 class="icon"><i class="fa fa-television" aria-hidden="true"></i>选手视频</h2>
+		  <div class="row">
+			 <!-- ARTICLES -->
+			 <div class="col-lg-9 col-md-12 col-sm-12">
+				<div class="row auto-clear">
+					{% for video in video_properties %}
+					<article class="col-lg-3 col-md-6 col-sm-4">
+					  <div class="post post-medium">
+						<div class="thumbr">
+						  <a class="post-thumb" href="/media/{{ video.video_path }}" data-lity>
+							<span class="play-btn-border" title="Play"><i class="fa fa-play-circle headline-round" aria-hidden="true"></i></span>
+							<img class="img-responsive" src="/media/{{ video.img_path }}" alt="{{ video.Cptr_Name }}">
+						  </a>
+						</div>
+						<div class="infor">
+						  <h4>
+							<a class="title" href="#">{{ video.title }}</a>
+						  </h4>
+						</div>
+					  </div>
+					</article>
+					{% endfor %}
+				</div>
+				<div class="clearfix spacer"></div>
+			 </div>
+				<!-- SIDEBAR ADVERTISE BOX -->
+				<a href="" class="banner-l hidden-sm hidden-xs">
+				<img src="{% static 'img/banners/banner-l.jpg' %}" class="img-responsive" alt="Buy Now Muvee Reviews Bootstrap HTML5 Template" title="Buy Now Muvee Reviews Bootstrap HTML5 Template">
+				</a>
+			 </div>
+	   </section>
+	</div>
+ </div>
+</div>
+
+    <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>
+
+    <script>
+
+        {#只能输入整数或一位两位小数#}
+        $('input').on('input', function() {
+          let val = this.value;
+          let regex = /^([1-9][0-9]?)(\.\d{0,2})?$|100$/;
+          if (!regex.test(val)) {
+            this.value = val.slice(0, -1);
+          }
+        });
+
+        {#提交表单#}
+        $(document).ready(function() {
+          $(".score-form").submit(function(event) {
+            event.preventDefault();
+
+            let formData = {
+              "cptrID": $(this).find("input[name='cptrID']").val(),
+              "qinggan": $(this).find("input[name='qinggan']").val(),
+              "ziti": $(this).find("input[name='ziti']").val(),
+              "luoji": $(this).find("input[name='luoji']").val(),
+              "wencai": $(this).find("input[name='wencai']").val(),
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
+            };
+            console.log(formData);
+
+            $.ajax({
+              type: "POST",
+              url: "/judge/humanScore/",
+              data: formData,
+              success: function(ret) {
+                alert('提交成功');
+              },
+              error: function(ret) {
+                console.log("提交失败 !");
+              }
+            });
+          });
+        });
+
+        {#console.log("{{ cptr|safe }}");#}
+
+    </script>
+
+
+</body>
+</html>

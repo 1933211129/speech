@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+
+        <title>评委</title>
+
+    </head>
+
+    <body>
+
+        {% for one in cptr %}
+
+            <video src="/media/{{ one.video_path }}"></video>
+            <img src="/media/{{ one.img_path }}" alt="{{ one.video_path.title }}">
+
+        {% endfor %}
+
+
+        {% for one in cptr %}
+            <div> 选手 &nbsp;{{ one.Cptr_Name }} </div>
+            <form class="HumanScoreForm">
+              <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ one.Cptr_id }}">
+
+              <label for="qinggan">情感饱和度</label>
+              <input type="text" id="qinggan" name="qinggan"><br><br>
+
+                <label for="ziti">肢体动作适当</label>
+              <input type="text" id="ziti" name="ziti"><br><br>
+
+                <label for="luoji">演讲逻辑性</label>
+              <input type="text" id="luoji" name="luoji"><br><br>
+
+                <label for="wencai">演讲文采性</label>
+              <input type="text" id="wencai" name="wencai"><br><br>
+
+              <button type="submit">提交</button><br><br>
+
+            </form>
+        {% endfor %}
+
+
+    </body>
+
+    <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>
+
+    <script>
+
+        {#只能输入整数或一位两位小数#}
+        $('input').on('input', function() {
+          let val = this.value;
+          let regex = /^([1-9][0-9]?)(\.\d{0,2})?$|100$/;
+          if (!regex.test(val)) {
+            this.value = val.slice(0, -1);
+          }
+        });
+
+        {#提交表单#}
+        $(document).ready(function() {
+          $(".HumanScoreForm").submit(function(event) {
+            event.preventDefault();
+
+            let formData = {
+              "cptrID": $(this).find("input[name='cptrID']").val(),
+              "qinggan": $(this).find("input[name='qinggan']").val(),
+              "ziti": $(this).find("input[name='ziti']").val(),
+              "luoji": $(this).find("input[name='luoji']").val(),
+              "wencai": $(this).find("input[name='wencai']").val(),
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
+            };
+            console.log(formData);
+
+            $.ajax({
+              type: "POST",
+              url: "/judge/humanScore/",
+              data: formData,
+              success: function(ret) {
+                console.log(ret);
+              },
+              error: function(ret) {
+                console.log("提交失败 !");
+              }
+            });
+          });
+        });
+
+        {#console.log("{{ cptr|safe }}");#}
+
+    </script>
+
+
+</html>

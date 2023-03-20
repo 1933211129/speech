@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Event Schedule</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border: 1px solid #ddd;
+		}
+		th {
+			background-color: #f2f2f2;
+		}
+	</style>
+</head>
+<body>
+	<h1>火热进行中...</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>赛事ID</th>
+				<th>比赛时间</th>
+				<th>赛事组织方</th>
+				<th>组织方邮箱</th>
+				<th>赛事介绍</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for event in events %}
+				{% comment %} {% if event.race_time > now %} {% endcomment %}
+                <tr>
+                    <td>{{ event.race_id }}</td>
+                    <td>{{ event.race_time }}</td>
+                    <td>{{ event.organizers_unit }}</td>
+                    <td>{{ event.organizers_email }}</td>
+                    <td>{{ event.race_file }}</td>
+                </tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</body>
+</html>

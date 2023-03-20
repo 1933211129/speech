@@ -1,0 +1,20 @@
+<div id="chart" style="width:600px;height:400px;"></div>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
+  <script>
+        var chart = echarts.init(document.getElementById('chart'));
+
+        option = {
+            xAxis: {
+                type: 'category',
+                data: {{x_axis}}
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: {{fluency_score}},
+                type: 'line'
+            }]
+        };
+        chart.setOption(option);
+  </script>

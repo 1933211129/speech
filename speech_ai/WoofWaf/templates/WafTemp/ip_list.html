@@ -1,0 +1,180 @@
+{% extends 'WafTemp/layout.html' %}
+{% load static %}
+{% block ip_list_active %}active{% endblock %}
+{% block WBlist %}block{% endblock %}
+
+{% block main_content %}
+                 <div class="section__content section__content--p35">
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE -->
+                                <!-- TABLE TITLE-->
+                                <h3 class="title-5 m-b-35" >IP黑白名单</h3>
+                                <a  style="font-size: 15px">管理特定IP的访问权限,保护网站安全</a><br><br>
+
+                                <!-- TABLE TOOL-->
+
+                                <div class="table-responsive m-b-40">
+                                    <table class="table table-borderless table-data3 " id = "ddd">
+                                        <thead>
+                                            <tr>
+                                                <th>序号</th>
+
+                                                <th>IP</th>
+                                                <th>状态</th>
+                                                <th>描述</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                             {% for row in queryset %}
+
+                                                      <td>{{ forloop.counter }}</td>
+                                                <td>{{ row.ip }}</td>
+
+                                                 {%   if row.status == 0 %}
+                                                             <td>白名单</td>
+                                                             {% elif row.status == 1 %}
+                                                                        <td>黑名单</td>
+                                                  {% elif row.status == 2 %}
+                                                                        <td>临时黑名单</td>
+                                                            {% endif %}
+
+
+                                                <td class="process">{{ row.description }}&nbsp;</td>
+
+                                             <td>
+                                                  <button type="button" class="btn btn-secondary mb-1" data-toggle="modal" data-target="#{{ row.id }}">
+											        编辑
+										            </button>
+
+                                                </td>
+
+
+
+                                            </tr>
+
+                                        {% endfor %}
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE -->
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+                    <div>
+        {% for row in queryset %}
+               	<!-- modal small -->
+			<div class="modal fade" id="{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-sm" role="document">
+                    <form method="post">
+                    {% csrf_token %}
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="smallmodalLabel">IP地址：{{ row.ip }}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+
+						<div class="modal-body">
+							<p>
+
+  <fieldset class="form-group">
+    <div class="row">
+      <legend class="col-form-label col-sm-2 pt-0">状态</legend>
+      <div class="col-sm-10">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios{{ row.id }}"  value="0" checked>
+          <label class="form-check-label" for="gridRadios1">
+            白名单
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios{{ row.id }}"  value="1">
+          <label class="form-check-label" for="gridRadios2">
+            黑名单
+          </label>
+        </div>
+        <div class="form-check disabled">
+          <input class="form-check-input" type="radio" name="gridRadios{{ row.id }}"  value="2" disabled>
+          <label class="form-check-label" for="gridRadios3">
+            临时黑名单
+          </label>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">描述</label>
+      <br>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="dcp{{ row.id }}">
+    </div>
+  </div>
+                            </p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" onclick="updateIpList('{{ row.id }}','{{ row.ip }}')")>提交</button>
+						</div>
+
+					</div>
+                           </form>
+				</div>
+			</div>
+			<!-- end modal small -->
+        {% endfor %}
+                </div>
+
+        <!-- ajax实现修改iplist-->
+    <script>
+    function updateIpList(id,ip){
+        var status
+        var radio = document.getElementsByName("gridRadios"+id)
+        for(i=0; i<radio.length;i++)    {
+               if(radio[i].checked)    {
+                      status = radio[i].value;
+               }
+           }
+        var dcpid = "dcp"+id
+        var dcp = document.getElementById(dcpid).value
+        var url = "{% url 'WoofWaf-views-iplist_update' %}"
+        var xhr
+        if(window.ActiveXObject){
+            xhr = new ActiveXObject("Microsoft.XMLHTTP")
+        }else if(window.XMLHttpRequest){
+            xhr = new XMLHttpRequest()
+        }
+
+        xhr.open("post",url,true)
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+        xhr.setRequestHeader("X-CSRFToken",'{{ csrf_token }}')
+        var send = "ip="+ip+"&status="+status+"&dcp="+dcp+"&csrfmiddlewaretoken="+"{{ csrf_token }}"
+        xhr.send(send)
+        xhr.onreadystatechange = function (){
+            if (xhr.readyState==4 && xhr.status==200){
+                rsp = xhr.responseText
+                alert(rsp)
+
+            }
+
+        }
+        location.reload()
+};
+    </script>
+
+
+<script>
+    function copy() {
+        document.getElementById('message').style.display='';   //弹出
+ setTimeout("document.getElementById('message').style.display='none'",1000);  //2秒后自动隐藏
+}
+</script>
+           {% endblock %}

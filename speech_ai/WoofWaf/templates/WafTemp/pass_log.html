@@ -1,0 +1,75 @@
+{% extends 'WafTemp/layout.html' %}
+{% load static %}
+{% block pass_active %}active{% endblock %}
+{% block diplayLogRecord %}block{% endblock %}
+
+{% block main_content %}
+ <div class="section__content section__content--p35">
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE -->
+                                <!-- TABLE TITLE-->
+                                <h3 class="title-5 m-b-35">放行日志</h3>
+                            <br>
+                                <!-- TABLE TOOL-->
+
+
+                                <div class="table-responsive m-b-40">
+                                    <table class="table table-striped table-data3 table-borderless" id ="ddd" >
+                                        <thead>
+                                            <tr >
+                                                <th width="10%">序号</th>
+                                                <th>时间</th>
+                                                <th>IP</th>
+                                                <th width="10%">路径</th>
+                                                <th width="15%">POST</th>
+                                                <th width="15%">HEADERS</th>
+                                                <th>响应码</th>
+                                            </tr>
+                                        </thead>
+                                    <tbody>
+                                    {% for row in queryset %}
+                                            <tr >
+                                                <td >{{ forloop.counter }}</td>
+                                                <td>{{ row.time|date:"y-m-d H:i:s"}}</td>
+                                                <td>{{ row.ip }}</td>
+                                                <td>{{ row.path }}</td>
+                                                <td title="{{ row.post }}">{{ row.post|truncatechars:20 }}</td>
+                                                <td title="{{ row.headers }}">{{ row.headers|truncatechars:20 }}</td>
+                                                <td>{{ row.status }}</td>
+
+
+                                            </tr>
+                                        {% endfor %}
+
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                                   <th width="10%">序号</th>
+                                                <th>时间</th>
+                                                <th>IP</th>
+                                                <th width="10%">路径</th>
+                                                <th width="15%">POST</th>
+                                                <th width="15%">HEADERS</th>
+                                                <th>响应码</th>
+                                    </tr>
+
+                                    </table>
+                                </div>
+
+                                <!-- END DATA TABLE -->
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+              <div>
+
+            </div>
+
+
+{% endblock %}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/speech_ai.iml" filepath="$PROJECT_DIR$/.idea/speech_ai.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../code_test/前端/视频陈列1/.idea/视频陈列1.iml" filepath="$PROJECT_DIR$/../../code_test/前端/视频陈列1/.idea/视频陈列1.iml" />
+    </modules>
+  </component>
+</project>

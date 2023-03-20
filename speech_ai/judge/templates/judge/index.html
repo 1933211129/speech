@@ -1,0 +1,31 @@
+{% block content %}
+  <h1>Speech Contest Application Form</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      <label for="applicant-name">applicant-name:</label>
+      <input type="text" id="applicant-name" name="applicant_name">
+    </div>
+    <div>
+      <label for="applicant-mobile">applicant_mobile:</label>
+      <input type="text" id="applicant_mobile" name="applicant_mobile">
+    </div>
+    <div>
+      <label for="applicant-email">Speaker Name:</label>
+      <input type="text" id="applicant-email" name="applicant_email">
+    </div>
+    <div>
+      <label for="organization">Speaker School:</label>
+      <input type="text" id="organization" name="organization">
+    </div>
+    <div>
+      <label for="speech-content">Speaker Grade:</label>
+      <input type="text" id="speech_content" name="speech_content">
+    </div>
+    <div>
+      <label for="speech-file">Applicant's Mobile Phone Number:</label>
+      <input type="text" id="speech-file" name="speech_file">
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+{% endblock %}

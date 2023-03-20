@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="apple-touch-fullscreen" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="format-detection" content="telephone=no">
+
+        <title>提交赛事信息</title>
+ 
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+		
+    </head>
+    <body>
+        <section class="aui-content">
+            <div style="height:20px;"></div>
+            <div class="aui-content-up">
+                {% comment %} enctype="multipart/form-data" {% endcomment %}
+                {% comment %} <form action='' name="form1" method="post">
+                     {% endcomment %}
+            <form method="post", name='form1'>
+                    {% csrf_token %}
+                    <div class="aui-content-up-form">
+                        {% block content %}
+                        <h2>提交赛事信息</h2>
+                    </div>
+                    <div class="aui-form-group clear">
+                        <label class="aui-label-control">
+                            申请人 <em>*</em>
+                        </label>
+                        <div class="aui-form-input">
+                            <input type="text" class="aui-form-control-two" name="yourname" onBlur="checkna()" id='applicant-name' placeholder="请输入身份证名字">
+                            <span class="tips" id="divname">长度1~6个字符</span>
+                        </div>
+                    </div>
+                    <div class="aui-form-group clear">
+                        <label class="aui-label-control">
+                            手机号码 <em>*</em>
+                        </label>
+                        <div class="aui-form-input">
+                            <input type="text" class="aui-form-control-two" name="youphone" id="applicant_mobile" placeholder="请输入11位的手机号码" onBlur="checkpsd1()" required/>
+                            <span class="tips" id="phone">必须是11位的数字</span>
+                        </div>
+                    </div>
+
+                    <div class="aui-form-group clear">
+                        <label class="aui-label-control">
+                            邮箱 <em>*</em>
+                        </label>
+                        <div class="aui-form-input">
+                            <input type="text" class="aui-form-control-two" name="email" id="applicant_email" placeholder="请输入您的邮箱" onBlur="checkpsd4()" required/>
+                            <span class="tips" id="Email">不能为空</span>
+                        </div>
+                    </div>
+
+                    <div class="aui-form-group clear">
+                        <label class="aui-label-control">
+                            组织单位 <em>*</em>
+                        </label>
+                        <div class="aui-form-input">
+                            <input type="text" class="aui-form-control-two" name="youziz" id="organization" placeholder="请输入单位名称" onBlur="checkpsd2()" required/>
+                            <span class="tips" id="zizhi">单位名称</span>
+                        </div>
+                    </div>
+                    <div class="aui-form-group clear">
+                        <label class="aui-label-control">
+                            赛事简介<em>*</em>
+                        </label>
+                        <div class="aui-form-input">
+                            <input type="text" class="aui-form-control" name="description" id="speech_content" placeholder="请输入本次演讲赛事简介" onBlur="checkpsd3()" required/>
+                            <span class="tips" id="desc">赛事简介</span>
+                        </div>
+                    </div>
+                    <div class="aui-form-group clear">
+                        <label class="aui-label-control">
+                            相关文件
+                        </label>
+                        <div class="aui-form-input">
+                            <div class="aui-content-img-box aui-content-full">
+                                <div class="aui-photo aui-up-img clear">
+                                    <section class="aui-file-up fl">
+                                        <img src="{% static 'img/up.png' %}" class="add-img">
+                                        <input type="file" name="file" id="file" class="file" value="" accept="pdf,docx,doc,txt,md"  multiple='multiple' />
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-btn-default">
+                        <button type="submit">提交并等待审核</button>\
+                        {% comment %} class="aui-btn aui-btn-account" {% endcomment %}
+                    </div>  
+            </form>
+                {% endblock %}
+            </div>
+                {% csrf_token %}
+                <!-- your form fields here -->        
+        </section>
+        <script src="{% static 'js/jquery.min.js'%}"></script>
+        <script type="text/javascript" src="{% static 'js/up.js'%}"></script>
+        <script type="text/javascript">
+            
+
+        //验证姓名
+        function checkna() {
+            na = form1.yourname.value;
+            if (na.length < 1 || na.length > 6) {
+                divname.innerHTML = '<font class="tips_false">长度是1~6个字符</font>';
+            } else {
+                divname.innerHTML = '<font class="tips_true">输入正确</font>';
+            }
+        }
+
+        //验证手机号
+        function checkpsd1() {
+            psd1 = form1.youphone.value;
+            var re = /^[0-9]{11}$/;
+            if (re.test(psd1)) {
+                phone.innerHTML = '<font class="tips_true">输入正确</font>';
+            } else {
+                phone.innerHTML = '<font class="tips_false">必须是11位的数字</font>';
+            }
+        }
+
+        //验证单位名称
+        function checkpsd2() {
+            psd2 = form1.youziz.value;
+            if (psd2.length == 0) {
+                zizhi.innerHTML = '<font class="tips_false">单位名称不能为空</font>';
+            } else {
+                zizhi.innerHTML = '<font class="tips_true">输入正确</font>';
+            }
+        }
+
+        //验证赛事简介
+        function checkpsd3() {
+            psd3 = form1.description.value;
+            if (psd3.length == 0) {
+                desc.innerHTML = '<font class="tips_false">赛事简介不能为空</font>';
+            } else {
+                desc.innerHTML = '<font class="tips_true">输入正确</font>';
+            }
+        }
+
+        //验证邮箱
+        function checkpsd4() {
+            psd4 = form1.email.value;
+            var re = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+            if (re.test(psd4)) {
+                Email.innerHTML = '<font class="tips_true">输入正确</font>';
+            } else {
+                Email.innerHTML = '<font class="tips_false">请输入正确的邮箱地址</font>';
+            }
+        } 
+
+
+        
+        </script>
+    </body>
+</html>

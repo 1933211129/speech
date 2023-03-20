@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="{% static 'css/homepage_bootstrap.css' %}">
+		<link rel="stylesheet" type="text/css" href= "{% static 'css/homepage_index.css' %}">
+		<script src="{% static 'js/homepage_jquery-1.11.3.js'%}" type="text/javascript" charset="utf-8"></script>
+		<script src="{% static 'js/homepage_bootstrap.js'%}" type="text/javascript" charset="utf-8"></script>
+		<script src="{% static 'js/homepage_index.js'%}" type="text/javascript" charset="utf-8"></script>
+		<title>赛事广场</title>
+	</head>
+
+	<body>
+		<div class="header">
+			<div class="mainWrap">
+				<div class="topLine"></div>
+				<div class="topWrap">
+					{% comment %} <a href="" class="logo">
+						<img src="{% static 'img/bistu.png' %}" />
+					</a> {% endcomment %}
+					<section class="search">
+						<div class="version">
+							<a href="">English Version</a>
+						</div>
+						<form class="searchForm">
+							<input type="text" class="inp" />
+							<a href="" class=" searchbtn glyphicon glyphicon-search"></a>
+						</form>
+					</section>
+				</div>
+				<div class="clearfix"></div>
+				<div class="menu">
+					<nav class="navbar navbar-default">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#example-navbar-collapse">
+								  <span class="sr-only">导航</span>
+			                      <span class="icon-bar"></span>
+			                      <span class="icon-bar"></span>
+			                      <span class="icon-bar"></span>
+			                 </button>
+							<a href="" class="navbar-brand anav">导航</a>
+						</div>
+						<div class="collapse navbar-collapse" id="example-navbar-collapse" aria-expanded="false">
+							<ul class="nav-tabs nav-justified" style="padding:0 ;">
+								<li>
+									<a href="now">火热进行</a>
+									</li>
+									<li><a href="/judge/submit/">参与赛事</a>
+									</li>
+									{% comment %} <li><a href="图书馆.html">网站公告</a></li> {% endcomment %}
+									<li><a href="contact">联系我们</a>
+									</li>
+								</ul>
+							</div>
+						</nav>
+				</div>
+			</div>
+		</div>
+
+<div class="content">
+
+        <div class="imgWrap">
+ <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner" role="listbox">
+    <div class="item active"><img src="{% static 'img/img01.jpg' %}" alt="...">
+    	<div class=" carousel-caption">
+
+      </div>
+    </div>
+    <div class="item"><img src="{% static 'img/img02.jpg' %}" alt="...">
+    	<div class=" carousel-caption">
+
+      </div>
+    </div>
+    <div class="item"><img src="{% static 'img/img03.jpg' %}" alt="...">
+    	<div class=" carousel-caption">
+
+      </div>
+    </div>
+    <div class="item"><img src="{% static 'img/img04.jpg' %}" alt="...">
+    	<div class=" carousel-caption">
+
+      </div>
+    </div>
+  </div>
+  <span class="day" id="calendarToday">2023.3.15</span>
+  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+	<span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+	<span class="sr-only">Next</span>
+  </a>
+ </div>
+       </div>
+		<div class="mainWrap">
+					<div class="month clearfix">
+						<a href="" class="arrow arrowleft"><span class="glyphicon glyphicon-chevron-left"></span></a>
+						<a href="" class="arrow arrowright"><span class="glyphicon glyphicon-chevron-right"></span></a>
+						<div class="monthTxt">
+							<span id="calendarYear">2023</span>
+							<span id="calendarMonth">3</span>月
+						</div>
+						<ul class="day">
+							<li data-target="#carousel-example-generic" data-slide-to="0"><a>1</a></li>
+							<li data-target="#carousel-example-generic" data-slide-to="1"><a>2</a></li>
+							<li data-target="#carousel-example-generic" data-slide-to="2"><a>3</a></li>
+							<li data-target="#carousel-example-generic" data-slide-to="3"><a>4</a></li>
+							<li><a>5</a></li>
+							<li><a>6</a></li>
+							<li><a>7</a></li>
+							<li><a>8</a></li>
+							<li><a>9</a></li>
+							<li><a>10</a></li>
+							<li><a>11</a></li>
+							<li><a>12</a></li>
+							<li><a>13</a></li>
+							<li><a>14</a></li>
+							<li><a>15</a></li>
+							<li><a>16</a></li>
+							<li><a>17</a></li>
+							<li><a>18</a></li>
+							<li><a>19</a></li>
+							<li><a>20</a></li>
+							<li><a>21</a></li>
+							<li><a>22</a></li>
+							<li><a>23</a></li>
+							<li><a>24</a></li>
+							<li><a>25</a></li>
+							<li><a>26</a></li>
+							<li><a>27</a></li>
+							<li><a>28</a></li>
+							<li><a>29</a></li>
+							<li><a>30</a></li>
+						</ul>
+					</div>
+				</div>
+        <div class="mainWrap">
+        	<section class="news clearfix">
+        		<h2 class="yahei"><a class="more">更多 &gt;</a>往届赛事</h2>
+        		<ul class="newslist">
+        			<li class="col-sm-4">
+        				<div class="ydate ydate_2" id="div_ydate_1">
+        					<span>2</span>2021.12
+        				</div>
+        				<div class="tn">
+        					<h3><a href="">信管学院"信"说梦想，"管"望青春演讲比赛圆满结束</a></h3>
+        					<p id="news_summary_1">2021年12月2日晚，信管学院在报告厅举办的第一届“信”说梦想，“管”望青春演讲比赛在一阵阵热烈的掌声中拉开帷幕！我们诚邀了张洪瑞学长、信管学院</p>
+        				</div>
+        			</li>
+        			<li class="col-sm-4">
+        				<div class="ydate ydate_2" id="div_ydate_1">
+        					<span>24</span>2021.11
+        				</div>
+        				<div class="tn">
+        					<h3><a href="">第十二届"星空杯"新生辩论赛决赛</a></h3>
+        					<p id="news_summary_2">纵论古今千秋年，横辩中外万里经纬，秋冬更替时，辩友再相遇。2021年11月24日周三晚18：30，信管学院第十二届“星空杯”辩论赛总决赛在半阶一隆重举行。</p>
+        				</div>
+        			</li>
+        			<li class="col-sm-4">
+        				<div class="ydate ydate_2" id="div_ydate_1">
+        					<span>19</span>2020.11
+        				</div>
+        				<div class="tn">
+        					<h3><a href="">信管学院第十一届"星空杯"辩论赛圆满结束</a></h3>
+        					<p id="news_summary_3">2020年11月19日周四19：00，由院辩论队主办，院学生会承办的第十一届信管学院“星空杯”辩论赛决赛，在小营校区报告厅隆重举行。信管学院辅导员杨昕老师</p>
+        				</div>
+        			</li>
+        		</ul>
+        	</section>
+        </div>
+
+</div>
+
+<footer>
+	<section class="copyrights">
+		<section class="mainWrap">
+            <span class="info">
+                 <span>电话查号台：010-62793001</span>
+                 <span>管理员信箱：2020011933@bistu.edu.cn</span>
+                 <span>地址：北京市海淀区北京信息科技大学</span>
+            </span>
+            <span class="icp">京公网安备 110402430053 号</span>
+            <div class="clearfix"></div>
+            <span class="copy">版权所有 © 北京信息科技大学　　访问量:<span id="total"></span></span>
+       </section>
+	</section>
+
+</footer>
+
+	</body>
+
+</html>
