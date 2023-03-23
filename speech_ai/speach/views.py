@@ -23,7 +23,7 @@ def visualization(request):
     from pyecharts.charts import Page
     from speech_ai.work.Visualization import visualization
     obj1 = visualization()
-    page = Page(layout=Page.SimplePageLayout)  # 简单布局
+    page = Page(layout=Page.SimplePageLayout)  
     page.add(
         obj1.visual_bar(),
         obj1.RadarMap(),
