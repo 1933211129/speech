@@ -20,7 +20,6 @@ GC = "WoofWaf/GeneralConfig/gc.ini"
 
 class MyTestMiddleware_first(MiddlewareMixin):
     def process_request(self, request):
-
         # print("------process_request---------")
         # Test:输出WSGIRequest对象的属性以学习,test内可删除
         # 参考网站：https://www.cnblogs.com/limaomao/p/9383799.html
@@ -86,7 +85,7 @@ class MyTestMiddleware_first(MiddlewareMixin):
         # print("--------process_response()-----")
         return response
 
-def limitFrequency(ip,times=20,secs=5):
+def limitFrequency(ip,times=100,secs=10):
     """
     ip
     secs秒

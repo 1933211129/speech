@@ -20,7 +20,67 @@ def secure_login(request):
     return render(request, "WafTemp/login.html")
 
 def secure_index(request):
-    return render(request, "WafTemp/index.html")
+    monthly_expense_data = [
+        {"label": "GET", "y": 90},
+        {"label": "POST", "y": 10},
+    ]
+
+    recieved_emails_data = [
+        {"x": 1577817000000, "y": 7, 'label': "Midnight"},
+        {"x": 1577820600000, "y": 8},
+        {"x": 1577824200000, "y": 5},
+        {"x": 1577827800000, "y": 7},
+        {"x": 1577831400000, "y": 6},
+        {"x": 1577835000000, "y": 8},
+        {"x": 1577838600000, "y": 12},
+        {"x": 1577842200000, "y": 24},
+        {"x": 1577845800000, "y": 36},
+        {"x": 1577849400000, "y": 35},
+        {"x": 1577853000000, "y": 37},
+        {"x": 1577856600000, "y": 29},
+        {"x": 1577860200000, "y": 34, 'label': "Noon"},
+        {"x": 1577863800000, "y": 38},
+        {"x": 1577867400000, "y": 23},
+        {"x": 1577871000000, "y": 31},
+        {"x": 1577874600000, "y": 34},
+        {"x": 1577878200000, "y": 29},
+        {"x": 1577881800000, "y": 14},
+        {"x": 1577885400000, "y": 12},
+        {"x": 1577889000000, "y": 10},
+        {"x": 1577892600000, "y": 8},
+        {"x": 1577896200000, "y": 13},
+        {"x": 1577899800000, "y": 11}
+    ]
+
+    sent_emails_data = [
+        {"x": 1577817000000, "y": 12, 'label': "Midnight"},
+        {"x": 1577820600000, "y": 10},
+        {"x": 1577824200000, "y": 3},
+        {"x": 1577827800000, "y": 5},
+        {"x": 1577831400000, "y": 2},
+        {"x": 1577835000000, "y": 1},
+        {"x": 1577838600000, "y": 3},
+        {"x": 1577842200000, "y": 6},
+        {"x": 1577845800000, "y": 13},
+        {"x": 1577849400000, "y": 14},
+        {"x": 1577853000000, "y": 15},
+        {"x": 1577856600000, "y": 21},
+        {"x": 1577860200000, "y": 24},
+        {"x": 1577863800000, "y": 28, 'label': "Noon"},
+        {"x": 1577867400000, "y": 26},
+        {"x": 1577871000000, "y": 16},
+        {"x": 1577874600000, "y": 23},
+        {"x": 1577878200000, "y": 28},
+        {"x": 1577881800000, "y": 22},
+        {"x": 1577885400000, "y": 10},
+        {"x": 1577889000000, "y": 9},
+        {"x": 1577892600000, "y": 6},
+        {"x": 1577896200000, "y": 4},
+        {"x": 1577899800000, "y": 12}
+    ]
+    return render(request, "WafTemp/index.html",{ "monthly_expense_data" : monthly_expense_data ,
+                                                  "recieved_emails_data" : recieved_emails_data,
+                                                  "sent_emails_data" : sent_emails_data})
 
 
 def secure_ip_list(request):
@@ -42,6 +102,28 @@ def update_ip_list(request):
                 return HttpResponse("修改成功")
             except:
                 return HttpResponse("修改失败")
+
+
+def add_ip_list(request):
+    if request.method == "POST":
+        ip = request.POST.get(key="ip", default="")
+        status = int(request.POST.get(key="status", default="0"))
+        dcp = request.POST.get(key="dcp", default="无")
+        import re
+        # 正则表达式
+        ipv4_pattern = r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+        # 匹配
+        match = re.match(ipv4_pattern, ip)
+        # 输出结果
+        if match:
+            if (ip != "") and (status != ""):
+                try:
+                    newIp=ip_list(ip=ip,status=status,description=dcp)
+                    newIp.save()
+                    return HttpResponse("添加成功")
+                except:
+                    return HttpResponse("添加失败")
+        else:return HttpResponse("添加失败,IP地址不合法")
 
 
 def secure_temp_black_list(request):

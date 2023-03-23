@@ -35,8 +35,7 @@ class defend_log(models.Model):
     time = models.DateTimeField(max_length=32)
     type = models.CharField(max_length=32)
     rule = models.CharField(max_length=32)
-    # path = models.CharField(max_length=64)
-    path = models.CharField(max_length=128)
+    path = models.CharField(max_length=64)
     address = models.CharField(default="",max_length=32)
 
 class pass_log(models.Model):
@@ -45,7 +44,6 @@ class pass_log(models.Model):
     status = models.CharField(max_length=16)
     time = models.DateTimeField(max_length=32)
     # time = models.DecimalField(max_digits=3, decimal_places=2, default=0)
-    # path = models.CharField(max_length=64)
-    path = models.CharField(max_length=128)
+    path = models.CharField(max_length=64)
     post = models.CharField(max_length=128)
     headers = models.CharField(max_length=256)

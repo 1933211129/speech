@@ -7,6 +7,7 @@ urlpatterns = [
     path('secure/index', views.secure_index),
     path('secure/ip_list', views.secure_ip_list),
     path('secure/ip_list/update', views.update_ip_list,name='WoofWaf-views-iplist_update' ),
+    path('secure/ip_list/add', views.add_ip_list,name='WoofWaf-views-iplist_add' ),
     path('secure/temp_black_list', views.secure_temp_black_list),
     path('secure/defend_log', views.secure_defend_log),
     path('secure/trace_log', views.secure_trace_log),

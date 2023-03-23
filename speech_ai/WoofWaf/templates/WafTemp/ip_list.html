@@ -12,7 +12,13 @@
                                 <!-- DATA TABLE -->
                                 <!-- TABLE TITLE-->
                                 <h3 class="title-5 m-b-35" >IP黑白名单</h3>
-                                <a  style="font-size: 15px">管理特定IP的访问权限,保护网站安全</a><br><br>
+                                <a  style="font-size: 15px">管理特定IP的访问权限,保护网站安全</a>
+                             <a style="float:right">
+                                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#add">
+											        添加IP
+										            </button>
+                                          </a>
+                                <br><br>
 
                                 <!-- TABLE TOOL-->
 
@@ -67,7 +73,85 @@
                         </div>
                     </div>
                  </div>
+
                     <div>
+                    	<!-- modal small 添加ip -->
+			<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-sm" role="document">
+                    <form method="post">
+                    {% csrf_token %}
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="smallmodalLabel">添加ip</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+
+						<div class="modal-body">
+							<p>
+
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">IP地址</label>
+      <br>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="ip">
+    </div>
+  </div>
+  <fieldset class="form-group">
+    <div class="row">
+      <legend class="col-form-label col-sm-2 pt-0">状态</legend>
+      <div class="col-sm-10">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios"  value="0" checked>
+          <label class="form-check-label" for="gridRadios1">
+            白名单
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios"  value="1">
+          <label class="form-check-label" for="gridRadios2">
+            黑名单
+          </label>
+        </div>
+
+        <div class="form-check disabled">
+          <input class="form-check-input" type="radio" name="gridRadios"  value="2" disabled>
+          <label class="form-check-label" for="gridRadios3">
+            临时黑名单
+          </label>
+        </div>
+
+        <div class="form-check disabled">
+          <input class="form-check-input" type="radio" name="gridRadios"  value="3" >
+          <label class="form-check-label" for="gridRadios4">
+            无状态          </label>
+        </div>
+
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">描述</label>
+      <br>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="dcp">
+    </div>
+  </div>
+                            </p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" onclick="add()")>保存</button>
+						</div>
+
+					</div>
+                           </form>
+				</div>
+			</div>
+			<!-- end modal small -->
         {% for row in queryset %}
                	<!-- modal small -->
 			<div class="modal fade" id="{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
@@ -122,7 +206,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                            <button type="button" class="btn btn-primary" onclick="updateIpList('{{ row.id }}','{{ row.ip }}')")>提交</button>
+                            <button type="button" class="btn btn-primary" onclick="updateIpList('{{ row.id }}','{{ row.ip }}')")>保存</button>
 						</div>
 
 					</div>
@@ -146,6 +230,41 @@
         var dcpid = "dcp"+id
         var dcp = document.getElementById(dcpid).value
         var url = "{% url 'WoofWaf-views-iplist_update' %}"
+        var xhr
+        if(window.ActiveXObject){
+            xhr = new ActiveXObject("Microsoft.XMLHTTP")
+        }else if(window.XMLHttpRequest){
+            xhr = new XMLHttpRequest()
+        }
+
+        xhr.open("post",url,true)
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+        xhr.setRequestHeader("X-CSRFToken",'{{ csrf_token }}')
+        var send = "ip="+ip+"&status="+status+"&dcp="+dcp+"&csrfmiddlewaretoken="+"{{ csrf_token }}"
+        xhr.send(send)
+        xhr.onreadystatechange = function (){
+            if (xhr.readyState==4 && xhr.status==200){
+                rsp = xhr.responseText
+                alert(rsp)
+
+            }
+
+        }
+        location.reload()
+};
+    function add(){
+        var status
+
+        var radio = document.getElementsByName("gridRadios")
+        for(i=0; i<radio.length;i++)    {
+               if(radio[i].checked)    {
+                      status = radio[i].value;
+               }
+           }
+
+        var dcp = document.getElementById("dcp").value
+        var ip = document.getElementById("ip").value
+        var url = "{% url 'WoofWaf-views-iplist_add' %}"
         var xhr
         if(window.ActiveXObject){
             xhr = new ActiveXObject("Microsoft.XMLHTTP")

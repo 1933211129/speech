@@ -56,9 +56,9 @@ def request_check(request):
             if re.search(config['regex'],urllib.parse.unquote(request.get_full_path())) is not None:
                 # 检查出危险攻击
                 doRecord(status,request,config,ip,blockspan)
-                redirect("/Administrator/ParameterError")
+                redirect("/ParameterError")
                 print('checked')
-                return redirect("/Administrator/ParameterError")
+                return redirect("/ParameterError")
 
 
 
@@ -134,7 +134,7 @@ def doRecord(status,request,config,ip,blockspan):
             # dt = amsterdam_timezone.localize(datetime.datetime.today())
             access = datetime.datetime.today() + datetime.timedelta(minutes=int(blockspan))
             # access_time =datetime.datetime.today() + datetime.timedelta(hours=8) + datetime.timedelta(minutes=int(blockspan))
-            newBlockIp = Black_List(prohibit_time=datetime.datetime.today(), prohibit_span=1, ip=ip, access_time=access)
+            newBlockIp = Black_List(prohibit_time=datetime.datetime.today(), prohibit_span=0.15, ip=ip, access_time=access)
             newBlockIp.save()
             newDefendLog = defend_log(ip=ip, time=datetime.datetime.today(), type=config['type'], rule=config.name, path=request.path,
                                       address="中国")
