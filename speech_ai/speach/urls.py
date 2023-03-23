@@ -25,6 +25,12 @@ urlpatterns = [
     path('bar/', views.bar),
     path('radar/', views.radar_map_view),
     path('one_result/', views.one_result),
+    
+    path('flow_line/', views.line),
+    path('flow_pie/', views.pie),
+    path('line2/', views.line2),
+    path('bar2/', views.bar2),
+    path('bar1/', views.bar1),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

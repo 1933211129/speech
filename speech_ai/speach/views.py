@@ -266,7 +266,7 @@ def convert_pdf_to_txt(file_content):
     # 返回文本列表
     return text_list
 
-
+# 不注释
 def word_to_txt(file_content):
     file = io.BytesIO(file_content)
     # 读取文件的内容
@@ -703,3 +703,46 @@ def index_tip(request, tip):
         user_name = request.session.get('user_name')
         return render(request, 'index.html', {'login_status': True, 'user_name': user_name, 'tip': tip})
     return render(request, 'index.html', {'login_status': False, 'tip': tip})
+
+
+# 流量统计可视化测试
+
+
+def line(request):
+
+    # 获取数据
+    data_line = [[820, 932, 901, 934, 1290, 1330, 420], [720, 1232, 801, 1034, 990, 930, 320]]
+
+    # 将数据转换为 JSON 格式
+    data_line_json = json.dumps(data_line)
+
+
+    # 将数据传递到模板中
+    return render(request, '../templates/flow/line.html',{'data_line': data_line_json})
+
+def pie(request):
+    # 获取数据
+    data_pie = [
+        {'name': 'get', 'value': 20},
+        {'name': 'post', 'value': 80},
+    ]
+
+    return render(request, '../templates/flow/pie.html', {'data_pie': data_pie})
+
+
+
+def bar1(request):
+    seriesData = [120, 200, 150, 80, 70, 110, 130]
+
+    return render(request, '../templates/flow/bar1.html', {'seriesData':seriesData})
+
+
+def bar2(request):
+
+    seriesData = [110, 230, 180, 60, 90, 210, 230]
+    return render(request, '../templates/flow/bar2.html',{'seriesData':seriesData})
+
+def line2(request):
+    seriesData = [10, 11, 13, 11, 12, 12, 9]
+    return render(request, '../templates/flow/line2.html', {'seriesData':seriesData})
+
