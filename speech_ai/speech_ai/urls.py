@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from login.views import page_not_found
+# from login.views import page_not_found
 from django.conf.urls import url
 from speach import views
 
@@ -26,7 +26,8 @@ urlpatterns = [
     path('login/', include('login.urls')),
     path('Administrator/', include('WoofWaf.urls')),
     path('judge/',include('judge.urls')),
+    path('stats/',include('stats.urls')),
     url(r'^captcha', include('captcha.urls')),
 ]
 
-handler404 = page_not_found
+# handler404 = page_not_found

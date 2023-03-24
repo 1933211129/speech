@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'WoofWaf',                          # 系统管理员用例
     'judge',                            # 评委用例
     'captcha',
+    'stats',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
