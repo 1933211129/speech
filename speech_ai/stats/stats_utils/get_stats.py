@@ -5,7 +5,7 @@ from django.db.models import Avg, Sum
 from stats.models import Visit
 
 
-def ip_nums(t: float, t0=time.time()) -> int:
+def ip_nums(t: float = 0, t0=time.time()) -> int:
     """
     时间戳∈[t,t0] 来访ip的数目
     :param t0:默认现在时间
@@ -16,21 +16,34 @@ def ip_nums(t: float, t0=time.time()) -> int:
     return filtered_objects.count()
 
 
-def method_nums(t: float, t0=time.time()) -> dict:
+def method_stats(t: float = 0, t0=time.time()) -> dict:
     """
     时间戳∈[t,t0] get和post请求数
     :param t0:
     :param t:
     :return:
+    'POST': post_num,数量
+    'GET': get_num,
+    'total':total,总数
+    'get':get_pct,[0~100] 百分比整数部分
+    'post':post_pct
     """
 
     get_num = Visit.objects.filter(time_stamp__range=(t, t0), method="GET").count()
     post_num = Visit.objects.filter(time_stamp__range=(t, t0), method="POST").count()
-    method_num_dict = {'POST': post_num, 'GET': get_num}
+    total = get_num + post_num
+    if get_num == 0:
+        get_pct = 0
+    else:
+        get_pct = int((get_num / total) * 100)
+    post_pct = 100 - get_pct
+    if post_num == 0:
+        post_pct = 0
+    method_num_dict = {'POST': post_num, 'GET': get_num, 'total': total, 'get': get_pct, 'post': post_pct}
     return method_num_dict
 
 
-def ip_url_times(t: float, path: str, ip: str, t0=time.time()) -> int:
+def ip_url_times(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> int:
     """
     时间戳∈[t,t0] ip 对 path 的访问量
     :param t0:
@@ -58,7 +71,7 @@ def ip_url_times(t: float, path: str, ip: str, t0=time.time()) -> int:
     return filtered_objects.count()
 
 
-def url_average_response_time(t: float, path: str, t0=time.time()) -> float:
+def url_average_response_time(t: float = 0, path: str = "*", t0=time.time()) -> float:
     """
     时间戳∈[t,t0] path 的平均响应时间
     :param t0:
@@ -79,7 +92,7 @@ def url_average_response_time(t: float, path: str, t0=time.time()) -> float:
     return average_value
 
 
-def bytes_send(ip: str, t: float, path: str, t0=time.time()) -> float:
+def bytes_send(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> float:
     """
     时间戳∈[t,t0] path 向 ip 发送的流量：网站发送的流量
     :param t0:
@@ -91,22 +104,24 @@ def bytes_send(ip: str, t: float, path: str, t0=time.time()) -> float:
 
     if ip == "*":
         if path == "*":
-            sent_sum = Visit.objects.filter(time_stamp__range=(t, t0)).aggregate(Sum('bytes_sent'))['bytes_sent__sum']
+            send_sum = Visit.objects.filter(time_stamp__range=(t, t0)).aggregate(Sum('bytes_send'))['bytes_send__sum']
         else:
-            sent_sum = Visit.objects.filter(time_stamp__range=(t, t0), path=path).aggregate(Sum('bytes_sent'))[
-                'bytes_sent__sum']
+            send_sum = Visit.objects.filter(time_stamp__range=(t, t0), path=path).aggregate(Sum('bytes_send'))[
+                'bytes_send__sum']
     else:
         if path == "*":
-            sent_sum = Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip).aggregate(Sum('bytes_sent'))[
-                'bytes_sent__sum']
+            send_sum = Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip).aggregate(Sum('bytes_send'))[
+                'bytes_send__sum']
         else:
-            sent_sum = \
-                Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip, path=path).aggregate(Sum('bytes_sent'))[
-                    'bytes_sent__sum']
-    return sent_sum
+            send_sum = \
+                Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip, path=path).aggregate(Sum('bytes_send'))[
+                    'bytes_send__sum']
+    if send_sum is None:
+        send_sum = 0
+    return send_sum
 
 
-def bytes_recv(ip: str, t: float, path: str, t0=time.time()) -> float:
+def bytes_recv(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> float:
     """
     时间戳∈[t,t0] ip 对 path 发送的流量：用户发送的流量 ，网站接收的流量
     :param t0:
@@ -129,4 +144,6 @@ def bytes_recv(ip: str, t: float, path: str, t0=time.time()) -> float:
             recv_sum = \
                 Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip, path=path).aggregate(Sum('bytes_recv'))[
                     'bytes_recv__sum']
+    if recv_sum is None:
+        recv_sum = 0
     return recv_sum

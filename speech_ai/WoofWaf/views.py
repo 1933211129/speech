@@ -9,6 +9,9 @@ from WoofWaf.GeneralConfig.httpconfig import addRequestCheckRule, setRequestChec
 from WoofWaf.log.log import get_all_log, get_logByIp, atklog
 from WoofWaf.models import Black_List, ip_list
 from WoofWaf.waf_utils.get_defend_log import get_defend_log, get_pass_log
+from stats.stats_utils.get_stats import method_stats, bytes_recv, bytes_send
+from stats.stats_utils.time_stats import traffic_recent_hours
+from stats.stats_utils.time_transform import hour_list, strat_of_this_hour
 
 RCR = "WoofWaf/GeneralConfig/RequestCheckRule.ini"
 GC = "WoofWaf/GeneralConfig/gc.ini"
@@ -19,68 +22,34 @@ GC = "WoofWaf/GeneralConfig/gc.ini"
 def secure_login(request):
     return render(request, "WafTemp/login.html")
 
+
 def secure_index(request):
-    monthly_expense_data = [
-        {"label": "GET", "y": 90},
-        {"label": "POST", "y": 10},
+    # 请求方法饼状图
+    # 七天内数据
+    method = method_stats(t=time.time() - (7 * 24 * 3600))
+    data_pie = [
+        {'name': 'get', 'value': method['get']},
+        {'name': 'post', 'value': method['post']},
     ]
 
-    recieved_emails_data = [
-        {"x": 1577817000000, "y": 7, 'label': "Midnight"},
-        {"x": 1577820600000, "y": 8},
-        {"x": 1577824200000, "y": 5},
-        {"x": 1577827800000, "y": 7},
-        {"x": 1577831400000, "y": 6},
-        {"x": 1577835000000, "y": 8},
-        {"x": 1577838600000, "y": 12},
-        {"x": 1577842200000, "y": 24},
-        {"x": 1577845800000, "y": 36},
-        {"x": 1577849400000, "y": 35},
-        {"x": 1577853000000, "y": 37},
-        {"x": 1577856600000, "y": 29},
-        {"x": 1577860200000, "y": 34, 'label': "Noon"},
-        {"x": 1577863800000, "y": 38},
-        {"x": 1577867400000, "y": 23},
-        {"x": 1577871000000, "y": 31},
-        {"x": 1577874600000, "y": 34},
-        {"x": 1577878200000, "y": 29},
-        {"x": 1577881800000, "y": 14},
-        {"x": 1577885400000, "y": 12},
-        {"x": 1577889000000, "y": 10},
-        {"x": 1577892600000, "y": 8},
-        {"x": 1577896200000, "y": 13},
-        {"x": 1577899800000, "y": 11}
-    ]
+    # 12h流量趋势：双折线图
+    traffic = traffic_recent_hours(12)
+    # 12h时间表
+    hourList = hour_list(12)
 
-    sent_emails_data = [
-        {"x": 1577817000000, "y": 12, 'label': "Midnight"},
-        {"x": 1577820600000, "y": 10},
-        {"x": 1577824200000, "y": 3},
-        {"x": 1577827800000, "y": 5},
-        {"x": 1577831400000, "y": 2},
-        {"x": 1577835000000, "y": 1},
-        {"x": 1577838600000, "y": 3},
-        {"x": 1577842200000, "y": 6},
-        {"x": 1577845800000, "y": 13},
-        {"x": 1577849400000, "y": 14},
-        {"x": 1577853000000, "y": 15},
-        {"x": 1577856600000, "y": 21},
-        {"x": 1577860200000, "y": 24},
-        {"x": 1577863800000, "y": 28, 'label': "Noon"},
-        {"x": 1577867400000, "y": 26},
-        {"x": 1577871000000, "y": 16},
-        {"x": 1577874600000, "y": 23},
-        {"x": 1577878200000, "y": 28},
-        {"x": 1577881800000, "y": 22},
-        {"x": 1577885400000, "y": 10},
-        {"x": 1577889000000, "y": 9},
-        {"x": 1577892600000, "y": 6},
-        {"x": 1577896200000, "y": 4},
-        {"x": 1577899800000, "y": 12}
-    ]
-    return render(request, "WafTemp/index.html",{ "monthly_expense_data" : monthly_expense_data ,
-                                                  "recieved_emails_data" : recieved_emails_data,
-                                                  "sent_emails_data" : sent_emails_data})
+    # 攻击次数、IP封禁、ip总数、请求次数、总流量、进、出
+    attack_num = 18
+    ip_block_num=2
+    ip_num=34
+    request_num=89
+    recv = bytes_recv(t=strat_of_this_hour() - 24 * 3600)
+    send = bytes_send(t=strat_of_this_hour() - 24 * 3600)
+    total_traffic = recv + send
+    row = [attack_num,ip_block_num,ip_num,request_num, total_traffic, recv, send]
+
+    return render(request, "WafTemp/index.html", {'data_pie': data_pie,
+                                                  'row': row
+                                                  })
 
 
 def secure_ip_list(request):
@@ -118,12 +87,13 @@ def add_ip_list(request):
         if match:
             if (ip != "") and (status != ""):
                 try:
-                    newIp=ip_list(ip=ip,status=status,description=dcp)
+                    newIp = ip_list(ip=ip, status=status, description=dcp)
                     newIp.save()
                     return HttpResponse("添加成功")
                 except:
                     return HttpResponse("添加失败")
-        else:return HttpResponse("添加失败,IP地址不合法")
+        else:
+            return HttpResponse("添加失败,IP地址不合法")
 
 
 def secure_temp_black_list(request):
@@ -156,10 +126,11 @@ def httpCheckAddRule(request):
         import re
         if not bool(re.match("^[A-Za-z0-9_]*$", ruleName)):
             return HttpResponse("规则名只允许数字、字母、下划线的组合")
-        if regex == "undefined" or regex=="":
+        if regex == "undefined" or regex == "":
             return HttpResponse("正则不能为空")
 
-        a = addRequestCheckRule(ruleName, regex.replace("%2B","+"), u, cookie, p, h, dcp.replace("%2B","+"), type.replace("%2B","+"), Satus="1")
+        a = addRequestCheckRule(ruleName, regex.replace("%2B", "+"), u, cookie, p, h, dcp.replace("%2B", "+"),
+                                type.replace("%2B", "+"), Satus="1")
         if a == 0:
             return HttpResponse("添加成功")
         elif a == 1:
@@ -205,10 +176,11 @@ def httpCheckSetRule(request):
             return HttpResponse("规则名只允许数字、字母、下划线的组合")
         if ruleName == "undefined" or ruleName == "":
             return HttpResponse("此规则不存在")
-        if regex == "undefined" or regex == "" :
+        if regex == "undefined" or regex == "":
             return HttpResponse("正则不能为空")
 
-        a = setRequestCheckRule(ruleName, new_Name, regex.replace("%2B","+"), u, cookie, p, h, dcp.replace("%2B","+"), type.replace("%2B","+"), Satus="1")
+        a = setRequestCheckRule(ruleName, new_Name, regex.replace("%2B", "+"), u, cookie, p, h, dcp.replace("%2B", "+"),
+                                type.replace("%2B", "+"), Satus="1")
         if a == 0:
             return HttpResponse("修改成功")
         elif a == 1:
@@ -218,20 +190,22 @@ def httpCheckSetRule(request):
         else:
             return HttpResponse("修改失败")
 
+
 # 规则开关
 def httpCheckSwitch(request, ):
     if request.method == "GET":
         switchSection = request.GET.get(key="switchSection", default="")
         config = request.GET.get(key="config", default="")
-        if switchSection != "" and config != "" :
+        if switchSection != "" and config != "":
             try:
                 if config == "RCR":
                     swtichStatus(RCR, switchSection, "status")
-                elif config =="GC":
+                elif config == "GC":
                     swtichStatus(GC, "DEFAULT", switchSection)
                 return HttpResponse("修改成功")
             except:
                 return HttpResponse("修改失败")
+
 
 # ip封禁配置
 def httpCheckSetIpBlock(request):
@@ -239,34 +213,35 @@ def httpCheckSetIpBlock(request):
         blockspan = request.POST.get(key="blockspan", default="15")
         times = request.POST.get(key="times", default="5")
         timespan = request.POST.get(key="timespan", default="1")
-        if timespan == "": timespan="1"
-        if blockspan == "": blockspan="15"
-        if times == "": times="5"
+        if timespan == "": timespan = "1"
+        if blockspan == "": blockspan = "15"
+        if times == "": times = "5"
 
         import re
-        if not bool(re.match("^[0-9]*$",blockspan+times+timespan)):
+        if not bool(re.match("^[0-9]*$", blockspan + times + timespan)):
             return HttpResponse("请仅输入数字")
 
         try:
-            setField(RCR,'DEFAULT','blockspan',blockspan)
-            setField(RCR,'DEFAULT','times',times)
-            setField(RCR,'DEFAULT','timespan',timespan)
+            setField(RCR, 'DEFAULT', 'blockspan', blockspan)
+            setField(RCR, 'DEFAULT', 'times', times)
+            setField(RCR, 'DEFAULT', 'timespan', timespan)
             return HttpResponse("修改成功")
         except:
             return HttpResponse("修改失败")
 
 
-
 def uploadDefend(request):
     return render(request, "WafTemp/UploadDefend.html")
+
 
 def CCDefend(request):
     return render(request, "WafTemp/CCDefend.html")
 
+
 def settings(request):
     gc = getDefault(GC)
     rcr = getDefault(RCR)
-    return render(request, "WafTemp/settings.html",{'gc':gc,'rcr':rcr})
+    return render(request, "WafTemp/settings.html", {'gc': gc, 'rcr': rcr})
 
 
 def secure_defend_log(request):
@@ -281,7 +256,6 @@ def secure_trace_log(request):
 
 
 def secure_pass_log(request):
-
     queryset = get_pass_log()
 
     return render(request, "WafTemp/pass_log.html", {'queryset': queryset, })

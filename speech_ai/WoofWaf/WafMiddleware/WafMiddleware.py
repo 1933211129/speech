@@ -61,7 +61,8 @@ class MyTestMiddleware_first(MiddlewareMixin):
             # 检查请求
             if request!=None:
                 a = request_check(request)
-                return a
+                if a:
+                    return redirect("/ParameterError")
 
 
         # if getDefault(GC)['ccdefend'] == "1":

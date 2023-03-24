@@ -41,7 +41,7 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap-select.min.css' %}">
 
 
-
+{% block css %}{% endblock %}
 </head>
 
 <body>
@@ -166,9 +166,8 @@
             </nav>
         </header>
         <!-- END HEADER MOBILE-->
-
         <!-- MENU SIDEBAR-->
-        <aside class="menu-sidebar d-none d-lg-block ">
+        <aside class="menu-sidebar d-none d-lg-block " >
             <div class="logo">
                 <a href="#">
                     <img src="{%  static 'images/icon/logo.png' %}" alt="Woof Waf" />
@@ -179,11 +178,11 @@
                     <ul class="list-unstyled navbar__list">
 
 
-{#                        <li class="{% block index_active %}{% endblock %}">#}
-{#                            <a  href="/secure/index" style="text-decoration:none">#}
-{#                                <i class="fas fa-home "></i>&nbsp;&nbsp;WAF-首页</a>#}
-{##}
-{#                        </li>#}
+                        <li class="{% block index_active %}{% endblock %}">
+                            <a  href="{% url 'WoofWaf-views-index' %}" style="text-decoration:none">
+                                <i class="fas fa-home "></i>&nbsp;&nbsp;WAF-首页</a>
+
+                        </li>
 
                      <li class="has-sub">
                             <a class="js-arrow" href="#" style="text-decoration:none">
@@ -191,16 +190,30 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list " style="display: {% block diplayWebDefend %}{% endblock %} ">
 
                                 <li class="{% block http_active %}{% endblock %}">
-                                    <a class="fas fa-check-circle" href="/secure/HttpCheck" style="text-decoration:none">&nbsp;&nbsp;Http安全检测</a>
+                                    <a class="fas fa-check-circle" href="{% url 'WoofWaf-views-HttpCheck' %}" style="text-decoration:none">&nbsp;&nbsp;Http安全检测</a>
                                 </li>
 
-{#                                <li class = "{% block upload_active %}{% endblock %}">#}
-{#                                    <a class="fas fa-upload" href="/secure/UploadDefend" style="text-decoration:none">&nbsp;&nbsp;上传防护</a>#}
-{#                                </li>#}
+
+
                                 <li class = "{% block cc_active %}{% endblock %}">
-                                    <a class="fas fa-minus-circle" href="/secure/CCDefend" style="text-decoration:none">&nbsp;&nbsp;CC攻击防护</a>
+                                    <a class="fas fa-minus-circle" href="{% url 'WoofWaf-views-CCDefend' %}" style="text-decoration:none">&nbsp;&nbsp;CC攻击防护</a>
                                 </li>
+
+                             <li class = "{% block upload_active %}{% endblock %}">
+                                    <a class="fas fa-upload" href="{% url 'WoofWaf-views-upload' %}" style="text-decoration:none ;font-style:italic;font-size: smaller">&nbsp;&nbsp;上传防护(敬请期待)</a>
+                                </li>
+
+
+                             <li class = "{% block intrude_active %}{% endblock %}">
+                                    <a class="fas fa-eye" href="#" style="text-decoration:none ;font-style:italic;font-size: smaller">&nbsp;&nbsp;入侵检测(敬请期待)</a>
+                                </li>
+
                             </ul>
+                        </li>
+
+                        <li class=" {% block stats %}{% endblock %}">
+                            <a href="#" style="text-decoration:none ;font-style:italic;">
+                                <i class="fas fa-chart-bar"></i>数据分析(敬请期待)</a>
                         </li>
 
                     <li class="has-sub">
@@ -209,15 +222,15 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list " style="display: {% block diplayLogRecord %}{% endblock %}">
 
                                   <li class = "{% block defend_active %}{% endblock %}">
-                                      <a href="/secure/defend_log" style="text-decoration:none"><i class="fas fa-industry" ></i>&nbsp;&nbsp;&nbsp;防御日志</a>
+                                      <a href="{% url 'WoofWaf-views-defend_log' %}" style="text-decoration:none"><i class="fas fa-industry" ></i>&nbsp;&nbsp;&nbsp;防御日志</a>
                              </li>
 
                                 <li class = "{% block trace_active %}{% endblock %}">
-                                    <a href="/secure/trace_log" style="text-decoration:none"><i class="fas fa-search"></i>&nbsp;&nbsp;&nbsp;溯源日志</a>
+                                    <a href="{% url 'WoofWaf-views-trace_log' %}" style="text-decoration:none"><i class="fas fa-search"></i>&nbsp;&nbsp;&nbsp;溯源日志</a>
                                 </li>
 
                                 <li class = "{% block pass_active %}{% endblock %}">
-                                    <a href="/secure/pass_log" style="text-decoration:none"><i class="fas fa-road"></i>&nbsp;&nbsp;&nbsp;放行日志</a>
+                                    <a href="{% url 'WoofWaf-views-pass_log' %}" style="text-decoration:none"><i class="fas fa-road"></i>&nbsp;&nbsp;&nbsp;放行日志</a>
                                 </li>
 
 
@@ -230,10 +243,10 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list " style="display: {% block WBlist %}{% endblock %}">
 
                                   <li class="{% block ip_list_active %}{% endblock %}">
-                            <a href="/secure/ip_list " style="text-decoration:none">
+                            <a href="{% url 'WoofWaf-views-ip_list' %}" style="text-decoration:none">
                                 <i class="fa fa-user"></i>IP黑白名单</a>
                                     <li class="{% block temp_black_list %}{% endblock %}">
-                            <a href="/secure/temp_black_list " style="text-decoration:none">
+                            <a href="{% url 'WoofWaf-views-tbl' %}" style="text-decoration:none">
                                 <i class="fa fa-user-secret"></i>IP临时黑名单</a>
                         </li>
                             </ul>
@@ -243,7 +256,7 @@
 
 
                         <li class=" {% block settings_active %}{% endblock %}">
-                            <a href="/secure/waf_settings" style="text-decoration:none">
+                            <a href="{%  url 'WoofWaf-views-settings' %}" style="text-decoration:none">
                                 <i class="fas fa-cogs"></i>设置</a>
                         </li>
                     </ul>
