@@ -1,6 +1,6 @@
 import time
 
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Sum, Count
 
 from stats.models import Visit
 
@@ -147,3 +147,29 @@ def bytes_recv(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> 
     if recv_sum is None:
         recv_sum = 0
     return recv_sum
+
+def status_code(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()):
+    """
+    时间戳∈[t,t0] ip 对 path 的访问中，状态码的字典
+    :param t0:
+    :param ip:
+    :param t:
+    :param path:
+    :return:
+    """
+    if ip == "*":
+        if path == "*":
+
+            result = Visit.objects.values('status_code').annotate(total=Count('status_code')).order_by('status_code')
+
+        else:
+            recv_sum = Visit.objects.filter(time_stamp__range=(t, t0), path=path).aggregate(Sum('bytes_recv'))[
+                'bytes_recv__sum']
+    else:
+        if path == "*":
+            result = Visit.objects.values('status_code').annotate(total=Count('status_code')).order_by('status_code')
+
+        else:
+            result = Visit.objects.values('status_code').annotate(total=Count('status_code')).order_by('status_code')
+
+    return result

@@ -3,7 +3,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('secure/login', views.secure_login),
+    path('waf/login', views.login_waf,name='WoofWaf-views-login'),
+    path('waf/logout', views.logout_waf,name='WoofWaf-views-logout'),
     path('secure/index', views.secure_index,name='WoofWaf-views-index'),
     path('secure/ip_list', views.secure_ip_list,name='WoofWaf-views-ip_list'),
     path('secure/ip_list/update', views.update_ip_list,name='WoofWaf-views-iplist_update' ),
