@@ -3,6 +3,27 @@
 {% load static %}
 <head>
     <style>
+       /* 弹窗内容 */
+		.popup {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: rgba(0, 0, 0, 0.5);
+			padding: 20px;
+			border-radius: 5px;
+			box-shadow: 0 0 10px rgb(245, 245, 245);
+			display: none;
+			z-index: 9999;
+		}
+
+		/* 关闭按钮 */
+		.close {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			cursor: pointer;
+		}
    body {
   margin: 0;
   padding: 0;
@@ -84,26 +105,58 @@
 
     </style>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>WafLogin</title>
 </head>
 <body>
+{% if rdct %}
+<div class="popup">
+    <h1 >&nbsp&nbsp&nbsp<font color="white" ><i >您尚未登录</i></font>&nbsp&nbsp&nbsp</h1>
+		<span class="close">&times;</span>
+	</div>
+{% endif %}
+
     <div class="box">
   <h2>WoofWaf</h2>
-  <form>
+  <form method="post">
+  {% csrf_token %}
     <div class="inputBox">
-      <input type="email" name="email" required onkeyup="this.setAttribute('value', this.value);" value="">
+      <input type="text" name="username" id="username" >
       <label>Username</label>
     </div>
     <div class="inputBox">
-      <input type="password" name="password" required value=""
-             onkeyup="this.setAttribute('value', this.value);"
-             pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-             title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
-      <label>Password</label>
+      <input type="password" name="password" id="password" >
+             <label>Password</label>
     </div>
-    <input type="submit" name="sign-in" value="Sign In">
+
+      {% if error %}
+    <p class="error" style="color: white">{{ error }}</p>
+  {% endif %}
+    <input type="submit" name="sign-in" value="登录" >
   </form>
 </div>
+<script>
+		// 获取弹窗内容和关闭按钮
+		var popup = document.querySelector('.popup');
+		var close = document.querySelector('.close');
 
+		// 显示弹窗内容
+		popup.style.display = 'block';
+
+		// 计算弹窗位置
+		var height = popup.offsetHeight;
+		var width = popup.offsetWidth;
+		popup.style.top = 'calc(50% - ' + 250 + 'px)';
+		popup.style.left = 'calc(50% - ' + 0 + 'px)';
+
+		// 点击关闭按钮，关闭弹窗
+		close.addEventListener('click', function() {
+			popup.style.display = 'none';
+		});
+
+		// 等待2秒钟，然后关闭弹窗
+		setTimeout(function() {
+			popup.style.display = 'none';
+		}, 2000);
+	</script>
 </body>
 </html>
