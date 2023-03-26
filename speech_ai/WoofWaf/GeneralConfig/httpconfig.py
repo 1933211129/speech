@@ -52,6 +52,7 @@ def addRequestCheckRule(ruleName, re,u="0", cookie="0", p="0", h="0", dcp="无",
 
 def setRequestCheckRule(ruleName, new_name,re,u="0", cookie="0", p="0", h="0", dcp="无", type="未确定", Satus="1"):
     if ("#" in ruleName or ";" in ruleName):
+        # 规则名错误
         return 2
     config = configparser.ConfigParser()
     config.read(RCR)
@@ -70,9 +71,9 @@ def setRequestCheckRule(ruleName, new_name,re,u="0", cookie="0", p="0", h="0", d
         with open(RCR, 'w') as configfile:
             config.write(configfile)
     else:
-        return 1
+        return 1 # 规则不存在
 
-    return 0
+    return 0 # 修改成功
 
 
 

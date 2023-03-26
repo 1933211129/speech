@@ -1,18 +1,30 @@
 import time
+from statistics import median
 
-from django.db.models import Avg, Sum, Count
+from django.db.models import Avg, Sum, Count, Max, Min
 
 from stats.models import Visit
 
 
 def ip_nums(t: float = 0, t0=time.time()) -> int:
     """
-    时间戳∈[t,t0] 来访ip的数目
+    时间戳∈[t,t0] 来访ip的数目,种数，种数，种数，种数
     :param t0:默认现在时间
     :param t:
     :return:ip种数
     """
-    filtered_objects = Visit.objects.filter(time_stamp__range=(t, t0)).distinct()
+    filtered_objects = Visit.objects.filter(time_stamp__range=(t, t0)).values('ip_address').distinct()
+    return filtered_objects.count()
+
+
+def request_nums(t: float = 0, t0=time.time()) -> int:
+    """
+    时间戳∈[t,t0] 请求的数量
+    :param t0:默认现在时间
+    :param t:
+    :return:ip种数
+    """
+    filtered_objects = Visit.objects.filter(time_stamp__range=(t, t0))
     return filtered_objects.count()
 
 
@@ -148,9 +160,55 @@ def bytes_recv(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> 
         recv_sum = 0
     return recv_sum
 
+# 写到这里发现每次都分四个叉,十分地冗余,之前没想到先如何封装四个叉,现在补上
+def ip_path_queryset(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()):
+    """
+    返回一组查询罢了，然后尽情地统计数据吧～
+    :param t:
+    :param path:
+    :param ip:
+    :param t0:
+    :return:
+    """
+    if ip == "*":
+        if path == "*":
+            queryset = Visit.objects.filter(time_stamp__range=(t, t0))
+        else:
+            queryset = Visit.objects.filter(time_stamp__range=(t, t0), path=path)
+    else:
+        if path == "*":
+            queryset = Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip)
+        else:
+            queryset = Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip, path=path)
+
+    return queryset
+
+
+def rsp_time(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> list:
+    # 依次为响应速度的最小值、最大值、中位数、平均值
+    # 定义 1000/响应时间(ms) 为响应速度 条/秒
+    my_queryset = ip_path_queryset(t=t,path=path,ip=ip,t0=t0)
+    rsp_time_list = []
+    if my_queryset is not None:
+
+        max_response_time = my_queryset.aggregate(max_response_time=Max('response_time'))['max_response_time']
+        min_response_time = my_queryset.aggregate(min_response_time=Min('response_time'))['min_response_time']
+        avg_response_time = my_queryset.aggregate(avg_response_time=Avg('response_time'))['avg_response_time']
+        # 计算中位数
+        response_times = my_queryset.values_list('response_time', flat=True)
+        median_response_time = median(response_times)
+        if max_response_time*min_response_time*avg_response_time*median_response_time !=0:
+            rsp_time_list.extend([1000/max_response_time,1000/min_response_time,1000/median_response_time,1000/avg_response_time])
+        else:
+            rsp_time_list = [0, 0, 0, 0]
+    else:
+        rsp_time_list = [0,0,0,0]
+    return rsp_time_list
+
+
 def status_code(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()):
     """
-    时间戳∈[t,t0] ip 对 path 的访问中，状态码的字典
+    时间戳∈[t,t0] ip 对 path 的访问中，状态码及其对应数量的字典
     :param t0:
     :param ip:
     :param t:
@@ -160,16 +218,22 @@ def status_code(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()):
     if ip == "*":
         if path == "*":
 
-            result = Visit.objects.values('status_code').annotate(total=Count('status_code')).order_by('status_code')
+            result = Visit.objects.filter(time_stamp__range=(t, t0)).values('status_code').annotate(total=Count('status_code')).order_by('status_code')
 
         else:
-            recv_sum = Visit.objects.filter(time_stamp__range=(t, t0), path=path).aggregate(Sum('bytes_recv'))[
-                'bytes_recv__sum']
+            # 指定path
+
+            result = Visit.objects.filter(time_stamp__range=(t, t0), path=path).values('status_code').annotate(
+                total=Count('status_code')).order_by('status_code')
+
     else:
+        # 指定ip
         if path == "*":
-            result = Visit.objects.values('status_code').annotate(total=Count('status_code')).order_by('status_code')
+            result = Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip).values('status_code').annotate(
+                total=Count('status_code')).order_by('status_code')
 
         else:
-            result = Visit.objects.values('status_code').annotate(total=Count('status_code')).order_by('status_code')
+            result = Visit.objects.filter(time_stamp__range=(t, t0), ip_address=ip, path=path).values(
+                'status_code').annotate(total=Count('status_code')).order_by('status_code')
 
     return result

@@ -37,6 +37,8 @@ class StatsMiddleware(MiddlewareMixin):
         visit.ip_address = request.META.get('REMOTE_ADDR')
         visit.user_agent = request.META.get('HTTP_USER_AGENT')
         t=(time.time() - self.start_time)*1000 # 毫秒
+        if t == 0:
+            t = 5
         visit.response_time = self.limit_float_length(t ,4)
         visit.time_stamp=self.start_time
 

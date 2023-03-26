@@ -1,6 +1,6 @@
 {% extends 'WafTemp/layout.html' %}
 {% load static %}
-{% block CC_active %}active{% endblock %}
+{% block cc_active %}active{% endblock %}
 {% block diplayWebDefend %}block{% endblock %}
 
 {% block main_content %}
@@ -28,16 +28,40 @@
     <div class="row">
       <legend class="col-form-label col-sm-2 pt-0">防护模式</legend>
       <div class="col-sm-10">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="model1" value="forbid" checked >
+        <div class="form-check" >
+          <input class="form-check-input" type="radio" name="gridRadios" id="model1" value="forbid" onclick="switchStatus(2)"
+                {%   if openrule == "test" %}
+                                                             checked=true>
+                                                             {% else %}
+                                                                        >
+                                                            {% endif %}
+
+          <label class="form-check-label" for="gridRadios1" >
+            测试模式
+          </label>
+        </div>
+            <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="model2" value="check"  onclick="switchStatus(1)"
+                                        {%   if openrule == "default" %}
+                                                             checked=true>
+                                                             {% else %}
+                                                                        >
+                                                            {% endif %}
           <label class="form-check-label" for="gridRadios1">
             标准模式
           </label>
         </div>
-            <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="model2" value="check" disabled="disabled" >
+
+       <div class="form-check" >
+          <input class="form-check-input" type="radio" name="gridRadios" id="model1" value="forbid" onclick="switchStatus(0)"
+                {%   if openrule != "test" and openrule != 'default' %}
+                                                             checked=true>
+                                                             {% else %}
+                                                                        >
+                                                            {% endif %}
+
           <label class="form-check-label" for="gridRadios1">
-            紧急模式
+            关闭
           </label>
         </div>
 
@@ -113,7 +137,7 @@
 {#                                </div>#}
 {##}
 {#                            </div>#}
-                        </div>
+{#                        </div>#}
 {#                    <div class="row">#}
 {#                            <div class="col-xl-12">#}
 {#                             <div class="user-data m-b-40" style="padding: 5%">#}
@@ -193,7 +217,7 @@
 
                     </div>
                 </div>
-            </section>
+                </div></section>
 
                                 <!-- END DATA TABLE -->
 
@@ -203,184 +227,193 @@
 
                     </div>
                 </div>
-            <!-- modal large -->
-			<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-lg" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="largeModalLabel">添加规则</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-
-								<form method="post">
-                    {% csrf_token %}
-
-                                    <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text" >规则名</span>
-                                      </div>
-                                      <input type="text" class="form-control"id="ruleName" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-
-                                        <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text" >正则表达式</span>
-                                      </div>
-                                      <input type="text" class="form-control" id="regex" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-                                        <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text" >类型</span>
-                                      </div>
-                                      <input type="text" class="form-control"  id="type" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-
-                                        <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text">描述</span>
-                                      </div>
-                                      <input type="text" class="form-control"  id="dcp" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect" id="url" checked>
-                                      <label class="form-check-label" for="url">检查URL</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="cookie" checked>
-                                      <label class="form-check-label" for="cookie">检查COOKIE</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="post" checked>
-                                      <label class="form-check-label" for="post">检查POST</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="headers" checked>
-                                      <label class="form-check-label" for="headers">检查HEADERS</label>
-                                    </div>
-                                    <div>
-
-                                        </div>
-
-                        </form>
-
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-							<button type="button" class="btn btn-primary" onclick="addRule()">添加</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- end modal large -->
-      <div>
-                  {% for config in configlist %}
-                  <!-- modal large -->
-    <div class="modal fade" id="{{ config.name }}" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="largeModalLabel">{{ config.name }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                   <form method="post">
-                    {% csrf_token %}
-
-                                    <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text" >规则名</span>
-                                      </div>
-                                      <input type="text" class="form-control" id="{{ config.name }}newname" value="{{ config.name }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-
-                                        <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text" >正则表达式</span>
-                                      </div>
-                                      <input type="text" class="form-control" id="{{ config.name }}regex" value="{{ config.regex }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-                                        <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text" >类型</span>
-                                      </div>
-                                      <input type="text" class="form-control"  id="{{ config.name }}type" value="{{ config.type }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-
-                                        <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text">描述</span>
-                                      </div>
-                                      <input type="text" class="form-control"  id="{{ config.name }}dcp" value="{{ config.dcp }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">
-                                    </div>
-
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}url" {% if config.chkurl == "1"%}checked{% endif %}>
-                                      <label class="form-check-label" for="">检查URL</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}cookie"{% if config.chkcookie == "1"%}checked{% endif %}>
-                                      <label class="form-check-label" for="cookie">检查COOKIE</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}post" {% if config.chkpost == "1"%}checked{% endif %}>
-                                      <label class="form-check-label" for="post">检查POST</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}headers" {% if config.chkheader == "1"%}checked{% endif %}>
-                                      <label class="form-check-label" for="headers">检查HEADERS</label>
-                                    </div>
-                                    <div>
-
-                                        </div>
-
-                        </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="setRule('{{ config.name }}')">确定</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end modal large -->
-                      <!-- modal small -->
-			<div class="modal fade" id="{{ config.name }}del" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-sm" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="smallmodalLabel">删除规则</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<p>
-								是否确定删除规则'{{ config.name }}'
-							</p>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-							<button type="button" class="btn btn-primary" onclick="delRule('{{ config.name }}')">确定</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- end modal small -->
-              {%  endfor %}
-            </div>
+{#            <!-- modal large -->#}
+{#			<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">#}
+{#				<div class="modal-dialog modal-lg" role="document">#}
+{#					<div class="modal-content">#}
+{#						<div class="modal-header">#}
+{#							<h5 class="modal-title" id="largeModalLabel">添加规则</h5>#}
+{#							<button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#								<span aria-hidden="true">&times;</span>#}
+{#							</button>#}
+{#						</div>#}
+{#						<div class="modal-body">#}
+{##}
+{#								<form method="post">#}
+{#                    {% csrf_token %}#}
+{##}
+{#                                    <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text" >规则名</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control"id="ruleName" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{##}
+{#                                        <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text" >正则表达式</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control" id="regex" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{#                                        <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text" >类型</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control"  id="type" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{##}
+{#                                        <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text">描述</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control"  id="dcp" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{##}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect" id="url" checked>#}
+{#                                      <label class="form-check-label" for="url">检查URL</label>#}
+{#                                    </div>#}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="cookie" checked>#}
+{#                                      <label class="form-check-label" for="cookie">检查COOKIE</label>#}
+{#                                    </div>#}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="post" checked>#}
+{#                                      <label class="form-check-label" for="post">检查POST</label>#}
+{#                                    </div>#}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="headers" checked>#}
+{#                                      <label class="form-check-label" for="headers">检查HEADERS</label>#}
+{#                                    </div>#}
+{#                                    <div>#}
+{##}
+{#                                        </div>#}
+{##}
+{#                        </form>#}
+{##}
+{#						</div>#}
+{#						<div class="modal-footer">#}
+{#							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>#}
+{#							<button type="button" class="btn btn-primary" onclick="addRule()">添加</button>#}
+{#						</div>#}
+{#					</div>#}
+{#				</div>#}
+{#			</div>#}
+{#			<!-- end modal large -->#}
+{#      <div>#}
+{#                  {% for config in configlist %}#}
+{#                  <!-- modal large -->#}
+{#    <div class="modal fade" id="{{ config.name }}" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">#}
+{#        <div class="modal-dialog modal-lg" role="document">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <h5 class="modal-title" id="largeModalLabel">{{ config.name }}</h5>#}
+{#                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                        <span aria-hidden="true">&times;</span>#}
+{#                    </button>#}
+{#                </div>#}
+{#                <div class="modal-body">#}
+{#                   <form method="post">#}
+{#                    {% csrf_token %}#}
+{##}
+{#                                    <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text" >规则名</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control" id="{{ config.name }}newname" value="{{ config.name }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{##}
+{#                                        <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text" >正则表达式</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control" id="{{ config.name }}regex" value="{{ config.regex }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{#                                        <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text" >类型</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control"  id="{{ config.name }}type" value="{{ config.type }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{##}
+{#                                        <div class="input-group mb-3">#}
+{#                                      <div class="input-group-prepend">#}
+{#                                        <span class="input-group-text">描述</span>#}
+{#                                      </div>#}
+{#                                      <input type="text" class="form-control"  id="{{ config.name }}dcp" value="{{ config.dcp }}" aria-label="Default" aria-describedby="inputGroup-sizing-default">#}
+{#                                    </div>#}
+{##}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}url" {% if config.chkurl == "1"%}checked{% endif %}>#}
+{#                                      <label class="form-check-label" for="">检查URL</label>#}
+{#                                    </div>#}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}cookie"{% if config.chkcookie == "1"%}checked{% endif %}>#}
+{#                                      <label class="form-check-label" for="cookie">检查COOKIE</label>#}
+{#                                    </div>#}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}post" {% if config.chkpost == "1"%}checked{% endif %}>#}
+{#                                      <label class="form-check-label" for="post">检查POST</label>#}
+{#                                    </div>#}
+{#                                    <div class="form-check form-switch">#}
+{#                                      <input class="form-check-input" type="checkbox" name = "ruleSelect"id="{{ config.name }}headers" {% if config.chkheader == "1"%}checked{% endif %}>#}
+{#                                      <label class="form-check-label" for="headers">检查HEADERS</label>#}
+{#                                    </div>#}
+{#                                    <div>#}
+{##}
+{#                                        </div>#}
+{##}
+{#                        </form>#}
+{#                </div>#}
+{#                <div class="modal-footer">#}
+{#                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>#}
+{#                    <button type="button" class="btn btn-primary" onclick="setRule('{{ config.name }}')">确定</button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#    <!-- end modal large -->#}
+{#                      <!-- modal small -->#}
+{#			<div class="modal fade" id="{{ config.name }}del" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">#}
+{#				<div class="modal-dialog modal-sm" role="document">#}
+{#					<div class="modal-content">#}
+{#						<div class="modal-header">#}
+{#							<h5 class="modal-title" id="smallmodalLabel">删除规则</h5>#}
+{#							<button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#								<span aria-hidden="true">&times;</span>#}
+{#							</button>#}
+{#						</div>#}
+{#						<div class="modal-body">#}
+{#							<p>#}
+{#								是否确定删除规则'{{ config.name }}'#}
+{#							</p>#}
+{#						</div>#}
+{#						<div class="modal-footer">#}
+{#							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>#}
+{#							<button type="button" class="btn btn-primary" onclick="delRule('{{ config.name }}')">确定</button>#}
+{#						</div>#}
+{#					</div>#}
+{#				</div>#}
+{#			</div>#}
+{#			<!-- end modal small -->#}
+{#              {%  endfor %}#}
+{#            </div>#}
 
 
     <!-- ajax实现转换状态逻辑 -->
     <script>
-    function switchStatus(configname){
+    function switchStatus(n){
+        if (n==0){
+            rule = '0'
+        }
+           if (n==1){
+            rule = 'default'
+        }
+           if (n==2){
+            rule = 'test'
+        }
 
-        var url = "{% url 'WoofWaf-views-Switch' %}" + "?switchSection=" + configname + "&config=RCR";
+        var url = "{% url 'WoofWaf-views-ccSwitch' %}" + "?rule=" + rule ;
         var xhr ;
         if(window.ActiveXObject){
             xhr = new ActiveXObject("Microsoft.XMLHTTP")
@@ -396,128 +429,7 @@
             }
         }
 };
-        function addRule(){
-        var dcp = document.getElementById("dcp").value
-        var ruleName = document.getElementById("ruleName").value
-        var regex = document.getElementById("regex").value
-        var type = document.getElementById("type").value
-        var u,cookie,p,h
-            if (document.getElementById("url").checked==true){
-                u="1"
-            }else {
-                u="0"
-            }
-            if (document.getElementById("cookie").checked==true){
-                cookie="1"
-            }else {
-                cookie="0"
-            }
-            if (document.getElementById("post").checked==true){
-                p="1"
-            }else {
-                p="0"
-            }
-            if (document.getElementById("headers").checked==true){
-                h="1"
-            }else {
-                h="0"
-            }
-        var url = "{% url 'WoofWaf-views-AddRule' %}"
-        var xhr
-        if(window.ActiveXObject){
-            xhr = new ActiveXObject("Microsoft.XMLHTTP")
-        }else if(window.XMLHttpRequest){
-            xhr = new XMLHttpRequest()
-        }
 
-        xhr.open("post",url,true)
-        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
-        xhr.setRequestHeader("X-CSRFToken",'{{ csrf_token }}')
-        var send = "ruleName="+ruleName+"&re="+regex.replace(/\+/g, "%2B")+"&dcp="+dcp.replace(/\+/g, "%2B")+"&type="+type.replace(/\+/g, "%2B")+"&csrfmiddlewaretoken="+"{{ csrf_token }}"+"&u="+u+"&cookie="+cookie+"&p="+p+"&h="+h
-        xhr.send(send)
-        xhr.onreadystatechange = function (){
-            if (xhr.readyState==4 && xhr.status==200){
-                rsp = xhr.responseText
-                alert(rsp)
-                 if (rsp == "添加成功"){
-                     location.reload()
-                 }
-            }
-        }
-};
-        function setRule(ruleName){
-        var dcp = document.getElementById(ruleName+"dcp").value
-        var new_Name = document.getElementById(ruleName+"newname").value
-        var regex = document.getElementById(ruleName+"regex").value
-        var type = document.getElementById(ruleName+"type").value
-        var u,cookie,p,h
-            if (document.getElementById(ruleName+"url").checked==true){
-                u="1"
-            }else {
-                u="0"
-            }
-            if (document.getElementById(ruleName+"cookie").checked==true){
-                cookie="1"
-            }else {
-                cookie="0"
-            }
-            if (document.getElementById(ruleName+"post").checked==true){
-                p="1"
-            }else {
-                p="0"
-            }
-            if (document.getElementById(ruleName+"headers").checked==true){
-                h="1"
-            }else {
-                h="0"
-            }
-        var url = "{% url 'WoofWaf-views-SetRule' %}"
-        var xhr
-        if(window.ActiveXObject){
-            xhr = new ActiveXObject("Microsoft.XMLHTTP")
-        }else if(window.XMLHttpRequest){
-            xhr = new XMLHttpRequest()
-        }
-
-        xhr.open("post",url,true)
-        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
-        xhr.setRequestHeader("X-CSRFToken",'{{ csrf_token }}')
-        var send = "ruleName="+ruleName+"&newName="+new_Name+"&re="+regex.replace(/\+/g, "%2B")+"&dcp="+dcp.replace(/\+/g, "%2B")+"&type="+type.replace(/\+/g, "%2B")+"&csrfmiddlewaretoken="+"{{ csrf_token }}"+"&u="+u+"&cookie="+cookie+"&p="+p+"&h="+h
-        xhr.send(send)
-        xhr.onreadystatechange = function (){
-            if (xhr.readyState==4 && xhr.status==200){
-                rsp = xhr.responseText
-                alert(rsp)
-                 if (rsp == "修改成功"){
-                     location.reload()
-                 }
-            }
-        }
-};
-        function delRule(ruleName){
-
-        var url = "{% url 'WoofWaf-views-DelRule' %}"
-        var xhr
-        if(window.ActiveXObject){
-            xhr = new ActiveXObject("Microsoft.XMLHTTP")
-        }else if(window.XMLHttpRequest){
-            xhr = new XMLHttpRequest()
-        }
-
-        xhr.open("post",url,true)
-        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
-        xhr.setRequestHeader("X-CSRFToken",'{{ csrf_token }}')
-        var send = "ruleName="+ruleName
-        xhr.send(send)
-        xhr.onreadystatechange = function (){
-            if (xhr.readyState==4 && xhr.status==200){
-                rsp = xhr.responseText
-                 if (rsp == "删除成功"){
-                     location.reload()
-                 }
-            }
-        }
-};
     </script>
 
            {% endblock %}

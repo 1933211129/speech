@@ -46,6 +46,8 @@
                                                                         <td>黑名单</td>
                                                   {% elif row.status == 2 %}
                                                                         <td>临时黑名单</td>
+                                                      {% elif row.status == 3 %}
+                                                                        <td>无状态</td>
                                                             {% endif %}
 
 
@@ -189,6 +191,12 @@
           <input class="form-check-input" type="radio" name="gridRadios{{ row.id }}"  value="2" disabled>
           <label class="form-check-label" for="gridRadios3">
             临时黑名单
+          </label>
+        </div>
+           <div class="form-check ">
+          <input class="form-check-input" type="radio" name="gridRadios{{ row.id }}"  value="3" >
+          <label class="form-check-label" for="gridRadios4">
+            无状态
           </label>
         </div>
       </div>

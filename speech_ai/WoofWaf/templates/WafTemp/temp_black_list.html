@@ -24,7 +24,7 @@
                                                   <th>IP</th>
                                                 <th>封禁日期</th>
                                                 <th>解封时间</th>
-                                                <th>操作</th>
+{#                                                <th>操作</th>#}
 
 
                                             </tr>
@@ -38,9 +38,9 @@
                                                 <!--60分钟之内绿色-->
                                                 <td class="process">{{ row.access_time|date:"Y-m-d H:i:s"}}&nbsp;</td>
 
-                                             <td>
-                                                    <a class="btn btn-danger" href="#">暂无</a>
-                                                </td>
+{#                                             <td>#}
+{#                                                    <a class="btn btn-danger" href="#">暂无</a>#}
+{#                                                </td>#}
 
 
 
@@ -53,13 +53,7 @@
                                 <!-- END DATA TABLE -->
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="copyright">
-                                    <p>Copyright © 2018 Colorlib. All rights reserved. Template by <a href="https://colorlib.com">Colorlib</a>.</p>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
            {% endblock %}
