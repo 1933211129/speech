@@ -26,7 +26,7 @@ urlpatterns = [
     path('login/', include('login.urls')),
     path('Administrator/', include('WoofWaf.urls')),
     path('judge/',include('judge.urls')),
-    path('stats/',include('stats.urls')),
+    # path('stats/',include('stats.urls')),
     url(r'^captcha', include('captcha.urls')),
 ]
 
