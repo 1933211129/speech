@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <title>show</title>
+
+
+    </head>
+
+    <body>
+
+        {% comment %} <p>{{ avatar_info.userName }}</p> {% endcomment %}
+        {% comment %} <img src="{{  avatar }}" title="{{ avatar }}">
+         {% endcomment %}
+        {% comment %} {% for user in users %}
+            user:{{ user.username }}
+            registration_time: {{  user.registration_time}}
+            avatar:
+            {% if user.avatar %}
+                <img src="/media/{{ user.avatar }}" width="100" height="100">
+            {% endif %}
+            {% comment %} face:
+            {% if user.face %}
+                <img src="/media/{{ user.face }}" width="100" height="100">
+            {% endif %} {% endcomment %}
+            {% comment %} <br>
+        {% endfor %} {% endcomment %}
+        username:{{ username }}
+        
+        <br>
+        <br>
+
+        avatar:
+        {% if avatar %}
+            <img src="/media/{{ avatar }}" width="20%" height="20%">
+        {% endif %}
+
+        <br>
+        <br>
+
+        {% comment %} face:
+        <img src="/media/" width="20%" height="20%"> {% endcomment %}
+
+
+    </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/info.css">
+    <title>用户界面</title>
+
+{#        <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.min.css'%}" />#}
+{#        <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />#}
+{#        <link rel="stylesheet" href="/static/css/demo.css">#}
+
+{#      <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />#}
+{#    <link href="https://fonts.googleapis.com/css?family=Lobster|Poppins:400,600,700&display=swap" rel="stylesheet">#}
+{#      <link href="{% static 'css/style.css' %}" rel="stylesheet" />#}
+{#    <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />#}
+
+      <link href="{% static 'css/fontCharacter.css' %}" rel="stylesheet" />
+        <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
+        <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+  </head>
+
+  <body>
+
+        <div class="container-info">
+          <div action="#" class="login-form">
+
+            <img src="/media/{{ user.avatar }}" width="90%" height="90%" alt="头像"/>
+            {% comment %} <input type="text" name="username" placeholder="用户名">
+            <input type="password" name="password" placeholder="密码"> {% endcomment %}
+            <p>{{ user.username }}</p>
+            <p>{{ user.email }}</p>
+
+            <button type="button">修改</button>
+
+          </div>
+        </div>
+
+{#    </div>#}
+
+  </body>
+
+</html>

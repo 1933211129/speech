@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <title>登录</title>
+
+{#        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />#}
+{#        <link href="https://fonts.googleapis.com/css?family=Lobster|Poppins:400,600,700&display=swap" rel="stylesheet">#}
+{#        <link href="{% static 'css/style.css' %}" rel="stylesheet" />#}
+{#        <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />#}
+
+
+        <link rel="icon" href="{% static 'favicon/logo.svg'%}">
+        <link href="{% static 'css/fontCharacter.css' %}" rel="stylesheet" />
+        <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
+        <link rel="stylesheet" href="{% static 'css/index.css' %}">
+        <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+        <style>
+
+            #MyRadio{
+                margin-top: 10px;
+                list-style-type: none;
+                padding: 0;
+                display: flex;
+                text-align: center;
+            }
+
+            #MyRadio label {
+                display: inline-block;
+                background-color: #ffffff;
+                padding: 10px 20px;
+                cursor: pointer;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            #MyRadio label:hover {
+              border-color: #27ccab;
+                {#color: #27ccab;#}
+            }
+
+            #MyRadio li {
+                display: inline-block;
+              position: relative;
+              margin-left: 25px;
+              cursor: pointer;
+              user-select: none;
+            }
+
+            #MyRadio label {
+              {% comment %}background-color: #1abc9c;
+              border-color: #1abc9c;
+              color: #fff;{% endcomment %}
+
+                {% comment %}background-color: #007bff;
+                color: #fff;
+                border-color: #007bff;{% endcomment %}
+            }
+
+            #MyRadio input {
+
+            }
+
+            #MyRadio li::marker {
+                content: "";
+            }
+
+
+        </style>
+
+        <script>
+
+
+        </script>
+
+    </head>
+
+    <body>
+        <div class="hero_area">
+            <!-- header section strats -->
+            <header class="header_section">
+              <div class="container">
+                <nav class="navbar navbar-expand-lg custom_nav-container ">
+                  <a class="navbar-brand" href="/index">
+                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px" y="0px" viewBox="0 0 512.009 512.009" style="enable-background:new 0 0 512.009 512.009;"
+                      xml:space="preserve">
+                      <g>
+                        <g>
+                          <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
+                    c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
+                    c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
+                    l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
+                    c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
+                    C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
+                    c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
+                    z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
+                    c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
+                    C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
+                    c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
+                    C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
+                        </g>
+                      </g>
+
+                    </svg>
+                    <span>
+                      Speech scoring system
+                    </span>
+                  </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="s-1"> </span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                      <ul class="navbar-nav">
+                        <li class="nav-item">
+                          <a class="nav-link" href="/index"> 主页 </a>
+                        </li>
+
+                          <li class="nav-item active" >
+                            {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
+                            <a class="nav-link last_link" href="/login"> 登录 </a>
+                          </li>
+
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
+              </div>
+            </header>
+
+            <!-- 搭建结构 -->
+            {% if login %}
+                <div class="container-login">
+            {% else %}
+                <div class="container-login switch">
+            {% endif %}
+
+                <!-- 登录页面 -->
+                <div class="container-form container-sign-in">
+                    <form action="/login/login" class="form" method="post">{% csrf_token %}
+                        <h2 class="form-title">欢迎登录 !</h2>
+                        {% if login_message %}
+                            <p class="alert" style="color: red;">{{ login_message }}</p>
+                        {% endif %}
+
+                        {{ login_form.flag }}
+
+                        {{ login_form.username }}
+                        {{ login_form.password }}
+{#                        {{ login_form.captcha }}#}
+                        <!-- <div class="">  -->
+                            <!-- {{ register.captcha.image }} -->
+                            <!-- {{ register.captcha.input }} -->
+                            <!-- {{ register.captcha.errors }} -->
+                        <!-- </div> -->
+
+                        <a href="/login/face/login">人脸登录</a>
+                        <button class="submit">登 录</button>
+                    </form>
+                </div>
+
+
+                <!-- 注册页面 -->
+                <div class="container-form container-signup">
+                    <form action="/login/register" class="form" method="post">{% csrf_token %}
+                        <h2 class="form-title">欢迎注册 !</h2>
+                        {% if register_message %}
+                            <p class="alert" style="color: red;">{{ register_message }}</p>
+                        {% endif %}
+                        <!-- <input type="text" name="username" placeholder="用户名" class="input">
+                        <input type="email" name="email" placeholder="邮箱" class="input">
+                        <input type="password" name="password" placeholder="密码" class="input"> -->
+
+
+                        {{ register_form.email }}
+                        {{ register_form.username }}
+                        {{ register_form.password }}
+                        {{ register_form.password2 }}
+{#                        {{ register_form.captcha }}#}
+
+                        <button class="submit" >注 册</button>
+{#                        <button type='button' onclick="video()">face</button>#}
+                    </form>
+                </div>
+
+                <!-- 覆盖层 -->
+                <div class="container-overlay">
+                    <div class="overlay">
+                        <div class="overlay-slide overlay-right">
+                            <button class="submit" id="goSignUp">注 册</button>
+                        </div>
+
+                        <div class="overlay-slide overlay-left">
+                            <button class="submit" id="goSignIn">登 录</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </div>
+          </div>
+
+        <script>
+            if("{{ tip }}" !== ''){
+                alert("{{ tip }}");
+            }
+
+            window.addEventListener('load',()=>{
+              // 我们需要获取两个切换按钮 因此需要到html结构中 定义特殊类名或id名
+              const goSignIn = document.querySelector('#goSignIn');
+              const goSignUp = document.querySelector('#goSignUp');
+              // 获取被切换的样式类
+              const container = document.querySelector('.container-login');
+              // 添加点击事件
+              goSignIn.addEventListener('click',()=>{
+                container.classList.remove('switch');
+              })
+              goSignUp.addEventListener('click',()=>{
+                container.classList.add('switch');
+              })
+              // 原理：通过点击goSignIn登录页按钮时 就删除switch这个类名
+              // 因为之前已经定义好了样式 删除switch类名 就会恢复成没有设置包含switch类
+              // 反之点击goSignUp 就会添加switch类名 显示我们默认页面
+              // 可以看到页面没有加过渡效果 继续前往css设置把！
+            })
+
+        </script>
+
+{#        <script src="{% static 'js/login.js' %}"></script>#}
+
+
+    </body>
+
+
+
+</html>
+

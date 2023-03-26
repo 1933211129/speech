@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, user-scalable=no, initial-scale=1.0,
+			maximum-scale=1.0, minimum-scale=1.0">
+		<title>{{ page }}</title>
+		<link rel="icon" href="{% static 'favicon/logo.svg'%}">
+
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />
+        <link href="{% static 'css/fontFace.css' %}" rel="stylesheet">
+        <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+        <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+
+
+        <link rel="stylesheet" href="{% static 'css/camera.css' %}">
+
+	</head>
+
+	<body>
+
+        <div class="hero_area">
+            <!-- header section strats -->
+            <header class="header_section">
+              <div class="container">
+                <nav class="navbar navbar-expand-lg custom_nav-container ">
+                  <a class="navbar-brand" href="/index">
+                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px" y="0px" viewBox="0 0 512.009 512.009" style="enable-background:new 0 0 512.009 512.009;"
+                      xml:space="preserve">
+                      <g>
+                        <g>
+                          <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
+                    c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
+                    c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
+                    l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
+                    c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
+                    C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
+                    c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
+                    z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
+                    c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
+                    C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
+                    c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
+                    C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
+                        </g>
+                      </g>
+
+                    </svg>
+                    <span>
+                      Speech scoring system
+                    </span>
+                  </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="s-1"> </span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                      <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                          <a class="nav-link" href="/index"> 主页 </a>
+                        </li>
+
+                          <li class="nav-item">
+                              <a class="nav-link" href="/login/score"> 评测结果 </a>
+                          </li>
+
+
+                          <li class="nav-item active">
+                              <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
+                          </li>
+
+                          <li class="nav-item">
+                            {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
+                              <a class="nav-link last_link" href="/login/logout"> 注销 </a>
+                          </li>
+
+                          <li class="nav-item">
+                              <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
+                          </li>
+
+
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
+              </div>
+            </header>
+		
+            <div class="content" >
+                <h2 id="txt"> 请点击开启摄像头，并看向摄像头 </h2>
+
+                <div class="panel">
+                    <button class="btn" id="connect">开启摄像头</button>
+                    <button class="btn" id="disconnect" style="display:none">关闭摄像头</button>
+                    <!-- <button class="btn" id="capture">截图</button> -->
+                </div>
+
+                <div id='video'>
+                    <img src="{% static 'image/camera.png' %}" id="img-temp" style="height: 450px; width: 600px" alt="摄像头图片"/>
+                    <video id="vid" style="display:none"></video>
+                    <canvas id="canvas2" class="canvas2" style="display:none"></canvas>
+                </div>
+
+                <div class="device-list" id="devices">
+                    <ul class="ul"></ul>
+                    <button class="btn" id="close">关 闭</button>
+                </div>
+
+                <div class="img-list" id="imgList">
+                </div>
+            </div>
+
+        </div>
+
+		<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+		<script src="{% static 'js/tracking-min.js' %}" type="text/javascript"></script>
+{#        <script src="{% static 'js/tracking.js' %}" type="text/javascript"></script>#}
+		<script src="{% static 'js/face-min.js' %}" type="text/javascript"></script>
+{#		 <script src="{% static 'js/camera.js' %}"></script> #}
+
+		<script>
+			const msg_style = document.getElementById("txt");
+
+			const start = document.getElementById('connect');
+  			const stop = document.getElementById('disconnect');
+
+			const videoWidth = 600;
+			const videoHeight = 450;
+			const video = document.querySelector('video');
+			const deviceList = document.getElementById('devices');
+			const canvas = document.createElement('canvas');
+
+			let mediaTrack = null;
+			const ctx = canvas.getContext('2d', {willReadFrequently: true});
+			const imgList = document.getElementById('imgList');
+
+			const vid = document.getElementById('vid');
+			const canvas2 = document.getElementById('canvas2');
+
+            canvas.setAttribute('width', '600px');
+            canvas.setAttribute('height', '450px');
+            canvas2.setAttribute('width', '640px');
+            canvas2.setAttribute('height', '450px');
+
+			const ctx2 = canvas2.getContext('2d');
+			const tracker = new tracking.ObjectTracker('face');
+
+            const imgTemp = document.getElementById('img-temp');
+
+            let sum = 0;
+            let count = 0;
+            const param = new FormData();
+
+
+            // 开启摄像头
+			// document.getElementById('connect').onclick = connect()
+			document.getElementById('connect').onclick = function ()  {
+				navigator.mediaDevices.enumerateDevices().then(function (devices) {
+						// console.log(devices);
+						const videoInputs = devices.filter(d => d.kind === 'videoinput');
+						if (!videoInputs.length) {
+							alert('请接入摄像头');
+						} else if(videoInputs.length === 1){
+							connectCamera(videoInputs[0].groupId);
+
+						} else {
+							const lis = videoInputs.map((d, i) => `<li id="${d.groupId}">摄像头${i + 1}</li>`);
+							deviceList.querySelector('ul').innerHTML = lis.join('');
+							deviceList.classList.add('active');
+						}
+					}
+				)
+			};
+
+
+			// 选择摄像头
+			deviceList.onclick = function (e) {
+				const t = e.target;
+				if (t.nodeName === 'LI') {
+					connectCamera(t.id);
+					deviceList.classList.remove('active');
+				}
+			};
+
+			// 关闭摄像头
+			document.getElementById('close').onclick = function () {
+				deviceList.classList.remove('active');
+			};
+
+
+			function jump(key){
+				window.location.href = '/' + key;
+			}
+
+			function connectCamera(groupId) {
+				start.style.display = "none";
+                imgTemp.style.display = 'none';
+                vid.style.display = "";
+                canvas2.style.display = "";
+				stop.style.display = "";
+
+				navigator.mediaDevices
+					.getUserMedia({
+						video: { groupId, width: videoWidth, height: videoHeight },
+                    }).then(function (stream) {
+						video.srcObject = stream;
+                        video.volume = 0;
+                        {#mediaTrack = stream.getTracks()[0];#}
+						video.onloadedmetadata = function () {
+							video.play();
+						};
+
+						tracker.setInitialScale(4);
+						tracker.setStepSize(2);
+						tracker.setEdgesDensity(0.1);
+
+                        // tracker.setInitialScale(2.8);
+                        // tracker.setStepSize(1);
+                        // tracker.setEdgesDensity(0.05);
+
+                        tracking.track('#vid', tracker);
+
+						tracker.on('track', function (event) {
+							ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+							event.data.forEach(function (rect) {
+								ctx2.strokeStyle = '#00fe44';
+								ctx2.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+                                msg_style.innerHTML = "正在录入，请保持面部在摄像头范围内";
+                                sum += 1;
+                                console.log(sum);
+
+								if(sum % 5 === 0){
+									ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+									let imgURL = canvas.toDataURL('image/png', 1); {# 0.9 #}
+									let imgContainer = document.createElement('div');
+									imgContainer.className = 'img';
+									let img = new Image();
+									img.src = imgURL;
+									imgContainer.appendChild(img);
+									imgList.appendChild(imgContainer);
+
+									//图片转成Buffer
+									function dataURItoBlob(dataURI) {
+										let byteString = atob(dataURI.split(',')[1]);
+										let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+										let ab = new ArrayBuffer(byteString.length);
+										let ia = new Uint8Array(ab);
+										for (let i = 0; i < byteString.length; i++) {
+											ia[i] = byteString.charCodeAt(i);
+										}
+										return new Blob([ab], {type: mimeString});
+									}
+
+									let blob = dataURItoBlob(imgURL);
+									param.append('face', blob);
+									count += 1;
+									if (count === 3){
+										param.append("csrfmiddlewaretoken",'{{ csrf_token }}');
+										msg_style.innerHTML = "录入成功，正在上传...";
+										$.ajax({
+											url: '/login/face/upload',
+											async: true,
+											type: "POST",
+											data: param,
+											processData: false,
+											dataType: "json",
+											cache: false,
+											contentType: false,
+											success: function () {
+												alert('录入成功，点击确定跳转到首页');
+												jump('index');
+											},
+											error: function (ret) {
+												alert('上传失败，点击确定刷新网页！');
+												console.log(ret);
+												location.reload();
+											},
+										})
+									}
+								}
+								
+							});
+						});
+
+
+						document.getElementById('disconnect').onclick = function () {
+							// clearInterval(id);
+                            canvas2.style.display = "none";
+                            vid.style.display = "none";
+                            stop.style.display = "none";
+                            start.style.display = "";
+                            imgTemp.style.display = '';
+
+                            stream.getTracks().forEach(track => {
+                                track.stop();
+                            });
+
+							sum = 0;
+							count = 0;
+							ctx2.clearRect(0, 0, videoWidth, videoHeight);
+
+                            video.pause();
+							video.srcObject = null;
+
+						};
+						
+					}).catch(console.log);
+			}
+		</script>
+
+
+	</body>
+
+</html>

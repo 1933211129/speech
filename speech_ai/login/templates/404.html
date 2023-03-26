@@ -1,0 +1,92 @@
+<!-- 
+    Link：https://www.bilibili.com/video/BV1YA4y1f7eX/
+    Share：bilibili 大碗绿豆沙
+ -->
+
+{% load staticfiles %}
+<!DOCTYPE html>
+    <html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--=============== BOXICONS ===============-->
+        <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+
+        <!--=============== CSS ===============-->
+        <link rel="stylesheet" href="../static/css/styles.css">
+
+        <title>响应式404页面</title>
+    </head>
+    <body>
+        <!--==================== HEADER ====================-->
+        <header class="header">
+            <nav class="nav container">
+                <a href="#" class="nav__logo">
+                    演讲评分
+                </a>
+
+                <div class="nav__menu" id="nav-menu">
+                    <ul class="nav__list">
+                        <li class="nav__item">
+                            <a href="/index" class="nav__link">首页</a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="#" class="nav__link">关于</a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="#" class="nav__link">联系</a>
+                        </li>
+                    </ul>
+
+                    <div class="nav__close" id="nav-close">
+                        <i class='bx bx-x'></i>
+                    </div>
+                </div>
+
+                <!-- Toggle button -->
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class='bx bx-grid-alt'></i>
+                </div>
+            </nav>
+        </header>
+
+        <!--==================== MAIN ====================-->
+        <main class="main">
+            <!--==================== HOME ====================-->
+            <section class="home">
+                <div class="home__container container">
+                    <div class="home__data">
+                        <span class="home__subtitle">Error 404</span>
+                        <h1 class="home__title">页面丢失</h1>
+                        <p class="home__description">
+                            您要寻找的页面不存在<br> 请尝试重新搜索
+                        </p>
+                        <a href="/index" class="home__button">
+                            返回首页
+                        </a>
+                    </div>
+
+                    <div class="home__img">
+                        <img src="../static/image/ghost-img.png" alt="">
+                        <div class="home__shadow"></div>
+                    </div>
+                </div>
+
+                <footer class="home__footer">
+                    <a href="https://www.bilibili.com/video/BV1YA4y1f7eX/">
+                    <span>carter</span>
+                    <span>|</span>
+                    <span>demo@qq.com</span>
+                </a>
+                </footer>
+            </section>
+        </main>
+
+        <!--=============== SCROLLREVEAL ===============-->
+        <script src="../static/js/scrollreveal.min.js"></script>
+
+        <!--=============== MAIN JS ===============-->
+        <script src="../static/js/main.js"></script>
+    </body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>评测结果</title>
+
+{#        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />#}
+{#        <link href="https://fonts.googleapis.com/css?family=Lobster|Poppins:400,600,700&display=swap" rel="stylesheet">#}
+{#        <link href="{% static 'css/style.css' %}" rel="stylesheet" />#}
+{#        <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />#}
+        <link rel="icon" href="{% static 'favicon/logo.svg'%}">
+
+        <link href="{% static 'css/fontCharacter.css' %}" rel="stylesheet" />
+        <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
+        <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/echarts.min.js' %}"></script>
+        <link href="{% static 'css/score.css' %}" rel="stylesheet" />
+
+    </head>
+
+    <body>
+        <div class="hero_area">
+            <!-- header section strats -->
+            <header class="header_section">
+              <div class="container">
+                <nav class="navbar navbar-expand-lg custom_nav-container ">
+                  <a class="navbar-brand" href="/index">
+                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px" y="0px" viewBox="0 0 512.009 512.009" style="enable-background:new 0 0 512.009 512.009;"
+                      xml:space="preserve">
+                      <g>
+                        <g>
+                          <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
+                    c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
+                    c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
+                    l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
+                    c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
+                    C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
+                    c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
+                    z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
+                    c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
+                    C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
+                    c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
+                    C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
+                        </g>
+                      </g>
+
+                    </svg>
+                    <span>
+                      Speech scoring system
+{#                        {{ date }}#}
+                    </span>
+                  </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="s-1"> </span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                      <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                          <a class="nav-link" href="/index"> 主页 <span class="sr-only">(current)</span></a>
+                        </li>
+                        {% if login_status %}
+                        <li class="nav-item active">
+                          <a class="nav-link" href="/login/score"> 评测结果 </a>
+                        </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link last_link" href="/login/logout"> 注销 </a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
+                          </li>
+                        {% else %}
+                          <li class="nav-item">
+{#                             <a class="nav-link last_link" href="testimonial.html"> 待定 </a>#}
+                            <a class="nav-link last_link" href="/login"> 登录 </a>
+                          </li>
+                        {% endif %}
+
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
+              </div>
+            </header>
+
+            <h5 style="position: relative; text-align: center">
+
+            <form id="dateForm" action="/login/score/" method="post">{% csrf_token %}
+              <select id="dateSelect" name="date">
+                {% for d in dates %}
+                  <option value="{{ d }}" {% if d == date %} selected {% endif %} >{{ d }}</option>
+                {% endfor %}
+              </select>
+            </form>
+
+
+            </h5>
+
+            <br>
+
+            <div id="echart_container">
+                <div class="grid-item1" id="emotion_count" style="width: 50vw; height:50vh;"></div>
+                <div class="grid-item2" id="stand_score" style="width: auto; height:auto;"></div>
+                <div class="grid-item3" id="speech_score_bar" style="width: auto; height:auto;"></div>
+                <div class="grid-item4" id="speech_score_radar" style="width: auto; height:auto;"></div>
+            </div>
+
+            <br>
+            <h2 style="position: relative; text-align: center"> 关键图片展示 </h2>
+
+            <div class="img-container">
+                {% for one in pose %}
+                    {% if one.flag or count_flag == False %}
+                    <div class="img-item">
+                        <img class="lightbox-trigger" src="{{ one.pose }}" alt="姿态图片">
+                        <figcaption>时间:{{ one.imgTime }}s &emsp;&emsp; 分数:{{ one.score }}</figcaption>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+             <div class="lightbox-container">
+              <div class="lightbox-content">
+
+                <div>
+                    <button class="lightbox-prev">&lt;</button>
+                </div>
+
+                <img class="lightbox-image" src="" alt="">
+                <div class="lightbox-caption"></div>
+
+                <div>
+                  <button class="lightbox-next">&gt;</button>
+                </div>
+
+                <button class="lightbox-close">&times;</button>
+
+              </div>
+
+            </div>
+
+            </div>
+
+        </div>
+
+    <script  type="text/javascript">
+        const dateSelect = document.getElementById('dateSelect');
+        const dateForm = document.getElementById('dateForm');
+        dateSelect.addEventListener('change', (event) => {
+            dateForm.submit();
+        });
+
+
+        let score = {{ data.score }};
+        let emotion = {{ data.emotion|safe }};
+        let flag = {{ data.flag|safe }};
+        let date = '{{ date }}';
+        let angry = disgust = fear = happy = sad = surprise = neutral = 0;
+
+
+        emotion.forEach((elem)=>{
+            if(elem === 'angry') angry++;
+            else if(elem === 'disgust') disgust++;
+            else if(elem === 'fear') fear++;
+            else if(elem === 'happy') happy++;
+            else if(elem === 'sad') sad++;
+            else if(elem === 'surprise') surprise++;
+            else if(elem === 'neutral') neutral++;
+        });
+
+        emotion = [angry, disgust, fear, happy, sad, surprise, neutral];
+        let max_count = Math.max.apply(null, emotion);
+
+
+        let speech_score = {{ speech_score }};
+        const speechScoreBar = echarts.init(document.getElementById('speech_score_bar'));
+        let speech_score_bar_option = {
+          title: {
+            text: '演讲得分'
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          legend: {},
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+            {#boundaryGap: [0, 0.01]#}
+            boundaryGap: [0, 0.0001]
+          },
+          yAxis: {
+            type: 'category',
+            data: ['发音流畅度', '演讲完整度', '发音韵律', '发音调型','缀词冗余',
+                {% if topic_flag|safe == 'false' %} '主题契合度', {% endif %}'总分'
+                ]
+          },
+          series: [
+            {
+              {#name: '{{ date }}',#}
+              type: 'bar',
+              data: speech_score
+            }
+          ]
+        };
+        speechScoreBar.setOption(speech_score_bar_option);
+
+
+
+        let max_speach_score = 100;
+        const speechScoreRadar = echarts.init(document.getElementById('speech_score_radar'));
+        let speech_score_radar_option = {
+          title: {
+            text: '语音分数'
+          },
+            legend: {
+            data: '{{ date }}'
+          },
+          radar: {
+            // shape: 'circle',
+            indicator: [
+              { name: '发音流畅度', max: max_speach_score },
+              { name: '演讲完整度', max: max_speach_score },
+              { name: '发音韵律', max: max_speach_score },
+              { name: '发音调型', max: max_speach_score },
+              { name: '缀词冗余', max: max_speach_score },
+              {% if topic_flag|safe == 'false' %} { name: '主题契合度', max: max_speach_score } {% endif %}
+            ]
+          },
+          series: [
+            {
+              name: 'specch score radar',
+              type: 'radar',
+              data: [
+                {
+                  value: speech_score.slice(0,-1),
+                  name: date,
+                },
+              ]
+            }
+          ]
+        };
+        speechScoreRadar.setOption(speech_score_radar_option);
+
+
+
+        const emotionCount = echarts.init(document.getElementById('emotion_count'));
+        let emotionCount_option = {
+          title: {
+            text: '各个表情统计'
+          },
+            legend: {
+            data: '{{ date }}'
+          },
+          radar: {
+            // shape: 'circle',
+            indicator: [
+              { name: 'angry 愤怒', max: max_count },
+              { name: 'disgust 厌恶', max: max_count },
+              { name: 'fear 恐惧', max: max_count },
+              { name: 'happy 快乐', max: max_count },
+              { name: 'sad 悲伤', max: max_count },
+              { name: 'surprise 惊讶', max: max_count },
+              { name: 'neutral 无表情', max: max_count }
+            ]
+          },
+          series: [
+            {
+              name: 'emotion count',
+              type: 'radar',
+              data: [
+                {
+                  value: emotion,
+                  name: date,
+                },
+              ]
+            }
+          ]
+        };
+        emotionCount.setOption(emotionCount_option);
+
+
+        {% comment %}let imgTime = {{ data.imgTime|safe }};
+        imgTime.forEach((elem)=> {
+            elem = elem + 's';
+        });{% endcomment %}
+        const standScore = echarts.init(document.getElementById('stand_score'));
+        let standScore_option = {
+          title: {
+            text: '姿态得分',
+            {#subtext: date#}
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            data: [score]
+          },
+          toolbox: {
+            show: true,
+            feature: {
+              dataView: { show: true, readOnly: false },
+              magicType: { show: true, type: ['bar', 'line'] }, // ['line', 'bar']
+              restore: { show: true },
+              saveAsImage: { show: true }
+            }
+          },
+          calculable: true,
+          xAxis: [{
+            type: 'category',
+            // prettier-ignore
+            data: Array.from({length:score.length}, (v,k) => k+1), // imgTime
+
+          }],
+          yAxis: [{
+              type: 'value',
+              min: parseInt(Math.min.apply(null, score)/5)*5,
+              max: parseInt(Math.max.apply(null, score)/5)*5+5,
+
+          }],
+          series: [
+            {
+              {#  |safe  #}
+              name: 'score',
+              type: 'line',
+              data: score,
+              markPoint: {
+                data: [
+                  { type: 'max', name: 'Max' },
+                  { type: 'min', name: 'Min' }
+                ]
+              },
+              markLine: {
+                data: [{ type: 'average', name: 'Avg' }]
+              }
+            },
+          ]
+        };
+        standScore.setOption(standScore_option);
+    </script>
+
+
+
+    <script>
+        const lightbox = document.querySelector('.lightbox-container');
+        const closeButton = document.querySelector('.lightbox-close');
+        const prevButton = document.querySelector('.lightbox-prev');
+        const nextButton = document.querySelector('.lightbox-next');
+        const images = document.querySelectorAll('.lightbox-trigger');
+        let index = 0;
+
+        {# 灯箱文字展示需要的 #}
+        const imgItem = document.querySelectorAll('.img-item');
+        const lightboxCaption = document.querySelector('.lightbox-caption');
+
+        function showImage(event) {
+          const imgSrc = event.target.src;
+          const imgAlt = event.target.alt;
+          index = Array.from(images).indexOf(event.target);
+
+          const lightboxImage = document.querySelector('.lightbox-image');
+          lightboxImage.src = imgSrc;
+          lightboxImage.alt = imgAlt;
+          lightbox.style.display = 'block';
+
+          {# 下方文字展示 #}
+          lightboxCaption.textContent = imgItem[index].querySelector('figcaption').textContent;
+        }
+
+        function hideImage() {
+          lightbox.style.display = 'none';
+        }
+
+        function showPrevImage() {
+          if (index > 0) {
+            index--;
+          } else {
+            lightboxCaption.textContent = '已经到最后了';
+            {#index = images.length - 1;#}
+          }
+
+          const imgSrc = images[index].src;
+          const imgAlt = images[index].alt;
+
+          const lightboxImage = document.querySelector('.lightbox-image');
+          lightboxImage.src = imgSrc;
+          lightboxImage.alt = imgAlt;
+          lightboxCaption.textContent = imgItem[index].querySelector('figcaption').textContent;
+        }
+
+        function showNextImage() {
+          if (index < images.length - 1) {
+            index++;
+          } else{
+            lightboxCaption.textContent = '已经到最后了';
+            {#index = 0;#}
+        }
+
+        const imgSrc = images[index].src;
+        const imgAlt = images[index].alt;
+
+        const lightboxImage = document.querySelector('.lightbox-image');
+            lightboxImage.src = imgSrc;
+            lightboxImage.alt = imgAlt;
+            lightboxCaption.textContent = imgItem[index].querySelector('figcaption').textContent;
+        }
+
+        images.forEach(image => {
+            image.addEventListener('click', showImage);
+        });
+
+        closeButton.addEventListener('click', hideImage);
+
+        prevButton.addEventListener('click', showPrevImage);
+
+        nextButton.addEventListener('click', showNextImage);
+
+        document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            hideImage();
+        } else if (event.key === 'ArrowLeft') {
+            showPrevImage();
+        } else if (event.key === 'ArrowRight') {
+            showNextImage();
+        }
+        });
+    </script>
+
+    </body>
+
+
+</html>

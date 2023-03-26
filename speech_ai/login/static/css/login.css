@@ -1,0 +1,185 @@
+/* 清除所有元素内外边距 转换为c3盒子模型 */
+/**{*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  box-sizing: border-box;*/
+/*}*/
+
+/* 清除input、button默认边框以及点击高亮 */
+input,
+button{
+  outline: none;
+  border: none;
+}
+
+ /*清除a标签默认下划线 颜色设置为#333 */
+/*a{*/
+/*  text-decoration: none;*/
+/*  color: #333;*/
+/*  margin: 1.25rem 0;*/
+/*}*/
+
+ /*页面整体样式*/
+/*body{*/
+/*  display: flex;*/
+/*  justify-content: center;*/
+/*  align-items: center;*/
+/*  min-height: 100vh; !* url('https://i.loli.net/2021/10/24/gkIC45ZqmLBRSAD.jpg') *!*/
+/*  background: url(../image/login_background.png) no-repeat fixed center;*/
+/*  background-size: cover;*/
+/*}*/
+
+input{
+  border-radius: 18px;
+}
+
+/* 盒子样式 */
+.container-login{
+  position: relative;
+  margin:auto;
+
+  /*display: block;*/
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+
+  width: 60vw;
+  height: 70vh;
+  background-color: #e9e9e9;
+  box-shadow: 0 1rem 1.5rem rgba(0,0,0,.3),
+  0 .5rem .5rem rgba(0,0,0,.2);
+  border-radius: 1rem;
+  overflow: hidden;
+
+}
+
+/* 将两个form表单设置绝对定位 */
+.container-form{
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all .5s ease-in-out;
+}
+/* 设置注册页样式 */
+.container-signup{
+  left: 0;
+  width: 50%;
+  z-index: 1;
+  opacity: 0;
+}
+/* 设置登录页样式 */
+.container-sign-in{
+  left: 0;
+  width: 50%;
+  z-index: 2;
+  opacity: 1;
+}
+
+/* 默认显示signup注册页，通过操作switch类名 显示登录页 */
+.container-login.switch .container-signup{
+  transform: translateX(100%);
+  z-index: 5;
+  opacity: 1;
+}
+.container-login.switch .container-sign-in{
+  transform: translateX(100%);
+  opacity: 0;
+}
+/* 设置覆盖层 */
+.container-overlay{
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transform: translateX(0);
+  transition: transform .5s ease-in-out;
+  z-index: 999;
+}
+/* 设置显示背景图 */
+.overlay{
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;  /* url('https://i.loli.net/2021/10/24/gkIC45ZqmLBRSAD.jpg') */
+  background: url(../image/login_background.png) no-repeat fixed center;
+  background-size: cover;
+  transition: transform .5s ease-in-out;
+  /* 完工！ */
+}
+/* 默认左边显示 通过操作switch类名显示登录页 */
+.container-login.switch .container-overlay{
+  transform: translateX(-100%);
+}
+.container-login.switch .overlay{
+  transform: translateX(50%);
+}
+/* 设置切换按钮页样式 */
+.overlay-slide{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 50%;
+  transition: transform .5s ease-in-out;
+}
+/* 这一块在最后讲解 */ 
+/* 这里的意思就是让按钮跟随页面一起进行移动 如果不加会有点难看 */
+/* 是不是很难看！ */
+.overlay-left{
+  transform: translateX(-20%);
+}
+.overlay-right{
+  transform: translateX(0);
+  right:0;
+}
+.container-login.switch .overlay-left{
+  transform: translateX(0);
+}
+.container-login.switch .overlay-right{
+  transform: translateX(20%);
+}
+/* 设置表单内元素样式 */
+.form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0 1rem;
+}
+/* 设置input标签样式 */
+.input{
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 1rem;
+}
+/* 设置表单标题样式 */
+.form-title{
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+/* 设置按钮样式 */
+.submit{
+  padding: 1rem 3rem;
+  background-image: -webkit-linear-gradient(40deg,#0367a6 0%,#008997 70%);
+  border-radius: 1rem;
+  color: #fff;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: transform .1s ease-in-out;
+}
+/* 偷偷添加个小手  对了！ */
+/* 只设置表单按钮的外边距 */
+.form>.submit{
+  margin-top: 1.5rem;
+}
+/* 设置按钮按下样式 */
+.submit:active{
+  transform: scale(0.95);
+}
+

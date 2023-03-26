@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <title>upload_image</title>
+        <style>
+            body {
+                background: #edf0f2;
+            }
+            img {
+                width: 100%;
+                display: block;
+                border: none;
+                vertical-align: bottom;
+            }
+            input[type="button"] {
+                -webkit-appearance: none;
+            }
+            .productDrawingBox {
+                background-color: #fcfcfc;
+                color: #333333;
+                font-size: 16px;
+                padding-left: 11px;
+                border-bottom: solid 1px #e5e5e5;
+            }
+            .productDescription {
+                height: 44px;
+                line-height: 44px;
+            }
+            .productImg {
+                height: 96px;
+                overflow: hidden;
+            } 
+            .imgBiMG{
+                {% comment %} width: 78px;
+                height: 81px; {% endcomment %}
+                width: 10%;
+                height: 10%;
+                float: left;
+                display: block;
+            }
+            .uploadDIv {
+                width: 78px;
+                height: 81px;
+                background-color: #edf0f2;
+                font-size: 28px;
+                color: #bfbfbf;
+                text-align: center;
+                line-height: 81px;
+                float: left;
+                position: relative;
+            }
+            .uploadDIv input {
+                width: 78px;
+                height: 78px;
+                opacity: 0;
+                position: absolute;
+                right: 0px;
+                top: 0px;
+                z-index: 4;
+                padding: 0;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div class="productDrawingBox productDescription productImg" id="uploadBox">上传图片
+            
+            <div class="uploadDIv">
+                <span>+</span>
+                <input type="file" name="avatar"> 
+        
+            </div> 
+            
+        </div>
+
+
+        <form action="/login/upload/avatar" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+                头像：<input name="avatar" type="file" >
+                <input id="upload_avatar" type="submit" value="上传头像">
+                {% comment %} <button id="upload_avatar" type="submit">上传头像</button> {% endcomment %}
+        </form>
+
+        <br>
+        <br>
+
+        <form action="/login/face/login" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            人脸图片:<input name="face" type="file" multiple />
+            <input id="upload_face" type="submit" value="上传多张人脸图片">
+        </form>
+        
+
+        
+    </body>
+
+        <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+        <script type="text/javascript">
+            $(function() {
+                var img = []; //创建一个空对象用来保存传入的图片
+                var AllowImgFileSize = '101376'; //1兆
+                $("#inputs").change(function() {
+                    const fil = this.files;
+                    for(let i = 0; i < fil.length; i++) {
+                        const curr = $('#inputs')[i].files[0].size;
+                        if(curr > AllowImgFileSize * 101376) { //当图片大于1兆提示
+                        layer.msg("图片文件大小超过限制 请上传小于99M的文件");
+                    } 
+                    else {
+                        reads(fil[i]);
+                        img.push($('#inputs')[i].files[0]); //将传入的图片push到空对象中
+                    }
+                }
+                if(img.length >= 6) { //判断图片的数量，数量不能超过3张
+                    $('.uploadDIv').hide();
+                } 
+                else {
+                    $('.uploadDIv').show();
+                }
+                console.log(img);
+                });
+                
+                function reads(fil) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(fil);	 
+                    reader.onload = function() {
+                        document.getElementById("uploadBox").innerHTML += "<div class='divImg' id='uploadImg'><img src='" + reader.result + "' class='imgBiMG'></div>";
+                    }
+                }
+                })
+        </script>
+</html>
