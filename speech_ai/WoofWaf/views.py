@@ -25,6 +25,24 @@ GC = "WoofWaf/GeneralConfig/gc.ini"
 cc = "WoofWaf/GeneralConfig/cc.ini"
 
 
+
+# 用户管理网页
+
+def secure_ip_list(request):
+    if not request.user.is_authenticated:
+        return redirect('/waf/login')
+    # 获取数据库
+    queryset = ip_list.objects.all()
+    return render(request, "WafTemp/user_management/user_management.html", {'queryset': queryset})
+
+def secure_ip_list(request):
+    if not request.user.is_authenticated:
+        return redirect('/waf/login')
+    queryset = ip_list.objects.all()
+    return render(request, "WafTemp/ip_list.html", {'queryset': queryset})
+
+# 用户管理网页
+
 # Create your views here.
 def login_waf(request):
     if request.user.is_authenticated:
