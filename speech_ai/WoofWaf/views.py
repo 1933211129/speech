@@ -25,7 +25,6 @@ GC = "WoofWaf/GeneralConfig/gc.ini"
 cc = "WoofWaf/GeneralConfig/cc.ini"
 
 
-
 # 用户管理网页
 
 def secure_ip_list(request):
@@ -35,11 +34,13 @@ def secure_ip_list(request):
     queryset = ip_list.objects.all()
     return render(request, "WafTemp/user_management/user_management.html", {'queryset': queryset})
 
+
 def secure_ip_list(request):
     if not request.user.is_authenticated:
         return redirect('/waf/login')
     queryset = ip_list.objects.all()
     return render(request, "WafTemp/ip_list.html", {'queryset': queryset})
+
 
 # 用户管理网页
 
@@ -70,10 +71,10 @@ def login_waf(request):
     else:
         return render(request, 'WafTemp/login.html')
 
+
 def logout_waf(request):
     logout(request)
     return redirect(reverse('WoofWaf-views-login'))
-
 
 
 # def secure_login(request):
@@ -81,7 +82,6 @@ def logout_waf(request):
 
 
 def secure_index(request):
-
     # wa = get_user_model()
     # admin=wa.objects.create_user(username="admin",password="admin")
     # admin.save()
@@ -94,13 +94,13 @@ def secure_index(request):
         return redirect(reverse('WoofWaf-views-login'))
     # 请求方法饼状图
     # 七天内数据
-    response_status = status_code(t=strat_of_this_hour() - 24 * 3600,t0=time.time())
+    response_status = status_code(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
     # 将产生的response_status改为列表类型
     data_list = list(response_status.values('status_code', 'total'))
     # 将data_list列表改为可直接绘制饼图的格式
     pie2_result_list = [{'name': data['status_code'], 'value': data['total']} for data in data_list]
     # print(result_list)
-    method = method_stats(t=time.time() - (7 * 24 * 3600),t0=time.time())
+    method = method_stats(t=time.time() - (7 * 24 * 3600), t0=time.time())
     data_pie = [
         {'name': 'get', 'value': method['GET']},
         {'name': 'post', 'value': method['POST']},
@@ -116,10 +116,10 @@ def secure_index(request):
     # 攻击次数、IP封禁、ip总数、请求次数、总流量、进、出
     attack_num = get_attack_times()
     ip_block_num = get_ip_block_times()
-    ip_num = ip_nums(t=strat_of_this_hour() - 24 * 3600,t0=time.time())
-    request_num = request_nums(t=strat_of_this_hour() - 24 * 3600,t0=time.time())
-    recv = bytes_recv(t=strat_of_this_hour() - 24 * 3600,t0=time.time())
-    send = bytes_send(t=strat_of_this_hour() - 24 * 3600,t0=time.time())
+    ip_num = ip_nums(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    request_num = request_nums(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    recv = bytes_recv(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    send = bytes_send(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
     total_traffic = recv + send
     row = [attack_num, ip_block_num, ip_num, request_num, total_traffic, recv, send]
 
@@ -353,8 +353,7 @@ def httpCheckSetIpBlock(request):
         import re
         BOOL = bool(re.match("^\d+$", blockspan) and re.match("^[0-9]*$", times) and re.match("^[0-9]*$", timespan))
 
-        if BOOL != True :
-
+        if BOOL != True:
             return HttpResponse("请仅输入数字")
 
         try:
@@ -368,7 +367,6 @@ def httpCheckSetIpBlock(request):
             return HttpResponse("修改失败")
 
 
-
 def uploadDefend(request):
     return render(request, "WafTemp/UploadDefend.html")
 
@@ -378,9 +376,11 @@ def CCDefend(request):
         return redirect(reverse('WoofWaf-views-login'))
     rule = getDefault(cc)['open']
     # 3day 条/秒 list 最小值、最大值、中位数、平均值
-    rsp_speed = rsp_time(t=time.time() - (3 * 24 * 3600))  # 毫秒
+    rsp_speed = rsp_time(t=time.time() - (3 * 24 * 3600))
+    print(rsp_speed)
 
-    return render(request, "WafTemp/CCDefend.html",{'openrule':rule})
+    return render(request, "WafTemp/CCDefend.html", {'openrule': rule,
+                                                     'rsp_speed': rsp_speed})
 
 
 def settings(request):
@@ -389,7 +389,7 @@ def settings(request):
     gc = getDefault(GC)
     rcr = getDefault(RCR)
     rule = getDefault(cc)['open']
-    return render(request, "WafTemp/settings.html", {'gc': gc, 'rcr': rcr,'openrule':rule})
+    return render(request, "WafTemp/settings.html", {'gc': gc, 'rcr': rcr, 'openrule': rule})
 
 
 def secure_defend_log(request):
@@ -416,5 +416,4 @@ def secure_pass_log(request):
 
 
 def ParameterError(request):
-
     return render(request, "WafTemp/ParameterError.html")

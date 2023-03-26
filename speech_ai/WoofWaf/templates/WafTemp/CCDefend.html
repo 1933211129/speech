@@ -71,149 +71,107 @@
 
                                 </div>
                             </div>
-{#                            <div class="col-xl-8">#}
-{#                             <div class="user-data m-b-40" style="padding: 5%">#}
-{#                                    <h3 class="title-3 m-b-30">#}
-{#                                        <i class="zmdi zmdi-account-calendar"></i>自定义规则</h3>#}
-{#                                 <form>#}
-{#  <div class="form-group row">#}
-{#    <label for="inputEmail3" class="col-sm-2 col-form-label">路径</label>#}
-{#    <div class="col-sm-10">#}
-{#      <input type="text" class="form-control" id="path" placeholder="请使用正则表达式">#}
-{#    </div>#}
-{#  </div>#}
-{#  <div class="form-group row">#}
-{#    <label for="inputPassword3" class="col-sm-2 col-form-label">限速频率</label>#}
-{#    <div class="col-sm-10">#}
-{#        <div class="row-cols-2">#}
-{#      <input type="number" class="form-control" id="times" placeholder="次数">#}
-{#        </div>#}
-{#      <div class="row-cols-2">#}
-{#      <input type="number" class="form-control" id="seconds" placeholder="秒">#}
-{#      </div>#}
-{#  </div>#}
-{#  </div>#}
-{# <div class="form-group row">#}
-{#    <label for="inputEmail3" class="col-sm-2 col-form-label">阻断时长</label>#}
-{#    <div class="col-sm-10">#}
-{#      <input type="text" class="form-control" id="blocktime" placeholder="秒">#}
-{#    </div>#}
-{#  </div>#}
-{#  <fieldset class="form-group">#}
-{#    <div class="row">#}
-{#      <legend class="col-form-label col-sm-2 pt-0">防护动作</legend>#}
-{#      <div class="col-sm-10">#}
-{#        <div class="form-check">#}
-{#          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="forbid" >#}
-{#          <label class="form-check-label" for="gridRadios1">#}
-{#            阻断#}
-{#          </label>#}
-{#        </div>#}
-{#            <div class="form-check">#}
-{#          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="check" >#}
-{#          <label class="form-check-label" for="gridRadios1">#}
-{#            人机验证#}
-{#          </label>#}
-{#        </div>#}
-{#            <div class="form-check">#}
-{#          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="record" >#}
-{#          <label class="form-check-label" for="gridRadios1">#}
-{#            仅记录#}
-{#          </label>#}
-{#        </div>#}
-{##}
-{#      </div>#}
-{#    </div>#}
-{#  </fieldset>#}
-{##}
-{#  <div class="form-group row">#}
-{#    <div class="col-sm-10">#}
-{#      <button type="submit" class="btn btn-primary">添加</button>#}
-{#    </div>#}
-{#  </div>#}
-{#</form>#}
-{##}
-{##}
-{#                                </div>#}
-{##}
-{#                            </div>#}
-{#                        </div>#}
-{#                    <div class="row">#}
-{#                            <div class="col-xl-12">#}
-{#                             <div class="user-data m-b-40" style="padding: 5%">#}
-{#                                    <h3 class="title-3 m-b-30">#}
-{#                                        <i class="zmdi zmdi-account-calendar"></i>规则列表</h3>#}
-{##}
-{#                                   <div class="table-responsive m-b-40">#}
-{#                                    <table class="table table-borderless table-data3 " id="ddd">#}
-{#                                        <thead>#}
-{#                                            <tr>#}
-{#                                                <th>序号</th>#}
-{#                                                <th width="20%">类型</th>#}
-{#                                                <th>规则名</th>#}
-{#                                                <th>检测项目</th>#}
-{#                                                <th>状态</th>#}
-{#                                                <th>描述</th>#}
-{#                                                <th >操作</th>#}
-{#                                            </tr>#}
-{#                                        </thead>#}
-{#                                        <tbody >#}
-{#                                             {% for config in configlist %}#}
-{#                                              <tr>#}
-{#                                               <td>{{ forloop.counter }}</td>#}
-{#                                                <td>{{ config.type }}</td>#}
-{#                                                <td>{{ config.name }}</td>#}
-{##}
-{#                                                <td width="15%">#}
-{#                                                    {%   if config.chkurl == "1" %}#}
-{#                                                             URL&nbsp;#}
-{#                                                            {% endif %}#}
-{##}
-{#                                                         {%   if config.chkpost == "1" %}#}
-{#                                                             POST&nbsp;#}
-{#                                                            {% endif %}#}
-{##}
-{#                                                         {%   if config.chkcookie == "1" %}#}
-{#                                                             COOKIE&nbsp;#}
-{#                                                            {% endif %}#}
-{#                                                         {%   if config.chkheader == "1" %}#}
-{#                                                             HEADERS&nbsp;#}
-{#                                                            {% endif %}#}
-{##}
-{#                                                </td>#}
-{#                                                <td>#}
-{#                                                    <label class="switch switch-text switch-success switch-text">#}
-{#                                                      <input type="checkbox" class="switch-input"  onclick="switchStatus('{{ config.name }}')"#}
-{#                                                             {%   if config.status == "1" %}#}
-{#                                                             checked=true>#}
-{#                                                             {% else %}#}
-{#                                                                        >#}
-{#                                                            {% endif %}#}
-{#                                                      <span data-on="On" data-off="Off" class="switch-label" style="background-color: grey;border: 1px solid grey"></span>#}
-{#                                                      <span class="switch-handle"></span>#}
-{#                                                    </label>#}
-{#                                                </td>#}
-{#                                                  <td title="{{ config.dcp }}"><a style="width:200px;white-space:nowrap;overflow:hidden;text-overflow : ellipsis">{{ config.dcp }}</a></td>#}
-{#                                                <td width="23%">#}
-{#                                                   <button type="button" class="btn btn-secondary mb-1" data-toggle="modal" data-target="#{{ config.name }}">#}
-{#											编辑#}
-{#										</button>#}
-{#                                                    &nbsp;&nbsp;<button type="button" class="btn btn-danger mb-1" data-toggle="modal" data-target="#{{ config.name }}del">#}
-{#											删除#}
-{#										</button>#}
-{#                                                </td>#}
-{#                                              </tr>#}
-{#                                            {% endfor %}#}
-{##}
-{#                                        </tbody>#}
-{#                                    </table>#}
-{#                                </div>#}
-{##}
-{#                                </div>#}
-{##}
-{#                            </div>#}
-{##}
-{#                        </div>#}
+                            {# 仪表盘 #}
+                        <div class="col-lg-6">
+                        <div class="au-card m-b-30">
+                            <div class="au-card-inner">
+                                <h3 class="title-2 m-b-40">网站响应速度(条/秒)</h3>
+                                   <div id="chart" style="width: 105%; height: 450%;"></div>
+                                      <script type="text/javascript">
+                                          var data = {{ rsp_speed }}
+                                        const gaugeData = [
+                                          {
+                                            value: data[0].toFixed(1),
+                                            name: '最小值',
+                                            title: {
+                                              offsetCenter: ['-40%', '80%']
+                                            },
+                                            detail: {
+                                              offsetCenter: ['-40%', '95%']
+                                            },
+                                            itemStyle: {
+                                              color: '#fac858' // 黄色
+                                            }
+                                          },
+                                          {
+                                            value: data[1].toFixed(1),
+                                            name: '最大值',
+                                            title: {
+                                              offsetCenter: ['0%', '80%']
+                                            },
+                                            detail: {
+                                              offsetCenter: ['0%', '95%']
+                                            },
+                                            itemStyle: {
+                                              color: '#91cc75' // 绿色
+                                            }
+                                          },
+                                          {
+                                            value: data[2].toFixed(1),
+                                            name: '中位数',
+                                            title: {
+                                              offsetCenter: ['40%', '80%']
+                                            },
+                                            detail: {
+                                              offsetCenter: ['40%', '95%']
+                                            },
+                                            itemStyle: {
+                                              color: '#5470c6' // 蓝色
+                                            }
+                                          }
+                                        ];
+
+                                        option = {
+                                          series: [
+                                            {
+                                              type: 'gauge',
+                                              anchor: {
+                                                show: true,
+                                                showAbove: true,
+                                                size: 18,
+                                                itemStyle: {
+                                                  color: '#FAC858'
+                                                }
+                                              },
+                                              pointer: {
+                                                icon: 'path://M2.9,0.7L2.9,0.7c1.4,0,2.6,1.2,2.6,2.6v115c0,1.4-1.2,2.6-2.6,2.6l0,0c-1.4,0-2.6-1.2-2.6-2.6V3.3C0.3,1.9,1.4,0.7,2.9,0.7z',
+                                                width: 8,
+                                                length: '80%',
+                                                offsetCenter: [0, '8%']
+                                              },
+                                              progress: {
+                                                show: true,
+                                                overlap: true,
+                                                roundCap: true
+                                              },
+                                              axisLine: {
+                                                roundCap: true
+                                              },
+                                              data: gaugeData,
+                                              title: {
+                                                fontSize: 14
+                                              },
+                                              detail: {
+                                                width: 40,
+                                                height: 14,
+                                                fontSize: 14,
+                                                color: '#fff',
+                                                backgroundColor: 'inherit',
+                                                borderRadius: 3,
+                                                formatter: '{value}'
+                                              }
+                                            }
+                                          ]
+                                        };
+
+                                        var chart = echarts.init(document.getElementById('chart'));
+                                        chart.setOption(option);
+
+                                      </script>
+                            </div>
+                        </div>
+                        </div>
+
 
                     </div>
                 </div>
