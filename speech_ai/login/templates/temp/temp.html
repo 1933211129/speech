@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Record Video</title>
+</head>
+<body>
+  <video id="video" width="640" height="480" autoplay></video>
+  <button id="start">Start Recording</button>
+  <button id="stop">Stop Recording</button>
+
+  <script>
+    var video = document.getElementById('video');
+    var startButton = document.getElementById('start');
+    var stopButton = document.getElementById('stop');
+
+    var mediaRecorder;
+    var recordedBlobs = [];
+
+    startButton.onclick = function() {
+      var options = { mimeType: 'video/webm;codecs=vp9' };
+      mediaRecorder = new MediaRecorder(video.srcObject, options);
+      mediaRecorder.ondataavailable = handleDataAvailable;
+      mediaRecorder.start();
+      startButton.disabled = true;
+      stopButton.disabled = false;
+    };
+
+    stopButton.onclick = function() {
+      mediaRecorder.stop();
+      startButton.disabled = false;
+      stopButton.disabled = true;
+    };
+
+    function handleDataAvailable(event) {
+      if (event.data && event.data.size > 0) {
+        recordedBlobs.push(event.data);
+      }
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function(stream) {
+        video.srcObject = stream;
+      });
+
+    var actualFps = 0;
+    var lastTime = 0;
+    var frameCount = 0;
+
+    mediaRecorder.ondataavailable = function(event) {
+      var current = performance.now();
+      var diff = current - lastTime;
+      lastTime = current;
+      actualFps = 1000 / diff;
+      frameCount++;
+    };
+
+    mediaRecorder.onstop = function() {
+      var metadata = {
+        'webm': {
+          'video': {
+            'realFrameRate': actualFps,
+            'frameCount': frameCount
+          }
+        }
+      };
+      var blob = new Blob(recordedBlobs, {type: 'video/webm'});
+      blob = new Blob([metadata, blob], {type: 'video/webm'});
+      saveAs(blob, 'recorded-video.webm');
+    };
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        {% if user.username %}
+            <title>{{ user.username }}</title>
+        {% else %}
+            <title>个人页面</title>
+        {% endif %}
+
+        <link rel="icon" href="{% static 'favicon/logo.svg'%}">
+    
+    </head>
+
+    <body>
+        <div class="">
+            <div class="">
+                
+                <div class="">
+                    <img src="/media/{{ user.avatar }}" width="20%" height="20%">
+                </div>
+
+                <div>
+                    用户名:<input type="text" class="" id="" value="{{ user.username }}" ></input>
+                </div>
+                
+                <div class="" id="">
+                    邮箱:<input type="text" class="" id="" value="{{ user.email }}" ></input>
+                </div>
+
+                <div>
+
+                    新密码:<input type="password" class="" id=""></input>
+                    再次输入:<input type="password" class="" id=""> </input>
+                    
+                </div>
+
+            </div>
+
+        </div>
+        
+    </body>
+</html>

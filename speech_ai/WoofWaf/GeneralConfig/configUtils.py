@@ -4,7 +4,7 @@ import configparser
 # 获取DEFAULT
 def getDefault(configpath):
     config = configparser.ConfigParser()
-    config.read(configpath)
+    config.read(configpath, encoding='utf8')
     return config['DEFAULT']
 
 # 转换开关状态
@@ -46,7 +46,7 @@ def setField(configpath, section, field, newkey):
 # 返回的列表里装的configPaser.proxy
 def getOpenRule(configpath):
     config = configparser.ConfigParser()
-    config.read(configpath)
+    config.read(configpath, encoding='utf8')
     configlist = []
     for section in config.sections():
         if config[section]['status'] == "1":
@@ -59,7 +59,7 @@ def getOpenRule(configpath):
 # 管理时返回全部规则
 def getAllRule(configpath):
     config = configparser.ConfigParser()
-    config.read(configpath)
+    config.read(configpath, encoding='utf8')
     configlist = []
     for section in config.sections():
         configlist.append(config[section])

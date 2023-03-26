@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>历史评测</title>
+
+
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />
+        <link href="https://fonts.googleapis.com/css?family=Lobster|Poppins:400,600,700&display=swap" rel="stylesheet">
+        <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+        <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+
+{#        <link href="{% static '' %}" rel="stylesheet" />#}
+
+
+        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/echarts.min.js' %}"></script>
+
+        <style>
+
+            #echart_container {
+                position: relative;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+
+            .grid-item1 {
+              grid-column: 1 / 2;
+              grid-row: 1 / 2;
+            }
+
+            .grid-item2 {
+              grid-column: 2 / 3;
+              grid-row: 1 / 2;
+            }
+
+            .grid-item3 {
+              grid-column: 1 / 2;
+              grid-row: 2 / 3;
+            }
+
+            .grid-item4 {
+              grid-column: 2 / 3;
+              grid-row: 2 / 3;
+            }
+            .grid-item1 .grid-item2 .grid-item3 .grid-item4{
+                position: absolute;
+                display: block;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="hero_area">
+            <!-- header section strats -->
+            <header class="header_section">
+              <div class="container">
+                <nav class="navbar navbar-expand-lg custom_nav-container ">
+                  <a class="navbar-brand" href="/index">
+                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px" y="0px" viewBox="0 0 512.009 512.009" style="enable-background:new 0 0 512.009 512.009;"
+                      xml:space="preserve">
+                      <g>
+                        <g>
+                          <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
+                    c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
+                    c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
+                    l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
+                    c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
+                    C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
+                    c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
+                    z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
+                    c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
+                    C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
+                        </g>
+                      </g>
+                      <g>
+                        <g>
+                          <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
+                    c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
+                    C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
+                        </g>
+                      </g>
+
+                    </svg>
+                    <span>
+                      Speech scoring system
+                    </span>
+                  </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="s-1"> </span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                      <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                          <a class="nav-link" href="/index"> 主页 <span class="sr-only">(current)</span></a>
+                        </li>
+
+
+                        {% if login_status %}
+
+                        <li class="nav-item  active">
+                          <a class="nav-link" href="/login/score/history_score"> 历史评测 </a>
+                        </li>
+
+
+                          <li class="nav-item">
+                            <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
+                          </li>
+
+                          <li class="nav-item">
+                            {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
+                            <a class="nav-link last_link" href="/login/logout"> 注销 </a>
+                          </li>
+
+                          <li class="nav-item">
+                            <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
+                          </li>
+
+                        {% else %}
+
+                          <li class="nav-item">
+                            {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
+                            <a class="nav-link last_link" href="/login"> 登录 </a>
+                          </li>
+
+                        {% endif %}
+
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
+              </div>
+            </header>
+
+            <div id="echart_container">
+                <div class="grid-item1" id="emotion_count" style="width: 50vw; height:50vh;"></div>
+                <div class="grid-item2" id="score_bar_line" style="width: auto; height:auto;"></div>
+                <div class="grid-item3" id="speach_score_line" style="width: auto; height:auto;"></div>
+                <div class="grid-item4" id="" style="width: auto; height:auto;"></div>
+            </div>
+
+        </div>
+
+
+    <script  type="text/javascript">
+        let poses = {{ poses|safe }};
+        let dates = {{ dates|safe }};
+        let speach = {{ speach|safe }};
+
+        let emotions = [];
+        let pose_scores = [];
+
+        let max_count_five = [];
+        let date_five = [];
+
+        if (dates.length < 5){
+            t = poses.length % 5;
+            dt = Push(poses.slice(0,t), dates.slice(0,t));
+            pose_scores.push(dt['score']);
+            emotions.push(dt['emotion']);
+            date_five.push(dt['date_five']);
+        }
+        else{
+            let len = poses.length
+            a = parseInt(len/5);
+            b = len % 5;
+            if (b !== 0) pose_scores.push(Push(poses.slice(0,b), dates.slice(0,b)));
+            for(let i=0; i<a; i++){
+                j = i*5+b;
+                dt = Push(poses.slice(j,j+5), dates.slice(j,j+5));
+                pose_scores.push(dt['score']);
+                emotions.push(dt['emotion']);
+                date_five.push(dt['date_five']);
+            }
+        };
+
+
+        function Push(pose, date){
+            let max = 0;
+            let ret = {};
+            let score = [];
+            let emotion_five = [];
+            let date_five = [];
+            let max_count = 0;
+
+            for(let i=0; i<pose.length; i++) {
+                let angry=0, disgust=0, fear=0, happy=0, sad=0, surprise=0, neutral = 0;
+                pose[i]['emotion'].forEach((elem)=>{
+                    if(elem === 'angry') angry++;
+                    else if(elem === 'disgust') disgust++;
+                    else if(elem === 'fear') fear++;
+                    else if(elem === 'happy') happy++;
+                    else if(elem === 'sad') sad++;
+                    else if(elem === 'surprise') surprise++;
+                    else if(elem === 'neutral') neutral++;
+                });
+                let emotion = [angry, disgust, fear, happy, sad, surprise, neutral];
+                if (max_count < Math.max.apply(null, emotion)) max_count=Math.max.apply(null, emotion);
+                emotion_five.push({'value': emotion, 'name':date[i]});
+                date_five.push(date[i]);
+
+                score.push(pose[i]['score']);
+                if (max < score[i].length) max = score[i].length;
+                score[i].splice(0, 0, date[i]);
+
+            };
+
+            let count = ['count', ];
+            for(let i=1; i <= max; i++) count.push(String(i));
+            score.splice(0, 0, count);
+
+            ret['score'] = score;
+            ret['emotion'] = emotion_five;
+            ret['date_five'] = date_five;
+            return ret
+
+        };
+
+        {# 第一张图 表情统计图 #}
+        const emotionCount = echarts.init(document.getElementById('emotion_count'));
+        let emotionCount_option = {
+          title: {
+            text: '各个表情统计'
+          },
+            legend: {
+            data: date_five.slice(-1)[0]
+                                    [
+                        {value: [1,2,3,4,5,6,7], name: dates[0],},
+                         {value: [2,4,6,8,10,12,14], name: dates[1],}
+                    ]
+
+          },
+          radar: {
+            // shape: 'circle',
+            indicator: [
+              { name: 'angry 愤怒', max: max_count_five.slice(-1)[0] },
+              { name: 'disgust 厌恶', max: max_count_five.slice(-1)[0] },
+              { name: 'fear 恐惧', max: max_count_five.slice(-1)[0] },
+              { name: 'happy 快乐', max: max_count_five.slice(-1)[0] },
+              { name: 'sad 悲伤', max: max_count_five.slice(-1)[0] },
+              { name: 'surprise 惊讶', max: max_count_five.slice(-1)[0] },
+              { name: 'neutral 无表情', max: max_count_five.slice(-1)[0] }
+            ]
+          },
+          series: [
+            {
+              name: 'emotion count',
+              type: 'radar',
+              data: emotions.slice(-1)[0]
+            }
+          ]
+        };
+        emotionCount.setOption(emotionCount_option);
+
+
+        {# 表情得分统计图 #}
+        const score_bar_line_Chart = echarts.init(document.getElementById('score_bar_line'));
+        let score_bar_line_option;
+        setTimeout(function () {
+          score_bar_line_option = {
+            legend: {},
+            tooltip: {
+              trigger: 'axis',
+              showContent: false
+            },
+            dataset: {
+              source: pose_scores.slice(-1)[0] //datas.slice(-1)[0]
+                      {% comment %}  ['count', 'imgTime 1', 'imgTime 2', 'imgTime 3', 'imgTime 4', 'imgTime 5', 'imgTime 6'],
+                        ['日期一', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+                        ['日期二', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+                        ['日期三', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+                        ['日期四', 25.2, 37.1, 41.2, 18, 33.9, 49.1]{% endcomment %}
+            },
+            xAxis: { type: 'category' },
+            yAxis: { gridIndex: 0 },
+            grid: { top: '55%' },
+            series: [
+              {
+                type: 'line',
+                smooth: true,
+                seriesLayoutBy: 'row',
+                emphasis: { focus: 'series' }
+              },
+              {
+                type: 'line',
+                smooth: true,
+                seriesLayoutBy: 'row',
+                emphasis: { focus: 'series' }
+              },
+              {
+                type: 'line',
+                smooth: true,
+                seriesLayoutBy: 'row',
+                emphasis: { focus: 'series' }
+              },
+              {
+                type: 'line',
+                smooth: true,
+                seriesLayoutBy: 'row',
+                emphasis: { focus: 'series' }
+              },
+              {
+                type: 'line',
+                smooth: true,
+                seriesLayoutBy: 'row',
+                emphasis: { focus: 'series' }
+              },
+              {
+                type: 'pie',
+                id: 'pie',
+                radius: '30%',
+                center: ['50%', '25%'],
+                emphasis: {
+                  focus: 'self'
+                },
+                label: {
+                  formatter: '{b}  {@1}({d}%)'
+                },
+                encode: {
+                  itemName: 'count',
+                  value: '1',
+                  tooltip: '1'
+                }
+              }
+            ]
+          };
+          score_bar_line_Chart.on('updateAxisPointer', function (event) {
+            const xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo) {
+              const dimension = xAxisInfo.value + 1;
+              score_bar_line_Chart.setOption({
+                series: {
+                  id: 'pie',
+                  label: {
+                    formatter: '{b}  {@[' + dimension + ']}({d}%)'
+                  },
+                  encode: {
+                    value: dimension,
+                    tooltip: dimension
+                  }
+                }
+              });
+            }
+          });
+          score_bar_line_Chart.setOption(score_bar_line_option);
+        });
+
+    </script>
+
+
+    </body>
+
+
+</html>
