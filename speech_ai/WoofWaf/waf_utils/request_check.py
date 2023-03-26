@@ -135,16 +135,20 @@ def doRecord(status,request,config,ip,blockspan):
         logRequest(request, config, action="WhiteIP")
     else:
         if ifBlockIp(ip):
-            if status == 3:
-                newIp = ip_list(ip=ip, frequency=1, status=2)
-                newIp.save()
+            # 设置ip_list表
+            if status == 3:# 无状态
+                if ip_list.objects.filter(ip=ip).exists():
+                    ip_list.objects.filter(ip=ip).update(status=2)
+                else:
+                    newIp = ip_list(ip=ip, frequency=1, status=2)
+                    newIp.save()
+            # 日志文件记录
             logRequest(request, config, action="Block:" + blockspan)
-            # amsterdam_timezone = pytz.timezone('Asia/Shanghai')
-            # 写入blacklist表
-            # dt = amsterdam_timezone.localize(datetime.datetime.today())
+            # 数据库临时黑名单记录
             access = datetime.datetime.today() + datetime.timedelta(minutes=int(blockspan))
             # access_time =datetime.datetime.today() + datetime.timedelta(hours=8) + datetime.timedelta(minutes=int(blockspan))
             newBlockIp = Black_List(prohibit_time=datetime.datetime.today(), prohibit_span=0.15, ip=ip, access_time=access)
+            print('new data')
             newBlockIp.save()
 
         else:

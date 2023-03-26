@@ -1,6 +1,7 @@
 {% extends 'WafTemp/layout.html' %}
 {% load static %}
 {% block css %}
+
     <style>
 .ag-format-container {
   width: 1142px;
@@ -36,7 +37,7 @@ body {
 .ag-courses-item_link {
   display: block;
   padding: 30px 20px;
-  background-color: #fff8e8;
+  background-color: rgb(255, 249, 240);
 
   overflow: hidden;
 
@@ -83,7 +84,7 @@ body {
 .ag-courses-item_bg {
   height: 128px;
   width: 128px;
-  background-color: #f9b234;
+  background-color: rgba(255, 233, 0, 0.37);
 
   z-index: 1;
   position: absolute;
@@ -159,7 +160,7 @@ body {
                             <div class="col-lg-2"  >
                                 <div class="ag-courses_item" >
       <a href="#" class="ag-courses-item_link" >
-        <div class="ag-courses-item_bg" style="background-color: #e44002;!important;"></div>
+        <div class="ag-courses-item_bg" style="background-color: rgba(228,2,2,0.35);!important;"></div>
 
         <div class="ag-courses-item_title">
           {{ row.0 }}次
@@ -173,10 +174,10 @@ body {
                               <div class="col-lg-2"  >
                                 <div class="ag-courses_item" >
       <a href="#" class="ag-courses-item_link" >
-        <div class="ag-courses-item_bg" style=" background-color: #cd3e94;!important;"></div>
+        <div class="ag-courses-item_bg" style=" background-color: rgba(205,62,148,0.35);!important;"></div>
 
         <div class="ag-courses-item_title">
-          {{ row.1 }}个
+          {{ row.1 }}条
             <br><h1 style="font-size:20px;color: #000000">/24h<br>IP封禁</h1>
         </div>
 
@@ -187,7 +188,7 @@ body {
                               <div class="col-lg-2"  >
                                 <div class="ag-courses_item" >
       <a href="#" class="ag-courses-item_link" >
-        <div class="ag-courses-item_bg" style=" background-color: #3ecd5e;!important;"></div>
+        <div class="ag-courses-item_bg" style=" background-color: rgba(62,205,94,0.35);!important;"></div>
 
         <div class="ag-courses-item_title">
           {{ row.2 }}个
@@ -200,7 +201,7 @@ body {
                              <div class="col-lg-2"  >
                                 <div class="ag-courses_item" >
       <a href="#" class="ag-courses-item_link" >
-        <div class="ag-courses-item_bg" style="background-color: #4c49ea !important;"></div>
+        <div class="ag-courses-item_bg" style="background-color: rgba(76,73,234,0.35) !important;"></div>
 
         <div class="ag-courses-item_title">
           {{ row.3 }}次
@@ -230,11 +231,301 @@ body {
                         </div>
 
                     </div>
+
+                 <div class="row">
+                    <div class="col-lg-3">
+                        <div class="au-card m-b-30">
+                            <div class="au-card-inner">
+                                <h3 class="title-2 m-b-40">请求方法</h3>
+                                  <!-- 在这里绘制饼图 -->
+                                  <div id="myChart" style="width: 100%; height: 200%;"></div>
+
+                                  <script>
+                                    // 获取数据
+                                    var data = {{ data_pie|safe }};
+
+                                    // 初始化 ECharts 实例
+                                    var myChart = echarts.init(document.getElementById('myChart'));
+
+                                    // 配置项
+                                    var option = {
+
+                                      tooltip: {
+                                        trigger: 'item'
+                                      },
+                                      legend: {
+                                        top: '1%',
+                                        left: 'center'
+                                      },
+                                      series: [
+                                        {
+                                          name: '请求方法',
+                                          type: 'pie',
+                                          radius: ['40%', '70%'],
+                                          avoidLabelOverlap: false,
+                                          itemStyle: {
+                                            borderRadius: 10,
+                                            borderColor: '#fff',
+                                            borderWidth: 2
+                                          },
+                                          label: {
+                                            show: false,
+                                            position: 'center'
+                                          },
+                                          emphasis: {
+                                            label: {
+                                              show: true,
+                                              fontSize: 40,
+                                              fontWeight: 'bold'
+                                            }
+                                          },
+                                          labelLine: {
+                                            show: false
+                                          },
+                                          data: data.map(function(item) {
+                                            return {name: item.name, value: item.value};
+                                          })
+                                        }
+                                      ]
+                                    };
+                                    // 使用配置项显示图表
+                                    myChart.setOption(option);
+                                  </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="au-card m-b-30">
+                            <div class="au-card-inner">
+                                <h3 class="title-2 m-b-40">今日流量趋势(KB)</h3>
+                                  <div id="myChart2" style="width: 105%; height: 200%;"></div>
+
+                                  <!-- JavaScript 代码 -->
+                                  <script>
+                                    // 获取数据
+                                    var data1 = {{ data_line }};
+                                    var x_axis = {{ data_line_xaxis | safe }}
+
+                                    // 初始化 ECharts 实例
+                                    var myChart2 = echarts.init(document.getElementById('myChart2'));
+
+                                    // 配置项
+                                    var option = {
+                                          tooltip: {
+                                            trigger: 'axis',
+                                            axisPointer: {
+                                              type: 'cross',
+                                              label: {
+                                                backgroundColor: '#6a7985'
+                                              }
+                                            }
+                                          },
+                                          legend: {
+                                            data: ['流量进', '流量出']
+                                          },
+                                          toolbox: {
+                                            feature: {
+                                              saveAsImage: {}
+                                            }
+                                          },
+                                          grid: {
+                                            left: '3%',
+                                            right: '4%',
+                                            bottom: '3%',
+                                            containLabel: true
+                                          },
+                                      xAxis: {
+                                        type: 'category',
+                                        boundaryGap: false,
+                                        data: x_axis
+                                      },
+                                      yAxis: {
+                                        type: 'value'
+                                      },
+                                      series: [
+                                        {
+                                          name:'流量进',
+                                          data: data1[0],
+                                          type: 'line',
+                                          areaStyle: {
+                                            opacity: 0.5 // 设置不透明度为50%
+                                          }
+                                        },
+                                        {
+                                          name:'流量出',
+                                          data: data1[1],
+                                          type: 'line',
+                                          areaStyle: {
+                                            opacity: 0.5 // 设置不透明度为50%
+                                          }
+                                        }
+                                      ]
+                                    };
+
+                                    // 使用配置项显示图表
+                                    myChart2.setOption(option);
+                                  </script>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+                 <div class="row">
+                    <div class="col-lg-3">
+                        <div class="au-card m-b-30">
+                            <div class="au-card-inner">
+                                <h3 class="title-2 m-b-40">响应码</h3>
+                                <div id="myChart1" style="width: 110%; height: 250%;"></div>
+                                  <script>
+                                    // 获取数据
+                                    var data = {{ response_status|safe }};
+
+                                    // 初始化 ECharts 实例
+                                    var myChart1= echarts.init(document.getElementById('myChart1'));
+
+                                    // 配置项
+                                    var option = {
+
+                                      tooltip: {
+                                        trigger: 'item'
+                                      },
+                                      legend: {
+                                        top: '1%',
+                                        left: 'center'
+                                      },
+                                      series: [
+                                        {
+                                          name: '响应码',
+                                          type: 'pie',
+                                          radius: ['40%', '70%'],
+                                          avoidLabelOverlap: false,
+                                          itemStyle: {
+                                            borderRadius: 10,
+                                            borderColor: '#fff',
+                                            borderWidth: 2
+                                          },
+                                          label: {
+                                            show: false,
+                                            position: 'center'
+                                          },
+                                          emphasis: {
+                                            label: {
+                                              show: true,
+                                              fontSize: 40,
+                                              fontWeight: 'bold'
+                                            }
+                                          },
+                                          labelLine: {
+                                            show: false
+                                          },
+                                          data: data.map(function(item) {
+                                            return {name: item.name, value: item.value};
+                                          })
+                                        }
+                                      ]
+                                    };
+                                    // 使用配置项显示图表
+                                    myChart1.setOption(option);
+                                  </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="au-card m-b-30">
+                            <div class="au-card-inner">
+                                <h3 class="title-2 m-b-40">一周IP访问趋势(个)</h3>
+                                  <!-- 使用一个 div 元素作为 echarts 图表的容器 -->
+                                  <div id="myChart3" style="width: 105%; height: 250%;"></div>
+
+                                  <script>
+                                    // 从后端传递的数据
+                                    var data = {{ two_line_data }};
+                                    var x_axis = {{ day_7 | safe}}
+                                    // 使用 echarts.init() 方法初始化一个 echarts 实例
+                                    var myChart3 = echarts.init(document.getElementById('myChart3'));
+
+                                    // 定义图表配置项
+                                    var option = {
+                                      tooltip: {
+                                        trigger: 'axis'
+                                      },
+                                      legend: {},
+                                      toolbox: {
+                                        show: true,
+                                        feature: {
+                                          dataZoom: {
+                                            yAxisIndex: 'none'
+                                          },
+                                          dataView: { readOnly: false },
+                                          magicType: { type: ['line', 'bar'] },
+                                          restore: {},
+                                          saveAsImage: {}
+                                        }
+                                      },
+                                      xAxis: {
+                                        type: 'category',
+                                        boundaryGap: false,
+                                        data: x_axis
+                                      },
+                                      yAxis: {
+                                        type: 'value',
+                                      },
+                                      series: [
+                                        {
+                                          name: 'Highest',
+                                          type: 'line',
+                                          data: data,
+                                          markPoint: {
+                                            data: [
+                                              { type: 'max', name: 'Max' },
+                                              { type: 'min', name: 'Min' }
+                                            ]
+                                          },
+                                          markLine: {
+                                            data: [{ type: 'average', name: 'Avg' }]
+                                          }
+                                        },
+                                        {
+
+                                          markLine: {
+                                            data: [
+                                              { type: 'average', name: 'Avg' },
+                                              [
+                                                {
+                                                  symbol: 'none',
+                                                  x: '90%',
+                                                  yAxis: 'max'
+                                                },
+                                                {
+                                                  symbol: 'circle',
+                                                  label: {
+                                                    position: 'start',
+                                                    formatter: 'Max'
+                                                  },
+                                                  type: 'max',
+                                                  name: '最高点'
+                                                }
+                                              ]
+                                            ]
+                                          }
+                                        }
+                                      ]
+                                    };
+                                    // 将配置项注入 echarts 实例中，并渲染图表
+                                    myChart3.setOption(option);
+                                  </script>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+
+
                 </div>
 
           {% endblock %}
 
 {% block js %}
+<!-- 引入 ECharts -->
 
 
 {%  endblock %}

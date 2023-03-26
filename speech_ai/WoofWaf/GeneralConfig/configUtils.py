@@ -7,12 +7,11 @@ def getDefault(configpath):
     config.read(configpath, encoding='utf8')
     return config['DEFAULT']
 
-
-# 转换状态
-def swtichStatus(configpath,section,field):
+# 转换开关状态
+def swtichStatus(configpath, section, field):
     config = configparser.ConfigParser()
     config.read(configpath)
-    if config.get(section,field) == "1":
+    if config.get(section, field) == "1":
         with open(configpath, "w") as f:
             config.set(section, field, "0")
             config.write(f)
@@ -21,22 +20,21 @@ def swtichStatus(configpath,section,field):
             config.set(section, field, "1")
             config.write(f)
 
-
-
 # 删除某section
-def delConfig(configpath,section):
+def delConfig(configpath, section):
     config = configparser.ConfigParser()
     config.read(configpath)
-    if (section in config):
-        with open(configpath,"w") as f:
+    if section in config:
+        with open(configpath, "w") as f:
             config.remove_section(section)
             config.write(f)
             return 0
     else:
         return 1
 
+
 # 更改某filed的值
-def setField(configpath,section,field,newkey):
+def setField(configpath, section, field, newkey):
     config = configparser.ConfigParser()
     config.read(configpath)
     with open(configpath, "w") as f:
@@ -57,14 +55,16 @@ def getOpenRule(configpath):
             continue
     return configlist
 
+
 # 管理时返回全部规则
 def getAllRule(configpath):
     config = configparser.ConfigParser()
     config.read(configpath, encoding='utf8')
     configlist = []
     for section in config.sections():
-            configlist.append(config[section])
+        configlist.append(config[section])
     return configlist
+
 
 # 返回的列表装的dict,已弃用
 def getAllRule1(configpath):
@@ -74,7 +74,7 @@ def getAllRule1(configpath):
     for section in config1.sections():
         config = config1[section]
         checkRange = ""
-        if config['chkurl']=="1":
+        if config['chkurl'] == "1":
             checkRange.join("URL,")
         if config['chkcookie'] == "1":
             checkRange.join("COOKIE,")
@@ -82,8 +82,8 @@ def getAllRule1(configpath):
             checkRange.join("POST,")
         if config['chkheader'] != "0":
             checkRange.join("HEADERS,")
-        configdict = {'name':config.name,
-                      'status' : config['status'],
+        configdict = {'name': config.name,
+                      'status': config['status'],
                       'chkrul': config['chkurl'],
                       'chkcookie': config['chkcookie'],
                       'chkpost': config['chkpost'],
@@ -91,8 +91,7 @@ def getAllRule1(configpath):
                       'regex': config['regex'],
                       'dcp': config['dcp'],
                       'type': config['type'],
-                      'surl':"/secure/"+config.name+"/HttpCheckSwitched/",
+                      'surl': "/secure/" + config.name + "/HttpCheckSwitched/",
                       }
         configlist.append(configdict)
     return configlist
-

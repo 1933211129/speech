@@ -13,14 +13,22 @@ urlpatterns = [
     path('secure/defend_log', views.secure_defend_log,name='WoofWaf-views-defend_log'),
     path('secure/trace_log', views.secure_trace_log,name='WoofWaf-views-trace_log'),
     path('secure/pass_log', views.secure_pass_log,name='WoofWaf-views-pass_log'),
-    path('ParameterError', views.ParameterError),
+    path('ParameterError', views.ParameterError,name='Woof-ParameterError'),
     path('secure/HttpCheck', views.httpCheck,name='WoofWaf-views-HttpCheck'),
     path('secure/HttpCheck/AddRule', views.httpCheckAddRule,name='WoofWaf-views-AddRule'),
     path('secure/HttpCheck/SetRule', views.httpCheckSetRule,name='WoofWaf-views-SetRule'),
     path('secure/HttpCheck/DelRule', views.httpCheckDelRule,name='WoofWaf-views-DelRule'),
     path('secure/HttpCheckSwitched', views.httpCheckSwitch, name='WoofWaf-views-Switch'),
+    path('secure/ccSwitch', views.ccSwitch, name='WoofWaf-views-ccSwitch'),
     path('secure/UploadDefend', views.uploadDefend,name='WoofWaf-views-upload'),
     path('secure/CCDefend', views.CCDefend,name='WoofWaf-views-CCDefend'),
     path('secure/waf_settings', views.settings,name='WoofWaf-views-settings'),
     path('secure/waf_settings/sib', views.httpCheckSetIpBlock,name='WoofWaf-views-sib'),
+    # 用户管理
+    path('secure/user_management', views.secure_index, name='WoofWaf-user-management'),  # 用户管理
+    path('secure/judge_manegement', views.secure_index, name='WoofWaf-judge-management'),  # 评委管理
+    path('secure/event_review', views.secure_index, name='WoofWaf-event-review'),  # 赛事审核
+    path('secure/temp_user', views.secure_index, name='WoofWaf-temp-user'),  # 临时用户
+    path('secure/register_administrator.html', views.secure_index, name='WoofWaf-register-administrator'),  # 管理员注册
+    # 用户管理
 ]

@@ -9,10 +9,10 @@ class Visit(models.Model):
     status_code = models.IntegerField()
     ip_address = models.CharField(max_length=255)
     user_agent = models.CharField(max_length=255)
-    response_time = models.FloatField()
+    response_time = models.FloatField() # 毫秒
     time_stamp = models.FloatField(default=0)
     bytes_send = models.IntegerField(default=0)
     bytes_recv = models.IntegerField(default=0)
 
-    class Meta:
-        db_table = 'visit'
+    # class Meta:
+    #     db_table = 'visit'

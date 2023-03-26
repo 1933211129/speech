@@ -19,15 +19,10 @@ class ip_list(models.Model):
 class Black_List(models.Model):
     """ 临时ip黑名单"""
     """可保留同一ip被封禁多次的记录"""
-
     ip = models.CharField(max_length=16)
-
     prohibit_time = models.DateTimeField(max_length=32)
-    # 起封日期
-    # 解封日期
     access_time = models.DateTimeField(max_length=32)
-    prohibit_span = models.FloatField(default=0)
-    # 封禁时长 min
+    prohibit_span = models.DecimalField(max_digits=3, decimal_places=2,default=0)
 
 
 class defend_log(models.Model):
@@ -63,10 +58,9 @@ class WafUserManager(BaseUserManager):
 
 
 class waf_admin(AbstractBaseUser):
-    username = models.CharField(max_length=30, default="admin")
+    username = models.CharField(max_length=30, default="admin",unique=True)
     password = models.CharField(max_length=128, default="admin")
     objects = WafUserManager()
-
     USERNAME_FIELD = 'username'
 
     def __str__(self):

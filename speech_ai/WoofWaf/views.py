@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.shortcuts import render
 import requests
 from django.shortcuts import render, redirect, HttpResponse
+from django.urls import reverse
 from gevent import time
 from WoofWaf import models
 from WoofWaf.GeneralConfig.configUtils import swtichStatus, getAllRule, delConfig, getDefault, setField
@@ -11,87 +12,29 @@ from WoofWaf.GeneralConfig.httpconfig import addRequestCheckRule, setRequestChec
 
 from WoofWaf.log.log import get_all_log, get_logByIp, atklog
 from WoofWaf.models import Black_List, ip_list, WafUserManager, waf_admin
+from WoofWaf.waf_utils.get_data import get_attack_times, get_ip_block_times
 from WoofWaf.waf_utils.get_defend_log import get_defend_log, get_pass_log
-from stats.stats_utils.get_stats import method_stats, bytes_recv, bytes_send, status_code
+from stats.stats_utils.get_stats import method_stats, bytes_recv, bytes_send, status_code, rsp_time, ip_nums, \
+    request_nums
 from stats.stats_utils.time_stats import traffic_recent_hours
 from stats.stats_utils.time_transform import hour_list, strat_of_this_hour
 from django.contrib.auth import logout
 
 RCR = "WoofWaf/GeneralConfig/RequestCheckRule.ini"
 GC = "WoofWaf/GeneralConfig/gc.ini"
+cc = "WoofWaf/GeneralConfig/cc.ini"
 
 
-# Create your views here.
-def login_waf(request):
+# 用户管理网页
 
-    if request.method == 'GET' and request.META.get('HTTP_REFERER'):
-        return render(request, 'WafTemp/login.html', {'rdct': True})
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('../secure/index')
-        else:
-            # 登录验证失败
-            return render(request, 'WafTemp/login.html', {'error': '用户名或密码错误'})
-    elif request.method == 'GET' and request.GET.get(key='logout') == 'True':
-        logout(request)
-        return redirect('/waf/login?logout=False')
-
-    else:
-        return render(request, 'WafTemp/login.html')
-
-def logout_waf(request):
-
-    logout(request)
-    return redirect('/waf/login')
-
-
-
-# def secure_login(request):
-#     return render(request, "WafTemp/login.html")
-
-
-def secure_index(request):
-
+def secure_ip_list(request):
     if not request.user.is_authenticated:
         return redirect('/waf/login')
-    # 请求方法饼状图
-    # 七天内数据
-    # wa = get_user_model()
-    # admin=wa.objects.create_user(username="admin",password="admin")
-    # admin.save()
-    response_status = status_code()
-    method = method_stats(t=time.time() - (7 * 24 * 3600))
-    data_pie = [
-        {'name': 'get', 'value': method['get']},
-        {'name': 'post', 'value': method['post']},
-    ]
-
-    # 12h流量趋势：双折线图
-    traffic = traffic_recent_hours(12)
-    # 12h时间表
-    hourList = hour_list(12)
-
-    # 攻击次数、IP封禁、ip总数、请求次数、总流量、进、出
-    attack_num = 18
-    ip_block_num = 2
-    ip_num = 34
-    request_num = 89
-    recv = bytes_recv(t=strat_of_this_hour() - 24 * 3600)
-    send = bytes_send(t=strat_of_this_hour() - 24 * 3600)
-    total_traffic = recv + send
-    row = [attack_num, ip_block_num, ip_num, request_num, total_traffic, recv, send]
-
-    return render(request, "WafTemp/index.html", {'data_pie': data_pie,
-                                                  'row': row,
-                                                  'response_status':response_status
-                                                  })
+    # 获取数据库
+    queryset = ip_list.objects.all()
+    return render(request, "WafTemp/user_management/user_management.html", {'queryset': queryset})
 
 
-# @login_required
 def secure_ip_list(request):
     if not request.user.is_authenticated:
         return redirect('/waf/login')
@@ -99,9 +42,114 @@ def secure_ip_list(request):
     return render(request, "WafTemp/ip_list.html", {'queryset': queryset})
 
 
+# 用户管理网页
+
+# Create your views here.
+def login_waf(request):
+    if request.user.is_authenticated:
+        # 若已经登陆，跳转index
+        return redirect(reverse('WoofWaf-views-index'))
+    # 重定向来的未登录用户
+    if request.method == 'GET' and request.META.get('HTTP_REFERER'):
+        return render(request, 'WafTemp/login.html', {'rdct': True})
+    # 登录判断
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect(reverse('WoofWaf-views-index'))
+        else:
+            # 登录验证失败
+            return render(request, 'WafTemp/login.html', {'error': '用户名或密码错误'})
+    # 暂时没用好像？
+    elif request.method == 'GET' and request.GET.get(key='logout') == 'True':
+        logout(request)
+        return redirect('/waf/login?logout=False')
+
+    else:
+        return render(request, 'WafTemp/login.html')
+
+
+def logout_waf(request):
+    logout(request)
+    return redirect(reverse('WoofWaf-views-login'))
+
+
+# def secure_login(request):
+#     return render(request, "WafTemp/login.html")
+
+
+def secure_index(request):
+    # wa = get_user_model()
+    # admin=wa.objects.create_user(username="admin",password="admin")
+    # admin.save()
+    import datetime
+    import random
+    # wa = get_user_model()
+    # admin = wa.objects.create_user(username="admin", password="admin")
+    # admin.save()
+    if not request.user.is_authenticated:
+        return redirect(reverse('WoofWaf-views-login'))
+    # 请求方法饼状图
+    # 七天内数据
+    response_status = status_code(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    # 将产生的response_status改为列表类型
+    data_list = list(response_status.values('status_code', 'total'))
+    # 将data_list列表改为可直接绘制饼图的格式
+    pie2_result_list = [{'name': data['status_code'], 'value': data['total']} for data in data_list]
+    # print(result_list)
+    method = method_stats(t=time.time() - (7 * 24 * 3600), t0=time.time())
+    data_pie = [
+        {'name': 'get', 'value': method['GET']},
+        {'name': 'post', 'value': method['POST']},
+    ]
+    # print(data_pie)
+
+    # 12h流量趋势：双折线图数据，二维列表形式
+    traffic = traffic_recent_hours(18)
+    # 12h时间表，x轴
+    hourList = hour_list(18)
+
+    # print(traffic)
+    # 攻击次数、IP封禁、ip总数、请求次数、总流量、进、出
+    attack_num = get_attack_times()
+    ip_block_num = get_ip_block_times()
+    ip_num = ip_nums(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    request_num = request_nums(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    recv = bytes_recv(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    send = bytes_send(t=strat_of_this_hour() - 24 * 3600, t0=time.time())
+    total_traffic = recv + send
+    row = [attack_num, ip_block_num, ip_num, request_num, total_traffic, recv, send]
+
+    # 获取最近七天内日期作为第二个折线图的横坐标
+    today = datetime.date.today()
+    dates = [str((today - datetime.timedelta(days=i)).strftime('%m-%d')) for i in range(6, -1, -1)]  # 获取到时间列表
+    # 生成随机整数
+    two_line_data = [random.randint(7, 18) for _ in range(7)]
+
+    return render(request, "WafTemp/index.html", {'data_pie': data_pie,  # 第一个饼图数据
+                                                  'row': row,
+                                                  'response_status': pie2_result_list,  # 第二个饼图数据
+                                                  'data_line': traffic,  # 第一个折线图的数据
+                                                  'data_line_xaxis': hourList,  # 第一个折线图的横坐标
+                                                  'day_7': dates,  # 第二个折线图的横坐标
+                                                  'two_line_data': two_line_data,  # 第二个折线图的数据
+                                                  })
+
+
+def secure_ip_list(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('WoofWaf-views-login'))
+    queryset = ip_list.objects.all()
+
+    return render(request, "WafTemp/ip_list.html", {'queryset': queryset})
+
+
 def update_ip_list(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "POST":
         ip = request.POST.get(key="ip", default="")
         status = int(request.POST.get(key="status", default=""))
@@ -119,7 +167,7 @@ def update_ip_list(request):
 
 def add_ip_list(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "POST":
         ip = request.POST.get(key="ip", default="")
         status = int(request.POST.get(key="status", default="0"))
@@ -144,14 +192,14 @@ def add_ip_list(request):
 
 def secure_temp_black_list(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     queryset = Black_List.objects.all()
     return render(request, "WafTemp/temp_black_list.html", {'queryset': queryset})
 
 
 def httpCheck(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "GET":
         configlist = getAllRule(RCR)
         return render(request, "WafTemp/HttpCheck.html", {'configlist': configlist})
@@ -159,7 +207,7 @@ def httpCheck(request):
 
 def httpCheckAddRule(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "POST":
         ruleName = request.POST.get(key="ruleName", default="")
         regex = request.POST.get(key="re", default="")
@@ -195,7 +243,7 @@ def httpCheckAddRule(request):
 
 def httpCheckDelRule(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "POST":
         ruleName = request.POST.get(key="ruleName", default="")
         a = delConfig(RCR, ruleName)
@@ -209,7 +257,7 @@ def httpCheckDelRule(request):
 
 def httpCheckSetRule(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "POST":
         ruleName = request.POST.get(key="ruleName", default="")
         new_Name = request.POST.get(key="newName", default="")
@@ -250,7 +298,7 @@ def httpCheckSetRule(request):
 # 规则开关
 def httpCheckSwitch(request, ):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "GET":
         switchSection = request.GET.get(key="switchSection", default="")
         config = request.GET.get(key="config", default="")
@@ -265,10 +313,35 @@ def httpCheckSwitch(request, ):
                 return HttpResponse("修改失败")
 
 
+# 规则开关
+def ccSwitch(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('WoofWaf-views-login'))
+
+    if request.method == "GET":
+        rule = request.GET.get(key="rule", default="default")
+        try:
+            setField(cc, 'DEFAULT', 'open', rule)
+            return HttpResponse("修改成功")
+            print(111)
+        except:
+            print(0)
+            return HttpResponse("修改失败")
+        # if switchSection != "" and config != "":
+        #     try:
+        #         if config == "RCR":
+        #             swtichStatus(RCR, switchSection, "status")
+        #         elif config == "GC":
+        #             swtichStatus(GC, "DEFAULT", switchSection)
+        #         return HttpResponse("修改成功")
+        #     except:
+        #         return HttpResponse("修改失败")
+
+
 # ip封禁配置
 def httpCheckSetIpBlock(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     if request.method == "POST":
         blockspan = request.POST.get(key="blockspan", default="15")
         times = request.POST.get(key="times", default="5")
@@ -278,14 +351,18 @@ def httpCheckSetIpBlock(request):
         if times == "": times = "5"
 
         import re
-        if not bool(re.match("^[0-9]*$", blockspan + times + timespan)):
+        BOOL = bool(re.match("^\d+$", blockspan) and re.match("^[0-9]*$", times) and re.match("^[0-9]*$", timespan))
+
+        if BOOL != True:
             return HttpResponse("请仅输入数字")
 
         try:
+
             setField(RCR, 'DEFAULT', 'blockspan', blockspan)
             setField(RCR, 'DEFAULT', 'times', times)
             setField(RCR, 'DEFAULT', 'timespan', timespan)
             return HttpResponse("修改成功")
+
         except:
             return HttpResponse("修改失败")
 
@@ -296,28 +373,35 @@ def uploadDefend(request):
 
 def CCDefend(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
-    return render(request, "WafTemp/CCDefend.html")
+        return redirect(reverse('WoofWaf-views-login'))
+    rule = getDefault(cc)['open']
+    # 3day 条/秒 list 最小值、最大值、中位数、平均值
+    rsp_speed = rsp_time(t=time.time() - (3 * 24 * 3600))
+    print(rsp_speed)
+
+    return render(request, "WafTemp/CCDefend.html", {'openrule': rule,
+                                                     'rsp_speed': rsp_speed})
 
 
 def settings(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     gc = getDefault(GC)
     rcr = getDefault(RCR)
-    return render(request, "WafTemp/settings.html", {'gc': gc, 'rcr': rcr})
+    rule = getDefault(cc)['open']
+    return render(request, "WafTemp/settings.html", {'gc': gc, 'rcr': rcr, 'openrule': rule})
 
 
 def secure_defend_log(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     queryset = get_defend_log()
     return render(request, "WafTemp/defend_log.html", {'queryset': queryset, })
 
 
 def secure_trace_log(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     loglist = get_all_log()
 
     return render(request, "WafTemp/trace_log.html", {'loglist': loglist, })
@@ -325,12 +409,11 @@ def secure_trace_log(request):
 
 def secure_pass_log(request):
     if not request.user.is_authenticated:
-        return redirect('/waf/login')
+        return redirect(reverse('WoofWaf-views-login'))
     queryset = get_pass_log()
 
     return render(request, "WafTemp/pass_log.html", {'queryset': queryset, })
 
 
 def ParameterError(request):
-
     return render(request, "WafTemp/ParameterError.html")

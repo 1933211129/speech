@@ -64,33 +64,64 @@
                   </div>
                 </div>
                 <!-- /# card -->
-<div class="row">
+
+              </div>
+ <div class="col-lg-4">
+ <div class="card">
+                  <div class="card-header">
+                    <strong>CC攻击防护</strong>
+                  </div>
+                              <div class="task-progress">
+                                        <span class="badge badge-danger">CC防护设置</span><br><br>
+                                  <fieldset class="form-group">
+    <div class="row">
       <legend class="col-form-label col-sm-2 pt-0">防护模式</legend>
       <div class="col-sm-10">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="model1" value="forbid" checked >
+        <div class="form-check" >
+          <input class="form-check-input" type="radio" name="gridRadios" id="model1" value="forbid" onclick="switchStatus1(2)"
+                {%   if openrule == "test" %}
+                                                             checked=true>
+                                                             {% else %}
+                                                                        >
+                                                            {% endif %}
+
+          <label class="form-check-label" for="gridRadios1" >
+            测试模式
+          </label>
+        </div>
+            <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="model2" value="check"  onclick="switchStatus1(1)"
+                                        {%   if openrule == "default" %}
+                                                             checked=true>
+                                                             {% else %}
+                                                                        >
+                                                            {% endif %}
           <label class="form-check-label" for="gridRadios1">
             标准模式
           </label>
         </div>
-            <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="model2" value="check" disabled="disabled" >
+
+       <div class="form-check" >
+          <input class="form-check-input" type="radio" name="gridRadios" id="model1" value="forbid" onclick="switchStatus1(0)"
+                {%   if openrule != "test" and openrule != 'default' %}
+                                                             checked=true>
+                                                             {% else %}
+                                                                        >
+                                                            {% endif %}
+
           <label class="form-check-label" for="gridRadios1">
-            紧急模式
+            关闭
           </label>
         </div>
 
       </div>
     </div>
+  </fieldset>
 
-
-
-              </div>
-              <div class="col-lg-6">
-
-              </div>
+                                </div>
+                            </div>
             </div>
-          </div>
+            </div></div>
         </div>
       </div>
     <script>
@@ -131,15 +162,47 @@
         xhr.onreadystatechange = function (){
             if (xhr.readyState==4 && xhr.status==200){
                 rsp = xhr.responseText
-                if (rsp="请仅输入数字") {
-                    alert(rsp)
-                }
-                 if (rsp == "修改成功"){
+                  if (rsp == "修改成功"){
+                       alert("保存成功")
                      location.reload()
                  }
+
+                if (rsp=="请仅输入数字") {
+                    alert(rsp)
+                }
+
             }
         }
 };
+
+    function switchStatus1(n){
+        if (n==0){
+            rule = '0'
+        }
+           if (n==1){
+            rule = 'default'
+        }
+           if (n==2){
+            rule = 'test'
+        }
+
+        var url = "{% url 'WoofWaf-views-ccSwitch' %}" + "?rule=" + rule ;
+        var xhr ;
+        if(window.ActiveXObject){
+            xhr = new ActiveXObject("Microsoft.XMLHTTP")
+        }else if(window.XMLHttpRequest){
+            xhr = new XMLHttpRequest()
+        }
+        xhr.open("get",url,true)
+        xhr.send()
+        xhr.onreadystatechange = function (){
+            if (xhr.readyState==4 && xhr.status==200){
+                rsp = xhr.responseText
+                {#alert(rsp)#}
+            }
+        }
+};
+
     </script>
 
 
