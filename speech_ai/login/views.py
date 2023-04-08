@@ -274,8 +274,8 @@ def audio_analyse(file_path, uid, time):
 
 
 # 本地视频分析
-def video_analyse(file_path, date_dir, uid, time):
-    video_path = file_path.replace('\\', '/')
+def video_analyse(video_path, date_dir, uid, time):
+    video_path = video_path.replace('\\', '/')
     vid = cv2.VideoCapture(video_path)
 
     # 提取帧的频率
@@ -290,23 +290,21 @@ def video_analyse(file_path, date_dir, uid, time):
     # 计算每隔 interval 秒需要截取的帧数
     frames_to_capture = int(interval / frame_time)
 
-    print(frame_count, frame_rate)
+    print("总帧率：", frame_count, ", 帧频率：", frame_rate)
 
     count = 1
     for i in range(0, frame_count, frames_to_capture):
         random_frame_index = random.randint(i, i + frames_to_capture)
         vid.set(cv2.CAP_PROP_POS_FRAMES, random_frame_index)
         success, image = vid.read()
+
         if success:
-            img_time = round(random_frame_index * frame_time, 2)
-
-            file_path = os.path.join(date_dir, "{}.jpg".format(count)).replace('\\', '/')
             # cv2.imwrite(file_path, image)
-
             mp_drawing = mp.solutions.drawing_utils
             mp_drawing_styles = mp.solutions.drawing_styles
             mp_holistic = mp.solutions.holistic
             holistic = mp_holistic.Holistic(static_image_mode=True)
+
             # image = cv2.imread(file_path)
             image_height, image_width, _ = image.shape
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -321,12 +319,17 @@ def video_analyse(file_path, date_dir, uid, time):
 
             if pose.any() != 0:
                 try:
-                    backends = ['opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface', 'mediapipe']
+                    # 原始图片
+                    file_path = os.path.join(date_dir, "{}.jpg".format(count)).replace('\\', '/')
                     cv2.imwrite(file_path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
-                    eps = DeepFace.analyze(img_path=file_path, detector_backend=backends[0], actions=('emotion',))
-                    pose_path = os.path.join(date_dir, "{}_1.jpg".format(count)).replace('\\', '/')
 
+                    # 人体关键点标记的图片
+                    pose_path = os.path.join(date_dir, "{}_1.jpg".format(count)).replace('\\', '/')
                     cv2.imwrite(pose_path, cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
+
+                    # 表情识别
+                    backends = ['opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface', 'mediapipe']
+                    eps = DeepFace.analyze(img_path=file_path, detector_backend=backends[0], actions=('emotion',))
 
                     if count == 1:
                         last_pose[uid] = pose.reshape(-1, 4)
@@ -336,6 +339,7 @@ def video_analyse(file_path, date_dir, uid, time):
                         flag = Flag(last_pose[uid], test)
                         last_pose[uid] = test
 
+                    img_time = round(random_frame_index * frame_time, 2)
                     score = poseScore(stand_pose, pose.reshape(-1, 4))
                     pose = models.Pose.objects.create(
                         uid=uid,
@@ -347,7 +351,7 @@ def video_analyse(file_path, date_dir, uid, time):
                     pose.save()
                     count += 1
                 except:
-                    pass
+                    print("表情识别失败")
             else:
                 print("未识别到姿态")
         else:
@@ -563,14 +567,40 @@ def GetAngle(c1p1, c1p2, c2p1, c2p2):
     return round(Cobb, 3)
 
 
-# 四肢变换幅度界定 前后动作是否大
+# 前后图片变化程度， True代表变化大， False代表变化小
 def Flag(sta, test):
     scope = 20
     flag_lst = [(11, 13), (13, 15), (12, 14), (14, 16), (24, 26), (26, 28), (23, 25), (25, 27)]
     for key in flag_lst:
         angle = GetAngle(sta[key[0]], sta[key[1]], test[key[0]], test[key[1]])
-        if angle >= scope:
+
+        # 四肢变化大 或者 人体偏移程度大
+        if angle >= scope or Distance(sta, test):
             return True
+    return False
+
+
+# 计算前后图片 人体偏移程度
+def Distance(sta, test):
+    # mediapipe中坐标是已经归一化后的，可以直接进行计算
+    sta2 = []
+    test2 = []
+    for i in range(0, 33):
+        # 置信度大于0.99
+        if sta[i][3] > 0.99 and test[i][3] > 0.99:
+            sta2.append([sta[i][0], sta[i][1]])
+            test2.append([test[i][0], test[i][1]])
+    sta2 = np.array(sta2)
+    test2 = np.array(test2)
+
+    # 计算距离
+    A = np.array([sta2[:, 0].mean(), sta2[:, 1].mean()])
+    B = np.array([test2[:, 0].mean(), test2[:, 1].mean()])
+    dist = np.sqrt(sum(np.power((A - B), 2)))
+
+    # 距离范围
+    if dist > 0.3:
+        return True
     return False
 
 
