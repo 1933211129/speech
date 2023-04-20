@@ -133,12 +133,19 @@ def speech(request):
 
             if request.POST.get('total') == '1':
                 flag = True
+                limbs = 0
+                body = 0
                 last_pose[user.id] = picture(file_path, save_file)
                 score = poseScore(stand_pose, last_pose[user.id])
 
             else:
                 test = picture(file_path, save_file)
-                flag = Flag(last_pose[user.id], test)
+                limbs = limbsChanges(last_pose[user.id], test)
+                body = bodyDeviation(last_pose[user.id], test)
+                if limbs + body > 1:
+                    flag = True
+                else:
+                    flag = False
                 score = poseScore(stand_pose, test)
                 last_pose[user.id] = test
 
@@ -151,7 +158,8 @@ def speech(request):
                 img='/media/pose/' + user.id + '/' + time_name + '/' + file_name,
                 pose='/media/pose/' + user.id + '/' + time_name + '/' + file_name2,
                 score=score, emotion=ret['eps'],
-                flag=flag, date=time, imgTime=img_time)
+                flag=flag, limbsChanges=limbs, bodyDeviation=body,
+                date=time, imgTime=img_time)
             pose.save()
 
             return JsonResponse(ret)
@@ -333,10 +341,17 @@ def video_analyse(video_path, date_dir, uid, time):
 
                     if count == 1:
                         last_pose[uid] = pose.reshape(-1, 4)
+                        limbs = 0
+                        body = 0
                         flag = True
                     else:
                         test = pose.reshape(-1, 4)
-                        flag = Flag(last_pose[uid], test)
+                        limbs = limbsChanges(last_pose[uid], test)
+                        body = bodyDeviation(last_pose[uid], test)
+                        if limbs + body > 1:
+                            flag=True
+                        else:
+                            flag=False
                         last_pose[uid] = test
 
                     img_time = round(random_frame_index * frame_time, 2)
@@ -347,7 +362,8 @@ def video_analyse(video_path, date_dir, uid, time):
                         img=file_path.replace('\\', '/').replace(BaseDir, ''),
                         pose=pose_path.replace('\\', '/').replace(BaseDir, ''),
                         score=score, emotion=eps['dominant_emotion'],
-                        flag=flag, date=time, imgTime=img_time)
+                        flag=flag, limbsChanges=limbs, bodyDeviation=body,
+                        date=time, imgTime=img_time)
                     pose.save()
                     count += 1
                 except:
@@ -418,12 +434,15 @@ def speachDateScore(request, date):
                     topic_flag = 'true'
 
                 pose = list(models.Pose.objects.filter(uid=request.session.get('user_id'), date=date)
-                            .values('score', 'imgTime', 'pose', 'flag', 'emotion'))
+                            .values('score', 'imgTime', 'pose', 'flag', 'emotion', 'limbsChanges', 'bodyDeviation'))
                 pose_score = [i['score'] for i in pose]
                 imgTime = [i['imgTime'] for i in pose]
                 flag = [str(i['flag']) for i in pose]
                 emotion = [i['emotion'] for i in pose]
                 dt = {'score': pose_score, 'imgTime': imgTime, 'emotion': emotion, 'flag': flag}
+
+                limbs = sum([i['limbsChanges'] for i in pose])
+                body = sum([i['bodyDeviation'] for i in pose])
 
                 # pose 图片 flag 为 1 是否超过一定数量，没超过则全部显示
                 count_flag = False
@@ -435,7 +454,9 @@ def speachDateScore(request, date):
                               {'login_status': True, 'user_name': user_name,
                                'date': date.strftime('%Y-%m-%d %H:%M:%S'), 'data': dt, 'speech_score': speech_table,
                                'content': speech_table, 'pose': pose, 'count_flag': count_flag,
-                               'topic_flag': topic_flag, 'dates': dates})
+                               'topic_flag': topic_flag, 'dates': dates,'limbs':limbs, 'body':body,
+
+                               })
             else:
                 return HttpResponse('<h1>该日期下并没有评测 !</h1>')
 
@@ -568,20 +589,20 @@ def GetAngle(c1p1, c1p2, c2p1, c2p2):
 
 
 # 前后图片变化程度， True代表变化大， False代表变化小
-def Flag(sta, test):
-    scope = 20
+
+def limbsChanges(sta, test):
+    scope = 60
     flag_lst = [(11, 13), (13, 15), (12, 14), (14, 16), (24, 26), (26, 28), (23, 25), (25, 27)]
     for key in flag_lst:
         angle = GetAngle(sta[key[0]], sta[key[1]], test[key[0]], test[key[1]])
-
         # 四肢变化大 或者 人体偏移程度大
-        if angle >= scope or Distance(sta, test):
-            return True
-    return False
+        if angle >= scope:
+            return 1
+    return 0
 
 
 # 计算前后图片 人体偏移程度
-def Distance(sta, test):
+def bodyDeviation(sta, test):
     # mediapipe中坐标是已经归一化后的，可以直接进行计算
     sta2 = []
     test2 = []
@@ -600,8 +621,8 @@ def Distance(sta, test):
 
     # 距离范围
     if dist > 0.3:
-        return True
-    return False
+        return 1
+    return 0
 
 
 # 站姿正 得分

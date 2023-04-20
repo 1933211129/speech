@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 
+
 # 获取压缩成22位的UUID
 def uid():
     # return uuid.UUID(str(uuid.uuid4()).replace('-', ''))
@@ -44,7 +45,9 @@ class Pose(models.Model):
     emotion = models.CharField(verbose_name='表情', max_length=64)
     pose = models.ImageField(verbose_name='姿态', max_length=256)
     score = models.FloatField(verbose_name='评分', default=-1.0)
-    flag = models.BooleanField(verbose_name='标志', default=False)
+    flag = models.BooleanField(verbose_name='是否变化', default=False)
+    limbsChanges = models.IntegerField(verbose_name='四肢变化', default=0)
+    bodyDeviation = models.IntegerField(verbose_name='人体偏移', default=0)
 
     def __str__(self):
         return f'时间: {self.date}, 图片时间:{self.imgTime}, 分数: {self.score}, 标志: {self.flag}'
