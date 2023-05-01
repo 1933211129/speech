@@ -25,12 +25,14 @@ urlpatterns = [
     path('bar/', views.bar),
     path('radar/', views.radar_map_view),
     path('one_result/', views.one_result),
-    
+    #############信安可视化测试######################
     path('flow_line/', views.line),
     path('flow_pie/', views.pie),
     path('line2/', views.line2),
     path('bar2/', views.bar2),
     path('bar1/', views.bar1),
+    ##########发音可视化测试################3
+    path('pro1/', views.HighlightingPronunciation),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

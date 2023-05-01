@@ -24,27 +24,62 @@ RCR = "WoofWaf/GeneralConfig/RequestCheckRule.ini"
 GC = "WoofWaf/GeneralConfig/gc.ini"
 cc = "WoofWaf/GeneralConfig/cc.ini"
 
-
 # 用户管理网页
+from login.models import MyUser  # 用户信息表
+from judge.models import Race  # 赛事表
+# 用户赛事审核逻辑的导入
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
-def secure_ip_list(request):
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%人员信息%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+def user_list(request):
     if not request.user.is_authenticated:
         return redirect('/waf/login')
-    # 获取数据库
-    queryset = ip_list.objects.all()
-    return render(request, "WafTemp/user_management/user_management.html", {'queryset': queryset})
+    users = MyUser.objects.all()
+    return render(request, '../templates/WafTemp/user_management/user_management.html', {'users': users})
 
 
-def secure_ip_list(request):
+# ###############################删除人员逻辑#####################################
+def delete_user(request, user_id):
+    user = MyUser.objects.get(pk=user_id)
+    user.delete()
+    return redirect(reverse('WoofWaf-user-management'))
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%人员信息%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%赛事审核%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def event_list(request):
     if not request.user.is_authenticated:
         return redirect('/waf/login')
-    queryset = ip_list.objects.all()
-    return render(request, "WafTemp/ip_list.html", {'queryset': queryset})
+    info = Race.objects.all()
+    return render(request, '../templates/WafTemp/user_management/event_review.html', {'info': info})
 
 
-# 用户管理网页
+##################################审核赛事确认#############################
+@csrf_exempt
+def review_pass(request, race_id):
+    try:
+        race = Race.objects.get(race_id=race_id)
+        race.flag = 1
+        race.save()
+        return JsonResponse({"status": "success"})
+    except Race.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Race not found"})
 
-# Create your views here.
+
+@csrf_exempt
+def review_fail(request, race_id):
+    try:
+        race = Race.objects.get(race_id=race_id)
+        race.delete()
+        return JsonResponse({"status": "success"})
+    except Race.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Race not found"})
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%赛事审核%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%添加临时用户%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%添加临时用户%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def login_waf(request):
     if request.user.is_authenticated:
         # 若已经登陆，跳转index
@@ -108,7 +143,7 @@ def secure_index(request):
     # print(data_pie)
 
     # 12h流量趋势：双折线图数据，二维列表形式
-    traffic = traffic_recent_hours(18)
+    traffic = traffic_recent_hours(18, ttt=time.time())
     # 12h时间表，x轴
     hourList = hour_list(18)
 
@@ -129,6 +164,20 @@ def secure_index(request):
     # 生成随机整数
     two_line_data = [random.randint(7, 18) for _ in range(7)]
 
+    # 攻击类型
+    data = [{'type': 'SQL注入', 'count': 175}, {'type': '文件包含', 'count': 85}]
+
+    # 使用列表推导式将原数据中的类型和数量分别存入两个列表
+    types = [d['type'] for d in data]
+    counts = [d['count'] for d in data]
+
+    # 将数据转换为echarts需要的饼图格式
+    pie_data = [{'name': t, 'value': count} for t, count in zip(types, counts)]
+    # 攻击次数/请求次数
+    # 传入一个二维列表
+    data_attack_request = [[1, 5, 4, 6, 7, 2, 8], [9, 7, 5, 7, 9, 10, 14]]
+    # 传入时间坐标轴
+    xaxis_attack_request = dates
     return render(request, "WafTemp/index.html", {'data_pie': data_pie,  # 第一个饼图数据
                                                   'row': row,
                                                   'response_status': pie2_result_list,  # 第二个饼图数据
@@ -136,6 +185,9 @@ def secure_index(request):
                                                   'data_line_xaxis': hourList,  # 第一个折线图的横坐标
                                                   'day_7': dates,  # 第二个折线图的横坐标
                                                   'two_line_data': two_line_data,  # 第二个折线图的数据
+                                                  'attack_type': pie_data,  # 攻击类型
+                                                  'data_attack_request': data_attack_request,  # 攻击请求次数
+                                                  'xaxis_attack_request': dates,  # 攻击请求次数坐标轴
                                                   })
 
 
@@ -381,6 +433,20 @@ def CCDefend(request):
 
     return render(request, "WafTemp/CCDefend.html", {'openrule': rule,
                                                      'rsp_speed': rsp_speed})
+
+
+def waf_test(request):
+    if request.method == "GET":
+        id = int(request.GET.get(key="id", default=""))
+        if id == 1:
+            for i in range(100):
+                # 用for循环高频率访问页面
+                response = requests.get("http://127.0.0.1:8000/Administrator/waf/login")
+        elif id == 2:
+            for i in range(10):
+                response = requests.get(
+                    "http://127.0.0.1:8000/Administrator/secure/Httpcheck?id=0'and drop database users")
+    return redirect(reverse('WoofWaf-views-login'))
 
 
 def settings(request):

@@ -1,0 +1,57 @@
+{% extends 'WafTemp/layout.html' %}
+{% load static %}
+{% block event_review_active %}active{% endblock %}
+{% block u %}block{% endblock %}
+
+{% block main_content %}
+ <div class="section__content section__content--p35">
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                               <!-- DATA TABLE -->
+                                <!-- TABLE TITLE-->
+                                <h3 class="title-5 m-b-35">赛事审核</h3>
+                                <a  style="font-size: 15px">审核赛事</a><br><br>
+
+
+                                <div class="table-responsive m-b-40">
+                                    <table class="table table-borderless table-data3 " id ="ddd">
+                                        <thead>
+                                            <tr>
+                                                <th width="10%">序号</th>
+                                                <th>赛事ID</th>
+                                                <th>组织者ID</th>
+                                                <th>组织者单位</th>
+                                                <th width="15%">手机</th>
+                                                <th width="15%">邮箱</th>
+                                                <th width="15%">赛事名称</th>
+                                                <th>赛事时间</th>
+                                                <th>赛事简介</th>
+                                                <th>赛事状态</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                        {% for inf in info %}
+                                            <tr>
+                                                <td >{{ forloop.counter }}</td>
+                                                <td>{{ inf.race_id }}</td>
+                                                <td>{{ inf.OrganizerID }}</td>
+                                                <td>{{ inf.organizers_unit }}</td>
+                                                <td>{{ inf.organizers_mobile }}</td>
+                                                <td>{{ inf.organizers_email }}</td>
+                                                <td>{{ inf.race_name }}</td>
+                                                <td>{{ inf.race_time }}</td>
+                                                <td>{{ inf.race_file }}</td>
+                                                <td>{{ inf.flag }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{% endblock %}

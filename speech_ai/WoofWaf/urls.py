@@ -24,11 +24,12 @@ urlpatterns = [
     path('secure/CCDefend', views.CCDefend,name='WoofWaf-views-CCDefend'),
     path('secure/waf_settings', views.settings,name='WoofWaf-views-settings'),
     path('secure/waf_settings/sib', views.httpCheckSetIpBlock,name='WoofWaf-views-sib'),
+    path('waf/test', views.waf_test,name='WoofWaf-views-test'),
     # 用户管理
-    path('secure/user_management', views.secure_index, name='WoofWaf-user-management'),  # 用户管理
-    path('secure/judge_manegement', views.secure_index, name='WoofWaf-judge-management'),  # 评委管理
-    path('secure/event_review', views.secure_index, name='WoofWaf-event-review'),  # 赛事审核
+    path('secure/user_management', views.user_list, name='WoofWaf-user-management'),  # 用户管理
+    path('secure/user_management/delete/<str:username>/', views.delete_user, name='delete_user'),
+    path('secure/event_review', views.event_list, name='WoofWaf-event-review'),  # 赛事审核
     path('secure/temp_user', views.secure_index, name='WoofWaf-temp-user'),  # 临时用户
-    path('secure/register_administrator.html', views.secure_index, name='WoofWaf-register-administrator'),  # 管理员注册
     # 用户管理
+
 ]

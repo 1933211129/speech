@@ -1,0 +1,56 @@
+{% extends 'WafTemp/layout.html' %}
+{% load static %}
+{% block user_management_active %}active{% endblock %}
+{#active:亮不亮#}
+{#block：是否展开#}
+{% block u %}block{% endblock %}
+
+{% block main_content %}
+ <div class="section__content section__content--p35">
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                               <!-- DATA TABLE -->
+                                <!-- TABLE TITLE-->
+                                <h3 class="title-5 m-b-35">用户管理</h3>
+                                <a  style="font-size: 15px">查看注册用户信息，删除用户信息等</a><br><br>
+                                <a  style="font-size: 15px">人员类型：0普通用户，1评委，2管理员</a><br><br>
+
+
+                                <div class="table-responsive m-b-40">
+                                    <table class="table table-borderless table-data3 " id ="ddd">
+                                        <thead>
+                                            <tr >
+                                                <th width="10%">序号</th>
+                                                <th>UID</th>
+                                                <th>用户名</th>
+                                                <th>邮箱</th>
+                                                <th>用户类型</th>
+                                                <th width="15%">注册时间</th>
+                                                <th width="15%">使用时间(天)</th>
+                                                <th width="15%">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                        {% for user in users %}
+                                            <tr>
+                                                <td >{{ forloop.counter }}</td>
+                                                <td>{{ user.id }}</td>
+                                                <td>{{ user.username }}</td>
+                                                <td>{{ user.email }}</td>
+                                                <td>{{ user.status_flag }}</td>
+                                                <td>{{ user.registration_time }}</td>
+                                                <td>{{ user.service_life }}</td>
+                                                <td><a href="{% url 'delete_user' user.id %}" class="logout-btn" onclick="return confirm('确认注销该用户吗?')">注销</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{% endblock %}

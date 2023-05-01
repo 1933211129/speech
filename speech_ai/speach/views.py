@@ -23,7 +23,7 @@ def visualization(request):
     from pyecharts.charts import Page
     from speech_ai.work.Visualization import visualization
     obj1 = visualization()
-    page = Page(layout=Page.SimplePageLayout)  
+    page = Page(layout=Page.SimplePageLayout)
     page.add(
         obj1.visual_bar(),
         obj1.RadarMap(),
@@ -265,6 +265,7 @@ def convert_pdf_to_txt(file_content):
         text_list.append(text)
     # 返回文本列表
     return text_list
+
 
 # 不注释
 def word_to_txt(file_content):
@@ -709,40 +710,90 @@ def index_tip(request, tip):
 
 
 def line(request):
-
     # 获取数据
     data_line = [[820, 932, 901, 934, 1290, 1330, 420], [720, 1232, 801, 1034, 990, 930, 320]]
 
     # 将数据转换为 JSON 格式
     data_line_json = json.dumps(data_line)
 
-
     # 将数据传递到模板中
-    return render(request, '../templates/flow/line.html',{'data_line': data_line_json})
+    return render(request, '../templates/flow/line.html', {'data_line': data_line_json})
+
 
 def pie(request):
     # 获取数据
     data_pie = [
         {'name': 'get', 'value': 20},
         {'name': 'post', 'value': 80},
+        {'name': 'other', 'value': 80},
     ]
 
     return render(request, '../templates/flow/pie.html', {'data_pie': data_pie})
 
 
-
 def bar1(request):
     seriesData = [120, 200, 150, 80, 70, 110, 130]
 
-    return render(request, '../templates/flow/bar1.html', {'seriesData':seriesData})
+    return render(request, '../templates/flow/bar1.html', {'seriesData': seriesData})
 
 
 def bar2(request):
-
     seriesData = [110, 230, 180, 60, 90, 210, 230]
-    return render(request, '../templates/flow/bar2.html',{'seriesData':seriesData})
+    return render(request, '../templates/flow/bar2.html', {'seriesData': seriesData})
+
 
 def line2(request):
     seriesData = [10, 11, 13, 11, 12, 12, 9]
-    return render(request, '../templates/flow/line2.html', {'seriesData':seriesData})
+    return render(request, '../templates/flow/line2.html', {'seriesData': seriesData})
 
+
+######################################### 文本发音可视化 ################################
+
+def HighlightingPronunciation(request):
+    from django.shortcuts import render
+    import xml.etree.ElementTree as ET
+
+    # 解析 XML 文件
+    tree = ET.parse('E:/code_test/1.xml')
+    root = tree.getroot()
+
+    # 获取总的 content
+    content_all = root.find('read_chapter').find('rec_paper').find('read_chapter').get('content')
+
+    # 初始化字典，用于存储每个字的 perr_msg 属性
+    perr_msg_dict = {}
+
+    # 遍历 XML 文件中的所有 word 元素并更新字典
+    for sentence in root.findall('.//sentence'):
+        for word in sentence.findall('word'):
+            word_content = word.get('content')
+            phone_list = word.findall('syll/phone')
+
+            # 统计 phone 元素中 perr_msg 属性值为 0 的个数
+            perr_msg_count = sum(1 for phone in phone_list if phone.get('perr_msg') == '0')
+
+            # 根据 perr_msg 的个数生成一个嵌套字典
+            if perr_msg_count == 0:
+                perr_msg_dict[word_content] = {'perr_msg': 2}
+            elif perr_msg_count == 1:
+                perr_msg_dict[word_content] = {'perr_msg': 1}
+            else:
+                perr_msg_dict[word_content] = {'perr_msg': 0}
+
+    # 根据 perr_msg 属性在 content_all 上设置不同颜色的背景
+    content_colored = ''
+    for char in content_all:
+        if char in perr_msg_dict:
+            perr_msg = perr_msg_dict[char]['perr_msg']
+            if perr_msg == 0:
+                content_colored += f'<span style="background-color: #b7e1cd">{char}</span>'
+            elif perr_msg == 1:
+                content_colored += f'<span style="background-color: #ffec8b">{char}</span>'
+            elif perr_msg == 2:
+                content_colored += f'<span style="background-color: #dc6c64">{char}</span>'
+        else:
+            content_colored += char
+
+    # 将处理后的文本传递给模板进行渲染
+    context = {'content_colored': content_colored}
+    return render(request, 'visualization/HighlightingPronunciation.html', context)

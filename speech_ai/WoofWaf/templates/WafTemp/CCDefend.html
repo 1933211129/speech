@@ -91,11 +91,12 @@
                                             },
                                             itemStyle: {
                                               color: '#fac858' // 黄色
-                                            }
+                                            },
+
                                           },
                                           {
-                                            value: data[1].toFixed(1),
-                                            name: '最大值',
+                                            value: data[2].toFixed(1),
+                                            name: '中位数',
                                             title: {
                                               offsetCenter: ['0%', '80%']
                                             },
@@ -103,12 +104,12 @@
                                               offsetCenter: ['0%', '95%']
                                             },
                                             itemStyle: {
-                                              color: '#91cc75' // 绿色
+                                              color: '#5470c6' // 蓝色
                                             }
                                           },
-                                          {
-                                            value: data[2].toFixed(1),
-                                            name: '中位数',
+                                                                                      {
+                                            value: data[1].toFixed(1),
+                                            name: '最大值',
                                             title: {
                                               offsetCenter: ['40%', '80%']
                                             },
@@ -116,9 +117,9 @@
                                               offsetCenter: ['40%', '95%']
                                             },
                                             itemStyle: {
-                                              color: '#5470c6' // 蓝色
-                                            }
-                                          }
+                                              color: '#91cc75' // 绿色
+                                            },
+                                          },
                                         ];
 
                                         option = {
@@ -145,9 +146,10 @@
                                                 roundCap: true
                                               },
                                               axisLine: {
-                                                roundCap: true
+                                                roundCap: true,
                                               },
                                               data: gaugeData,
+                                              max:Math.round(Math.ceil(data[1] / 10) * 10 * Math.pow(10, -Math.floor(Math.log10(Math.ceil(data[1])))) / Math.pow(10, -Math.floor(Math.log10(Math.ceil(data[1]))))),
                                               title: {
                                                 fontSize: 14
                                               },

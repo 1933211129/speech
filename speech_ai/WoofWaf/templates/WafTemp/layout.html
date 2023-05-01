@@ -188,28 +188,19 @@
                         <li class="has-sub">
                             <a class="js-arrow" href="#" style="text-decoration:none">
                                 <i class="fa fa-user"></i>    用户管理</a>
-                            <ul class="list-unstyled navbar__sub-list js-sub-list " style="display: {% block WBlis %}{% endblock %}">
+                            <ul class="list-unstyled navbar__sub-list js-sub-list " style="display: {% block u %}{% endblock %}">
 
                                 <li class="{% block user_management_active %}{% endblock %}">
                             <a href="{% url 'WoofWaf-user-management' %}" style="text-decoration:none">
-                                <i class="fa fa-users"></i>用户管理</a>
+                                <i class="fa fa-users"></i>用户信息</a>
 
-                                  <li class="{% block judge-management %}{% endblock %}">
-                            <a href="{% url 'WoofWaf-judge-management' %}" style="text-decoration:none">
-                                <i class="fas fa-industry"></i>评委管理</a>
-
-                                  <li class="{% block event-review %}{% endblock %}">
+                                  <li class="{% block event_review_active %}{% endblock %}">
                             <a href="{% url 'WoofWaf-event-review' %}" style="text-decoration:none">
                                 <i class="fas fa-search"></i>赛事审核</a>
 
-                                <li class="{% block temp-user %}{% endblock %}">
+                                <li class="{% block temp_user_active %}{% endblock %}">
                             <a href="{% url 'WoofWaf-temp-user' %}" style="text-decoration:none">
                                 <i class="fa fa-user-plus"></i>临时用户</a>
-
-                                <li class="{% block register-administrator %}{% endblock %}">
-                            <a href="{% url 'WoofWaf-register-administrator' %}" style="text-decoration:none">
-                                <i class="fa fa-user-circle"></i>管理员注册</a>
-                        </li>
                             </ul>
                         </li>
 
@@ -221,8 +212,6 @@
                                 <li class="{% block http_active %}{% endblock %}">
                                     <a class="fas fa-check-circle" href="{% url 'WoofWaf-views-HttpCheck' %}" style="text-decoration:none">&nbsp;&nbsp;Http安全检测</a>
                                 </li>
-
-
 
                                 <li class = "{% block cc_active %}{% endblock %}">
                                     <a class="fas fa-minus-circle" href="{% url 'WoofWaf-views-CCDefend' %}" style="text-decoration:none">&nbsp;&nbsp;CC攻击防护</a>
