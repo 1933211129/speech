@@ -236,7 +236,10 @@ def convert_video_to_audio(file_path):
     audio = audio.set_sample_width(2)
 
     # 保存为wav文件
-    new_file_path = file_path.split(".")[0] + ".wav"
+    # 设置文件名字为源文件的前缀
+    filename = os.path.basename(file_path)
+    filename_without_extension = os.path.splitext(filename)[0]
+    new_file_path = filename_without_extension + ".wav"
     audio.export(new_file_path, format="wav")
     return new_file_path
 
@@ -246,7 +249,9 @@ def audio_analyse(file_path, uid, time):
     # 提取音频
     audio_path = convert_video_to_audio(file_path)
     record = Recorder(audio_name=audio_path)
-    final_result = record.Affix_and_evaluation()
+    # 执行中间过渡函数
+    temp = record.betweenness()
+    final_result = record.evaluation_audio()
     affix_score = final_result[0]
     xml_list = final_result[1]
     length = len(xml_list)
