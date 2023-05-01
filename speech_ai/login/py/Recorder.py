@@ -116,64 +116,6 @@ class Recorder:
         access_key_secret = '2rG2MD6hXanAdpeyOADtkLl2vLhbpv'
         token, expire_time = AccessToken.create_token(access_key_id, access_key_secret)
         return token
-
-    #######################################阿里云转写#################################
-    # def ali_audio_rec(self, audioFile, audioFileName, q):
-    #     import http.client
-    #     import json
-
-    #     def process(request, audioFile):
-    #         with open(audioFile, mode='rb') as f:
-    #             audioContent = f.read()
-    #         host = 'nls-gateway.cn-shanghai.aliyuncs.com'
-    #         httpHeaders = {
-    #             'Content-Length': len(audioContent)
-    #         }
-    #         conn = http.client.HTTPConnection(host)
-
-    #         conn.request(method='POST', url=request, body=audioContent, headers=httpHeaders)
-    #         response = conn.getresponse()
-    #         # print('Response status and response reason:')
-    #         # print(response.status, response.reason)
-    #         body = response.read()
-    #         try:
-    #             # print('Recognize response is:')
-    #             body = json.loads(body)
-    #             # print(body)
-    #             status = body['status']
-    #             if status == 20000000:
-    #                 result = body['result']
-    #                 # print('Recognize result: ' + result)
-    #             else:
-    #                 print('Recognizer failed!')
-    #         except ValueError:
-    #             print('The response is not json format string')
-    #         conn.close()
-    #         return body
-
-    #     appKey = 'PStE5j0aeBM2SRCO'
-    #     token = self.get_token()
-
-    #     url = 'https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/FlashRecognizer'
-    #     format = 'wav'
-    #     sampleRate = 16000
-    #     enablePunctuationPrediction = True
-    #     enableInverseTextNormalization = True
-    #     enableVoiceDetection = False
-
-    #     request = url + '?appkey=' + appKey
-    #     request = request + '&token=' + token
-    #     request = request + '&format=' + format
-    #     request = request + '&sample_rate=' + str(sampleRate)
-    #     # print('Request: ' + request)
-    #     result = process(request, audioFile)
-    #     text = []
-    #     tmp = result['flash_result']['sentences']
-    #     for i in range(len(tmp)):
-    #         text.append(tmp[i]['text'])
-    #     content = ''.join(text)
-    #     q.put((audioFileName, content))
-
     ######################################时长&音频分割##################################
     def audio_duration(self, audio_file):
         import wave
@@ -287,12 +229,13 @@ class Recorder:
         result_dict = {}
 
         for audioFile in audioFiles:
-            thread = threading.Thread(target=process_audio_file, args=(audioFile, result_dict))
-            thread.start()
-            threads.append(thread)
+            for audio in audioFile:
+                thread = threading.Thread(target=process_audio_file, args=(audio, result_dict))
+                thread.start()
+                threads.append(thread)
 
-        for thread in threads:
-            thread.join()
+            for thread in threads:
+                thread.join()
 
         return result_dict
 
@@ -309,7 +252,7 @@ class Recorder:
         return result
 
     ##########################################语音评测###########################################
-    def evaluation(self, txt, audio, q, xml_name):
+    def evaluation(self, txt, audio, xml_name):
 
         from builtins import Exception, str
         import websocket
@@ -352,6 +295,9 @@ class Recorder:
                 self.APISecret = APISecret
                 self.AudioFile = AudioFile
                 self.Text = Text
+                self.affix_score = 0
+                self.sample = []
+                self.result_trans_dict = {}
 
                 # 公共参数(common)
                 self.CommonArgs = {"app_id": self.APPID}
@@ -488,19 +434,24 @@ class Recorder:
         ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
         time2 = datetime.now()
         # print(time2 - time1)
-        q.put(xml_name)
+        return xml_name
 
     ###############################缀词统计和语音评测########################
     def Affix_and_evaluation(self):
 
-        import threading
-        import queue
         import datetime as dt
         import jieba
         import pandas as pd
-        import random
+        import sys
 
+
+        # print("2. 进入到了affix评测函数")
+        # sys.stdout.flush()
         result_trans_dict = self.audio_trans()
+        # print("3. 得到了转写的文本")
+        # sys.stdout.flush()
+        # print("4. 输出转写文本：",len(result_trans_dict))
+        # sys.stdout.flush()
         global all_words
         all_words = ''.join(list(result_trans_dict.values()))
 
@@ -522,46 +473,53 @@ class Recorder:
                 pass
             pass
         affix_score = 100 - affix_deduction
-        #################################################评测####################################
-        sample = list(result_trans_dict.keys())
+        # print("5. 转写和缀词结束！！",affix_score)
+        # sys.stdout.flush()
+        return affix_score,result_trans_dict
+######################################介于二者的中介函数################
+    def betweenness(self):
+        # print("1. 已执行中介函数")
+        Affix_and_evaluation_result = self.Affix_and_evaluation()
+        self.affix_score, self.sample, self.result_trans_dict = Affix_and_evaluation_result[0],list(Affix_and_evaluation_result[1].keys()),Affix_and_evaluation_result[1]
+        # print('6. 已定义全局变量')
+#################################################评测####################################
+    def evaluation_audio(self):
+        import random
+        import sys
+        import concurrent.futures
 
-        if len(sample) == 1:
+        # print("7. 进入讯飞语音评测")
+        sys.stdout.flush()
+
+        if len(self.sample) == 1:
             k = 1
-        elif len(sample) < 8 and len(sample) > 1:
+        elif len(self.sample) < 8 and len(self.sample) > 1:
             k = 2
         else:
-            k = len(sample) // 4
+            k = len(self.sample) // 4
 
         # 随机采样1/4
-        evaluation_list = random.sample(sample, k=k)
+        evaluation_list = random.sample(self.sample, k=k)
         # 取出对应的文本构成一个字典
         evaluation_dict = {}
         for i in range(len(evaluation_list)):
             tmp_dict = {}
-            tmp_dict[evaluation_list[i]] = result_trans_dict[evaluation_list[i]]
+            tmp_dict[evaluation_list[i]] = self.result_trans_dict[evaluation_list[i]]
             evaluation_dict.update(tmp_dict)
-
+        # print("8. 完成随机采样构成字典")
         result_list = []
-        q = queue.Queue()
         audio = list(evaluation_dict.keys())
         num_threads = len(audio)
-        threads = []
-
-        for i in range(num_threads):
-            name = self.audio_name[:-4] + '_' + str(i) + '.xml'
-            # print('循环时保存xml地址:', name)
-            t = threading.Thread(target=self.evaluation, args=(evaluation_dict[audio[i]], audio[i], q, name))
-            t.start()
-            threads.append(t)
-
-        for t in threads:
-            t.join()
-
-        while not q.empty():
-            result_list.append(q.get())
-
-        return affix_score, result_list
-
+        # print("9.开始多线程执行评测")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+            future_to_audio = {executor.submit(self.evaluation, evaluation_dict[audio[i]], audio[i], self.audio_name[:-4] + '_' + str(i) + '.xml'): audio[i] for i in range(num_threads)}
+            for future in concurrent.futures.as_completed(future_to_audio):
+                try:
+                    result = future.result()
+                    result_list.append(result)
+                except Exception as exc:
+                    print('Generated an exception: %s' % (exc))
+        return self.affix_score, result_list
     #########################取值##################################
     def get_xml_score(self, file):
         import xml.etree.ElementTree as ET
