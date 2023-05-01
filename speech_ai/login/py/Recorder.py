@@ -118,61 +118,61 @@ class Recorder:
         return token
 
     #######################################阿里云转写#################################
-    def ali_audio_rec(self, audioFile, audioFileName, q):
-        import http.client
-        import json
+    # def ali_audio_rec(self, audioFile, audioFileName, q):
+    #     import http.client
+    #     import json
 
-        def process(request, audioFile):
-            with open(audioFile, mode='rb') as f:
-                audioContent = f.read()
-            host = 'nls-gateway.cn-shanghai.aliyuncs.com'
-            httpHeaders = {
-                'Content-Length': len(audioContent)
-            }
-            conn = http.client.HTTPConnection(host)
+    #     def process(request, audioFile):
+    #         with open(audioFile, mode='rb') as f:
+    #             audioContent = f.read()
+    #         host = 'nls-gateway.cn-shanghai.aliyuncs.com'
+    #         httpHeaders = {
+    #             'Content-Length': len(audioContent)
+    #         }
+    #         conn = http.client.HTTPConnection(host)
 
-            conn.request(method='POST', url=request, body=audioContent, headers=httpHeaders)
-            response = conn.getresponse()
-            # print('Response status and response reason:')
-            # print(response.status, response.reason)
-            body = response.read()
-            try:
-                # print('Recognize response is:')
-                body = json.loads(body)
-                # print(body)
-                status = body['status']
-                if status == 20000000:
-                    result = body['result']
-                    # print('Recognize result: ' + result)
-                else:
-                    print('Recognizer failed!')
-            except ValueError:
-                print('The response is not json format string')
-            conn.close()
-            return body
+    #         conn.request(method='POST', url=request, body=audioContent, headers=httpHeaders)
+    #         response = conn.getresponse()
+    #         # print('Response status and response reason:')
+    #         # print(response.status, response.reason)
+    #         body = response.read()
+    #         try:
+    #             # print('Recognize response is:')
+    #             body = json.loads(body)
+    #             # print(body)
+    #             status = body['status']
+    #             if status == 20000000:
+    #                 result = body['result']
+    #                 # print('Recognize result: ' + result)
+    #             else:
+    #                 print('Recognizer failed!')
+    #         except ValueError:
+    #             print('The response is not json format string')
+    #         conn.close()
+    #         return body
 
-        appKey = 'PStE5j0aeBM2SRCO'
-        token = self.get_token()
+    #     appKey = 'PStE5j0aeBM2SRCO'
+    #     token = self.get_token()
 
-        url = 'https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/FlashRecognizer'
-        format = 'wav'
-        sampleRate = 16000
-        enablePunctuationPrediction = True
-        enableInverseTextNormalization = True
-        enableVoiceDetection = False
+    #     url = 'https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/FlashRecognizer'
+    #     format = 'wav'
+    #     sampleRate = 16000
+    #     enablePunctuationPrediction = True
+    #     enableInverseTextNormalization = True
+    #     enableVoiceDetection = False
 
-        request = url + '?appkey=' + appKey
-        request = request + '&token=' + token
-        request = request + '&format=' + format
-        request = request + '&sample_rate=' + str(sampleRate)
-        # print('Request: ' + request)
-        result = process(request, audioFile)
-        text = []
-        tmp = result['flash_result']['sentences']
-        for i in range(len(tmp)):
-            text.append(tmp[i]['text'])
-        content = ''.join(text)
-        q.put((audioFileName, content))
+    #     request = url + '?appkey=' + appKey
+    #     request = request + '&token=' + token
+    #     request = request + '&format=' + format
+    #     request = request + '&sample_rate=' + str(sampleRate)
+    #     # print('Request: ' + request)
+    #     result = process(request, audioFile)
+    #     text = []
+    #     tmp = result['flash_result']['sentences']
+    #     for i in range(len(tmp)):
+    #         text.append(tmp[i]['text'])
+    #     content = ''.join(text)
+    #     q.put((audioFileName, content))
 
     ######################################时长&音频分割##################################
     def audio_duration(self, audio_file):
@@ -227,28 +227,74 @@ class Recorder:
             return new_list
 
     ######################################转写测试函数###########################
-    def Aliyun(self, llist):
+    def ali_audio_rec(self, audioFiles):
         import threading
-        from queue import Queue
+        import http.client
+        import json
+        
+        def process(request, audioFile):
+            with open(audioFile, mode='rb') as f:
+                audioContent = f.read()
+            host = 'nls-gateway.cn-shanghai.aliyuncs.com'
+            httpHeaders = {
+                'Content-Length': len(audioContent)
+            }
+            conn = http.client.HTTPConnection(host)
+            conn.request(method='POST', url=request, body=audioContent, headers=httpHeaders)
+            response = conn.getresponse()
+            body = response.read()
+            try:
+                body = json.loads(body)
+                status = body['status']
+                if status == 20000000:
+                    result = body['result']
+                else:
+                    print('Recognizer failed!')
+            except ValueError:
+                print('The response is not json format string')
+            conn.close()
+            return body
 
-        result = {}
+        def process_audio_file(audioFile, result_dict):
+            request = url + '?appkey=' + appKey
+            request = request + '&token=' + token
+            request = request + '&format=' + format
+            request = request + '&sample_rate=' + str(sampleRate)
+            result = process(request, audioFile)
+            try:
+                text = []
+                tmp = result['flash_result']['sentences']
+                for i in range(len(tmp)):
+                    text.append(tmp[i]['text'])
+                content = ''.join(text)
+                result_dict[audioFile] = content
+                
+            except KeyError:
+                print(f"Warning: 'flash_result' key not found in result for file: {audioFile}")
+
+        appKey = 'PStE5j0aeBM2SRCO'
+        token = self.get_token()
+
+        url = 'https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/FlashRecognizer'
+
+        format = 'wav'
+        sampleRate = 16000
+        enablePunctuationPrediction = True
+        enableInverseTextNormalization = True
+        enableVoiceDetection = False
+
         threads = []
-        q = Queue()
-        for i in range(len(llist)):
-            for j in range(len(llist[i])):
-                t = threading.Thread(target=self.ali_audio_rec, args=(llist[i][j], llist[i][j], q))
-                threads.append(t)
-                t.start()
+        result_dict = {}
 
-        # Wait for all threads to finish executing
-        for t in threads:
-            t.join()
+        for audioFile in audioFiles:
+            thread = threading.Thread(target=process_audio_file, args=(audioFile, result_dict))
+            thread.start()
+            threads.append(thread)
 
-        # Add the return values of all threads to the result dictionary
-        while not q.empty():
-            audioFileName, transliterationResult = q.get()
-            result[audioFileName] = transliterationResult
-        return result
+        for thread in threads:
+            thread.join()
+
+        return result_dict
 
     ###############################进行转写########################
     def audio_trans(self):
@@ -259,7 +305,7 @@ class Recorder:
         # 第二次分割，变成二维列表
         new_list = self.list_split(segment_files)
         # 开始转写
-        result = self.Aliyun(new_list)
+        result = self.ali_audio_rec(new_list)
         return result
 
     ##########################################语音评测###########################################

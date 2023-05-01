@@ -225,14 +225,17 @@ def convert_video_to_audio(file_path):
     try:
         audio = AudioSegment.from_file(file_path, file_ext[1:])
     except CouldntDecodeError:
-        raise Exception(f" {file_ext} 格式不支持, 请使用 mp4, webm, flv 等视频格式")
-    # Convert to mono
+        raise Exception(f" {file_ext} 格式不支持, 请使用 mp4, webm, flv,wav 等视频音频格式格式")
+    # 转换为单声道
     audio = audio.set_channels(1)
 
-    # Convert to 16kHz
+    # 转换为采样率16kHz
     audio = audio.set_frame_rate(16000)
 
-    # Save as WAV file
+    # 采样位数16位
+    audio = audio.set_sample_width(2)
+
+    # 保存为wav文件
     new_file_path = file_path.split(".")[0] + ".wav"
     audio.export(new_file_path, format="wav")
     return new_file_path
