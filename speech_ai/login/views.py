@@ -6,7 +6,8 @@ import random
 import shutil
 import threading
 import uuid
-import cv2
+from pathlib import Path
+
 import mediapipe as mp
 import numpy as np
 from deepface import DeepFace
@@ -16,18 +17,21 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # 解决 Forbidden (CSRF token missing or incorrect.)
-from django.views.decorators.csrf import csrf_exempt
 from speech_ai import settings
 from . import models
 from .MyForms import *
 from .fuc import findDb
 from .py.Recorder import Recorder
-from pathlib import Path
+
+import cv2
+from mtcnn import MTCNN
+from PIL import Image
+
 
 # 项目根目录
 BaseDir = Path(__file__).resolve().parent.parent
 BaseDir = str(BaseDir).replace('\\', '/')
-print(BaseDir)
+# print(BaseDir)
 
 # 存放上一张图片的人体点位置
 last_pose = {}
@@ -149,9 +153,11 @@ def speech(request):
                 score = poseScore(stand_pose, test)
                 last_pose[user.id] = test
 
-            eps = DeepFace.analyze(img_path=file_path, detector_backend=backends[5], actions=('emotion',),
-                                   enforce_detection=False)
-            ret = {'eps': eps['dominant_emotion'], 'status': True, 'tip': '成功执行'}
+            # eps = DeepFace.analyze(img_path=file_path, detector_backend=backends[5], actions=('emotion',),
+            #                        enforce_detection=False)
+            eps = MyExpression(file_path)
+
+            ret = {'eps': eps, 'status': True, 'tip': '成功执行'} # eps['dominant_emotion']
 
             pose = models.Pose.objects.create(
                 uid=user.id,
@@ -244,6 +250,7 @@ def convert_video_to_audio(file_path):
     return new_file_path
 
 
+
 def audio_analyse(file_path, uid, time):
     print('音频分析')
     # 提取音频
@@ -289,6 +296,105 @@ def audio_analyse(file_path, uid, time):
     speech_temp.save()
 
 
+import torch.nn as nn
+import cv2
+import dlib
+from PIL import Image
+from efficientnet_pytorch import EfficientNet
+from torchvision import transforms
+
+
+def MyExpression(image_path):
+    model = EfficientNet.from_pretrained('efficientnet-b0')
+    num_ftrs = model._fc.in_features
+    model._fc = nn.Linear(num_ftrs, 8)
+
+    # 加载权重
+    import torch
+
+    # 加载已保存的模型
+    model_path = BaseDir + '/media/weights/MyExpression.pth'
+
+    # 加载模型权重
+    checkpoint = torch.load(model_path, map_location='cpu')
+    model.load_state_dict(checkpoint)
+
+    # 设置为评估模式
+    model.eval()
+
+    emotion = ['anger', 'disgust', 'fear', 'happy', 'sad', 'surprised', 'normal']
+    transform = transforms.Compose([
+        transforms.Resize((48, 48)),
+        transforms.ToTensor(),
+        # transforms.Normalize(mean=[0.5], std=[0.5])
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
+    # # 读取图像
+    # image = cv2.imread(image_path)
+    # image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    #
+    # # 创建 MTCNN 检测器
+    # detector = MTCNN()
+    #
+    # # 使用 MTCNN 检测人脸
+    # faces = detector.detect_faces(image_rgb)
+    #
+    # if len(faces) == 0:
+    #     return None
+    #
+    # # 遍历检测到的人脸
+    # for face in faces:
+    #     # 获取人脸区域
+    #     x, y, w, h = face['box']
+    #
+    #     # 裁剪人脸
+    #     cropped_face = image[y:y + h, x:x + w]
+    #
+    #     # 缩放到 48x48 像素
+    #     resized_face = cv2.resize(cropped_face, (48, 48), interpolation=cv2.INTER_LINEAR)
+    #
+    #     # 将图像转换为 PIL 图像
+    #     face_image = Image.fromarray(resized_face)
+
+
+
+    # 装载dlib的人脸检测器
+    face_detector = dlib.get_frontal_face_detector()
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+    # 使用dlib检测人脸
+    faces = face_detector(image, 1)
+
+    if len(faces) == 0:
+        return 'normal'
+
+    # 遍历检测到的人脸
+    for face in faces:
+        # 获取人脸区域
+        x, y, w, h = face.left(), face.top(), face.width(), face.height()
+
+        # 裁剪人脸
+        cropped_face = image[y:y + h, x:x + w]
+
+        # 缩放到48x48像素
+        resized_face = cv2.resize(cropped_face, (48, 48), interpolation=cv2.INTER_LINEAR)
+
+        # 将图像转换为PIL图像
+        face_image = Image.fromarray(resized_face)
+
+        # 转换为模型所需的输入格式
+        face_image_rgb = face_image.convert('RGB')
+        face_tensor = transform(face_image_rgb).unsqueeze(0)
+
+        # 使用模型进行预测
+        output = model(face_tensor)
+
+        prediction = torch.argmax(output, 1)
+
+        return emotion[prediction.item()]
+
+
 # 本地视频分析
 def video_analyse(video_path, date_dir, uid, time):
     video_path = video_path.replace('\\', '/')
@@ -301,8 +407,10 @@ def video_analyse(video_path, date_dir, uid, time):
 
     # 计算每一帧的时间
     frame_time = 1 / frame_rate
+
     # 每隔几秒截取一帧
-    interval = 8
+    interval = 5
+
     # 计算每隔 interval 秒需要截取的帧数
     frames_to_capture = int(interval / frame_time)
 
@@ -334,48 +442,53 @@ def video_analyse(video_path, date_dir, uid, time):
             mp_drawing.draw_landmarks(annotated_image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
 
             if pose.any() != 0:
-                try:
-                    # 原始图片
-                    file_path = os.path.join(date_dir, "{}.jpg".format(count)).replace('\\', '/')
-                    cv2.imwrite(file_path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
+                # try:
+                # 原始图片
+                file_path = os.path.join(date_dir, "{}.jpg".format(count)).replace('\\', '/')
+                cv2.imwrite(file_path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
 
-                    # 人体关键点标记的图片
-                    pose_path = os.path.join(date_dir, "{}_1.jpg".format(count)).replace('\\', '/')
-                    cv2.imwrite(pose_path, cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
+                # 人体关键点标记的图片
+                pose_path = os.path.join(date_dir, "{}_1.jpg".format(count)).replace('\\', '/')
+                cv2.imwrite(pose_path, cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
 
-                    # 表情识别
-                    backends = ['opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface', 'mediapipe']
-                    eps = DeepFace.analyze(img_path=file_path, detector_backend=backends[0], actions=('emotion',))
+                # 表情识别
+                # backends = ['opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface', 'mediapipe']
+                # eps = DeepFace.analyze(img_path=file_path, detector_backend=backends[0], actions=('emotion',))
 
-                    if count == 1:
-                        last_pose[uid] = pose.reshape(-1, 4)
-                        limbs = 0
-                        body = 0
+                eps = MyExpression(file_path)
+                if eps is None:
+                    continue
+                print(eps)
+
+                if count == 1:
+                    last_pose[uid] = pose.reshape(-1, 4)
+                    limbs = 0
+                    body = 0
+                    flag = True
+                else:
+                    test = pose.reshape(-1, 4)
+                    limbs = limbsChanges(last_pose[uid], test)
+                    body = bodyDeviation(last_pose[uid], test)
+                    if limbs + body > 1:
                         flag = True
                     else:
-                        test = pose.reshape(-1, 4)
-                        limbs = limbsChanges(last_pose[uid], test)
-                        body = bodyDeviation(last_pose[uid], test)
-                        if limbs + body > 1:
-                            flag=True
-                        else:
-                            flag=False
-                        last_pose[uid] = test
+                        flag = False
+                    last_pose[uid] = test
 
-                    img_time = round(random_frame_index * frame_time, 2)
-                    score = poseScore(stand_pose, pose.reshape(-1, 4))
-                    pose = models.Pose.objects.create(
-                        uid=uid,
-                        # 标记
-                        img=file_path.replace('\\', '/').replace(BaseDir, ''),
-                        pose=pose_path.replace('\\', '/').replace(BaseDir, ''),
-                        score=score, emotion=eps['dominant_emotion'],
-                        flag=flag, limbsChanges=limbs, bodyDeviation=body,
-                        date=time, imgTime=img_time)
-                    pose.save()
-                    count += 1
-                except:
-                    print("表情识别失败")
+                img_time = round(random_frame_index * frame_time, 2)
+                score = poseScore(stand_pose, pose.reshape(-1, 4))
+                pose = models.Pose.objects.create(
+                    uid=uid,
+                    # 标记
+                    img=file_path.replace('\\', '/').replace(BaseDir, ''),
+                    pose=pose_path.replace('\\', '/').replace(BaseDir, ''),
+                    score=score, emotion=eps,  # eps['dominant_emotion']
+                    flag=flag, limbsChanges=limbs, bodyDeviation=body,
+                    date=time, imgTime=img_time)
+                pose.save()
+                count += 1
+                # except:
+                #     print("表情识别失败")
             else:
                 print("未识别到姿态")
         else:
@@ -462,7 +575,7 @@ def speachDateScore(request, date):
                               {'login_status': True, 'user_name': user_name,
                                'date': date.strftime('%Y-%m-%d %H:%M:%S'), 'data': dt, 'speech_score': speech_table,
                                'content': speech_table, 'pose': pose, 'count_flag': count_flag,
-                               'topic_flag': topic_flag, 'dates': dates,'limbs':limbs, 'body':body,
+                               'topic_flag': topic_flag, 'dates': dates, 'limbs': limbs, 'body': body,
 
                                })
             else:
