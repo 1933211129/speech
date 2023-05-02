@@ -297,32 +297,30 @@ def audio_analyse(file_path, uid, time):
 
 
 import torch.nn as nn
-import cv2
 import dlib
 from PIL import Image
 from efficientnet_pytorch import EfficientNet
 from torchvision import transforms
 
+# 加载权重
+import torch
+
+model = EfficientNet.from_pretrained('efficientnet-b0')
+num_ftrs = model._fc.in_features
+model._fc = nn.Linear(num_ftrs, 8)
+
+# 加载已保存的模型
+model_path = BaseDir + '/media/weights/MyExpression.pth'
+
+# 加载模型权重
+checkpoint = torch.load(model_path, map_location='cpu')
+model.load_state_dict(checkpoint)
+
+# 设置为评估模式
+model.eval()
 
 def MyExpression(image_path):
-    model = EfficientNet.from_pretrained('efficientnet-b0')
-    num_ftrs = model._fc.in_features
-    model._fc = nn.Linear(num_ftrs, 8)
-
-    # 加载权重
-    import torch
-
-    # 加载已保存的模型
-    model_path = BaseDir + '/media/weights/MyExpression.pth'
-
-    # 加载模型权重
-    checkpoint = torch.load(model_path, map_location='cpu')
-    model.load_state_dict(checkpoint)
-
-    # 设置为评估模式
-    model.eval()
-
-    emotion = ['anger', 'disgust', 'fear', 'happy', 'sad', 'surprised', 'normal']
+    emotion = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
     transform = transforms.Compose([
         transforms.Resize((48, 48)),
         transforms.ToTensor(),
@@ -357,8 +355,6 @@ def MyExpression(image_path):
     #     # 将图像转换为 PIL 图像
     #     face_image = Image.fromarray(resized_face)
 
-
-
     # 装载dlib的人脸检测器
     face_detector = dlib.get_frontal_face_detector()
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
@@ -367,7 +363,7 @@ def MyExpression(image_path):
     faces = face_detector(image, 1)
 
     if len(faces) == 0:
-        return 'normal'
+        return 'neutral'
 
     # 遍历检测到的人脸
     for face in faces:

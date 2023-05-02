@@ -122,10 +122,12 @@
             <br>
 
             <div id="echart_container">
-                <div class="grid-item1" id="emotion_count" style="width: 50vw; height:50vh;"></div>
+                <div class="grid-item1" id="emotion_count" style="width: 50vw; height:33vh;"></div>
                 <div class="grid-item2" id="stand_score" style="width: auto; height:auto;"></div>
                 <div class="grid-item3" id="speech_score_bar" style="width: auto; height:auto;"></div>
                 <div class="grid-item4" id="speech_score_radar" style="width: auto; height:auto;"></div>
+                <div class="grid-item5" id="txt" style="width: 50vw; height:33vh;"></div>
+                <div class="grid-item6" id="speech" style="width: 50vw; height:33vh;"></div>
             </div>
 
             <br>
@@ -167,12 +169,96 @@
         </div>
 
     <script  type="text/javascript">
+
+        let score_demo = [80, 90, 76, 76, 100.0, 90];
+
+        const txtBar = echarts.init(document.getElementById('txt'));
+        let txt_option = {
+          title: {
+            text: '演讲得分'
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          legend: {},
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+            {#boundaryGap: [0, 0.01]#}
+            boundaryGap: [0, 0.0001]
+          },
+          yAxis: {
+            type: 'category',
+            data: ['发音流畅度', '演讲完整度', '发音韵律', '发音调型','缀词冗余',
+                {% if topic_flag|safe == 'false' %} '主题契合度', {% endif %}'总分'
+                ]
+          },
+          series: [
+            {
+              {#name: '{{ date }}',#}
+              type: 'bar',
+              data: score_demo
+            }
+          ]
+        };
+        txtBar.setOption(txt_option);
+
+
+        const speechBar = echarts.init(document.getElementById('speech'));
+        let speech_option = {
+          title: {
+            text: '演讲得分'
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          legend: {},
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+            {#boundaryGap: [0, 0.01]#}
+            boundaryGap: [0, 0.0001]
+          },
+          yAxis: {
+            type: 'category',
+            data: ['发音流畅度', '演讲完整度', '发音韵律', '发音调型','缀词冗余',
+                {% if topic_flag|safe == 'false' %} '主题契合度', {% endif %}'总分'
+                ]
+          },
+          series: [
+            {
+              {#name: '{{ date }}',#}
+              type: 'bar',
+              data: score_demo
+            }
+          ]
+        };
+        speechBar.setOption(speech_option);
+
+
+
+
         const dateSelect = document.getElementById('dateSelect');
         const dateForm = document.getElementById('dateForm');
         dateSelect.addEventListener('change', (event) => {
             dateForm.submit();
         });
-
 
         let score = {{ data.score }};
         let emotion = {{ data.emotion|safe }};

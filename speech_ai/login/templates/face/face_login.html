@@ -2,26 +2,24 @@
 <html lang="zh-CN">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<meta name="viewport"
+			content="width=device-width, user-scalable=no, initial-scale=1.0,
+			maximum-scale=1.0, minimum-scale=1.0">
 		<title>{{ page }}</title>
-
 		<link rel="icon" href="{% static 'favicon/logo.svg'%}">
-
-{#        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />#}
-{#        <link href="https://fonts.googleapis.com/css?family=Lobster|Poppins:400,600,700&display=swap" rel="stylesheet">#}
-{#        <link href="{% static 'css/style.css' %}" rel="stylesheet" />#}
-{#        <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />#}
 
         <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />
         <link href="{% static 'css/fontFace.css' %}" rel="stylesheet">
         <link href="{% static 'css/style.css' %}" rel="stylesheet" />
         <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
 
+
         <link rel="stylesheet" href="{% static 'css/camera.css' %}">
 
 	</head>
 
 	<body>
+
         <div class="hero_area">
             <!-- header section strats -->
             <header class="header_section">
@@ -72,14 +70,29 @@
                   <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
                       <ul class="navbar-nav">
+
                         <li class="nav-item">
                           <a class="nav-link" href="/index"> 主页 </a>
                         </li>
 
-                          <li class="nav-item active" >
-                            {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
-                            <a class="nav-link last_link" href="/login"> 登录 </a>
+                          <li class="nav-item">
+                              <a class="nav-link" href="/login/score"> 评测结果 </a>
                           </li>
+
+
+                          <li class="nav-item active">
+                              <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
+                          </li>
+
+                          <li class="nav-item">
+                            {% comment %} <a class="nav-link last_link" href="testimonial.html"> 待定 </a> {% endcomment %}
+                              <a class="nav-link last_link" href="/login/logout"> 注销 </a>
+                          </li>
+
+                          <li class="nav-item">
+                              <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
+                          </li>
+
 
                       </ul>
                     </div>
@@ -88,447 +101,241 @@
               </div>
             </header>
 
-		
-            <div class="content" id="content">
-                <div id="tip" style="display: none;"></div>
+            <div class="content" >
+                <h2 id="txt"> 请点击开启摄像头，并看向摄像头 </h2>
 
-                    <h2 id="txt">请点击开启摄像头,并看向摄像头</h2>
-                    <div id="tip" style="display: none;"></div>
-                    {% comment %} <input type="hidden" id="result" /> {% endcomment %}
-                    <div id="msg" style="display: none;"></div>
-                    <div id="positions"></div>
+                <div class="panel">
+                    <button class="btn" id="connect">开启摄像头</button>
+                    <button class="btn" id="disconnect" style="display:none">关闭摄像头</button>
+                    <!-- <button class="btn" id="capture">截图</button> -->
+                </div>
 
-                    <div class="panel">
-                        <button class="btn" id="connect">开启摄像头</button>
-                        <button class="btn" id="disconnect">关闭摄像头</button>
-                        <!-- <button class="btn" id="capture">截图</button> -->
-                    </div>
+                <div id='video'>
+                    <img src="{% static 'image/camera.png' %}" id="img-temp" style="height: 450px; width: 600px" alt="摄像头图片"/>
+                    <video id="vid" style="display:none"></video>
+                    <canvas id="canvas2" class="canvas2" style="display:none"></canvas>
+                </div>
 
-                    <div id='video'>
-                        <video id="vid" style="display:none"></video>
-                        <img src="{% static 'image/camera.png' %}" id="img-temp" style="height: 450px; width: 600px" alt="摄像头图片"/>
-                        <canvas id="canvas2" class="canvas2" style="display:none" ></canvas>
-                        <div></div>
-                    </div>
+                <div class="device-list" id="devices">
+                    <ul class="ul"></ul>
+                    <button class="btn" id="close">关 闭</button>
+                </div>
 
-                    <div class="device-list" id="devices">
-                        <ul class="ul"></ul>
-                        <button class="btn" id="close">关 闭</button>
-                    </div>
-
-                    <div class="img-list" id="imgList">
-                    </div>
-
+                <div class="img-list" id="imgList">
+                </div>
             </div>
 
         </div>
 
-
 		<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 		<script src="{% static 'js/tracking-min.js' %}" type="text/javascript"></script>
+{#        <script src="{% static 'js/tracking.js' %}" type="text/javascript"></script>#}
 		<script src="{% static 'js/face-min.js' %}" type="text/javascript"></script>
+{#		 <script src="{% static 'js/camera.js' %}"></script> #}
 
-		{% comment %} <script src="/static/js/camera.js"></script> {% endcomment %}
-		{% comment %} <script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script> {% endcomment %}
+		<script>
+			const msg_style = document.getElementById("txt");
 
-		<script src="{% static 'js/utils.js' %}"></script>
-		<script src="{% static 'js/numeric.js' %}"></script>
-		<script src="{% static 'js/ccv.js' %}"></script>
-		<script src="{% static 'js/clmtrackr.js' %}"></script>
-		<script src="{% static 'js/model_pca_20_svm.js' %}"></script>
+			const start = document.getElementById('connect');
+  			const stop = document.getElementById('disconnect');
 
-		<script src="{% static 'js/mui.min.js' %}"></script>
-		<script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
+			const videoWidth = 600;
+			const videoHeight = 450;
+			const video = document.querySelector('video');
+			const deviceList = document.getElementById('devices');
+			const canvas = document.createElement('canvas');
 
+			let mediaTrack = null;
+			const ctx = canvas.getContext('2d', {willReadFrequently: true});
+			const imgList = document.getElementById('imgList');
 
-		<script type="text/javascript">
-            const start = document.getElementById('connect');
-            const stop = document.getElementById('disconnect');
+			const vid = document.getElementById('vid');
+			const canvas2 = document.getElementById('canvas2');
 
-            const videoWidth = 600;
-            const videoHeight = 450;
-            const deviceList = document.getElementById('devices');
-            let mediaTrack = null;
-            const imgList = document.getElementById('imgList');
-            const video = document.querySelector('video');
-            const canvas = document.createElement('canvas');
-            canvas.width = videoWidth;
-            canvas.height = videoHeight;
-            const ctx = canvas.getContext('2d', {willReadFrequently: true});
-            const tracker = new tracking.ObjectTracker('face');
+            canvas.setAttribute('width', '600px');
+            canvas.setAttribute('height', '450px');
+            canvas2.setAttribute('width', '640px');
+            canvas2.setAttribute('height', '450px');
 
-            const vid = document.getElementById('vid');
-            vid.width = videoWidth;
-            vid.height = videoHeight;
-            const canvas2 = document.getElementById('canvas2');
-            canvas2.width = videoWidth;
-            canvas2.height = videoHeight;
-            const ctx2 = canvas2.getContext('2d', {willReadFrequently: true});
+			const ctx2 = canvas2.getContext('2d');
+			const tracker = new tracking.ObjectTracker('face');
 
             const imgTemp = document.getElementById('img-temp');
 
             let sum = 0;
-            let flag = true;
-            const key = false;
+            let count = 0;
+            const param = new FormData();
 
-            {% comment %} const msg_mouse = document.getElementById('result'); {% endcomment %}
-            const msg_style = document.getElementById("txt");
-            let positions;
-
-
-            //活体
-            let last_time = 0; //时间因素
-            let last_nose_left = 0;
-            let last_nose_top = 0;
-
-            //张嘴动作
-            let mouse_ok = false;
-            let header_ok = false;
-
-            let last_dis_eye_norse = 0;
-            let last_dis_mouse = 0;
-            let last_dm = 0;
-            let last_dis_header = 0;
-            let last_eye_x = 0;
-            let last_eye_y = 0;
-            let last_mouse_x = 0;
-            let last_mouse_y = 0;
-
-
-            const ctracker = new clm.tracker();
-            ctracker.init(pModel);
-            ctracker.start(vid);
-            //ctracker.draw(canvasInput);
-            let time;
-
-            function stopTrack(){
-
-            }
-
-            // 连接摄像头
-            function connectCamera(groupId) {
-                start.style.display = "none";
-                imgTemp.style.display = 'none';
-
-                canvas2.style.display = "";
-                vid.style.display = "";
-                stop.style.display = "";
-
-
-                navigator.mediaDevices
-                    .getUserMedia({
-                        video: { groupId, width: videoWidth, height: videoHeight },
-                    })
-                    .then(function (stream) {
-                        video.srcObject = stream;
-                        mediaTrack = stream.getTracks()[0];
-                        video.onloadedmetadata = function () {
-                            video.play();
-                        };
-
-                        // 开启
-                        drawLoop();
-
-                    }).catch(console.log);
-            }
-
-            // 关闭摄像头
-            document.getElementById('disconnect').onclick = function (){
-                canvas2.style.display = "none";
-                vid.style.display = "none";
-                stop.style.display = "none";
-
-                start.style.display = "";
-                imgTemp.style.display = '';
-
-                // clearInterval(id);
-                sum = 0;
-                count = 0;
-                ctx2.clearRect(0, 0, videoWidth, videoHeight);
-                video.pause();
-                video.srcObject = null;
-                if (mediaTrack) mediaTrack.stop();
-                msg_style.innerHTML = "请点击开启摄像头,并看向摄像头";
-                cancelAnimationFrame(time);
-                //活体
-                last_time = last_nose_left = last_nose_top = 0;
-                //张嘴动作
-                mouse_ok = header_ok = false;
-                last_dis_eye_norse = last_dis_mouse = last_dm = last_dis_header = last_eye_x  = last_eye_y  = last_mouse_x  = last_mouse_y  = 0;
-
-            };
 
             // 开启摄像头
-            // document.getElementById('connect').onclick = connect()
-            document.getElementById('connect').onclick = function ()  {
-                navigator.mediaDevices.enumerateDevices().then(function (devices) {
+			// document.getElementById('connect').onclick = connect()
+			document.getElementById('connect').onclick = function ()  {
+				navigator.mediaDevices.enumerateDevices().then(function (devices) {
+						// console.log(devices);
+						const videoInputs = devices.filter(d => d.kind === 'videoinput');
+						if (!videoInputs.length) {
+							alert('请接入摄像头');
+						} else if(videoInputs.length === 1){
+							connectCamera(videoInputs[0].groupId);
 
-                        // console.log(devices);
-                        const videoInputs = devices.filter(d => d.kind === 'videoinput');
-                        if (!videoInputs.length) {
-                            alert('请接入摄像头');
-
-                        } else if(videoInputs.length === 1){
-                            connectCamera(videoInputs[0].groupId);
-
-                        } else {
-                            const lis = videoInputs.map((d, i) => `<li id="${d.groupId}">摄像头${i + 1}</li>`);
-                            deviceList.querySelector('ul').innerHTML = lis.join('');
-                            deviceList.classList.add('active');
-                        }
-                    }
-                )
-            };
-
-            // 选择摄像头
-            deviceList.onclick = function (e) {
-                const t = e.target;
-                if (t.nodeName === 'LI') {
-                    connectCamera(t.id);
-                    deviceList.classList.remove('active');
-                }
-            };
-            document.getElementById('close').onclick = function () {
-                deviceList.classList.remove('active');
-            };
+						} else {
+							const lis = videoInputs.map((d, i) => `<li id="${d.groupId}">摄像头${i + 1}</li>`);
+							deviceList.querySelector('ul').innerHTML = lis.join('');
+							deviceList.classList.add('active');
+						}
+					}
+				)
+			};
 
 
-            function jump(key){
-                window.location.href = '/' + key;
-            }
+			// 选择摄像头
+			deviceList.onclick = function (e) {
+				const t = e.target;
+				if (t.nodeName === 'LI') {
+					connectCamera(t.id);
+					deviceList.classList.remove('active');
+				}
+			};
 
-            function track(){
-                {#tracker.setInitialScale(2.8);#}
-                {#tracker.setStepSize(1);#}
-                {#tracker.setEdgesDensity(0.05);#}
-
-                tracker.setInitialScale(4);
-                tracker.setStepSize(2);
-                tracker.setEdgesDensity(0.1);
-                {#let tra = tracking.track('#vid', tracker);#}
-
-                tracker.on('track', function (event) {
-                    ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
-                    event.data.forEach(function (rect) {
-                        ctx2.strokeStyle = '#00fe44';
-                        ctx2.strokeRect(rect.x, rect.y, rect.width, rect.height);
-
-                        sum += 1;
-
-                        if(sum % 10 === 0){
-                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                            let imgURL = canvas.toDataURL('image/png', 1);
-                            let imgContainer = document.createElement('div');
-                            imgContainer.className = 'img';
-                            let img = new Image();
-                            img.src = imgURL;
-                            imgContainer.appendChild(img);
-                            imgList.appendChild(imgContainer);
-
-                            //图片转成Buffer
-                            function dataURItoBlob(dataURI) {
-                                let byteString = atob(dataURI.split(',')[1]);
-                                let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-                                let ab = new ArrayBuffer(byteString.length);
-                                let ia = new Uint8Array(ab);
-                                for (let i = 0; i < byteString.length; i++) {
-                                    ia[i] = byteString.charCodeAt(i);
-                                }
-                                return new Blob([ab], {type: mimeString});
-                            }
-
-                            let param = new FormData();
-                            let blob = dataURItoBlob(imgURL);
-                            param.append('face', blob);
-                            param.append("csrfmiddlewaretoken",'{{ csrf_token }}');
+			// 关闭摄像头
+			document.getElementById('close').onclick = function () {
+				deviceList.classList.remove('active');
+			};
 
 
+			function jump(key){
+				window.location.href = '/' + key;
+			}
 
-                            $.ajax({
-                                url: '/login/face/login',
-                                async: false,
-                                type: "POST",
-                                data: param,
-                                processData: false,
-                                dataType: "json",
-                                cache: false,
-                                contentType: false,
-                                success: function (ret) {
-                                    if (ret['state'] === true){
-                                        if (flag){
-                                            flag = false;
-                                            sum = 0;
-                                            count = 0;
-                                            ctx2.clearRect(0, 0, videoWidth, videoHeight);
-                                            video.pause();
-                                            video.srcObject = null;
-                                            if (mediaTrack) mediaTrack.stop();
-                                            cancelAnimationFrame(time);
-                                            //活体
-                                            last_time = last_nose_left = last_nose_top = 0;
-                                            //张嘴动作
-                                            mouse_ok = header_ok = false;
-                                            last_dis_eye_norse = last_dis_mouse = last_dm = last_dis_header = last_eye_x  = last_eye_y  = last_mouse_x  = last_mouse_y  = 0;
+			function connectCamera(groupId) {
+				start.style.display = "none";
+                imgTemp.style.display = 'none';
+                vid.style.display = "";
+                canvas2.style.display = "";
+				stop.style.display = "";
 
+				navigator.mediaDevices
+					.getUserMedia({
+						video: { groupId, width: videoWidth, height: videoHeight },
+                    }).then(function (stream) {
+						video.srcObject = stream;
+                        video.volume = 0;
 
-                                            alert('登录成功，欢迎用户 '+ ret['user_name'] + ' , 点击确定跳转到首页');
-                                            jump('index');
+						video.onloadedmetadata = function () {
+							video.play();
+						};
+
+						tracker.setInitialScale(4);
+						tracker.setStepSize(2);
+						tracker.setEdgesDensity(0.1);
+
+                        // tracker.setInitialScale(2.8);
+                        // tracker.setStepSize(1);
+                        // tracker.setEdgesDensity(0.05);
+
+                        tracking.track('#vid', tracker);
+
+						tracker.on('track', function (event) {
+							ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+							event.data.forEach(function (rect) {
+								ctx2.strokeStyle = '#00fe44';
+								ctx2.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+                                msg_style.innerHTML = "正在识别，请保持面部在摄像头范围内";
+
+                                sum += 1;
+                                if(sum % 5 === 0){
+                                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                    let imgURL = canvas.toDataURL('image/png', 1);
+                                    let imgContainer = document.createElement('div');
+                                    imgContainer.className = 'img';
+                                    let img = new Image();
+                                    img.src = imgURL;
+                                    imgContainer.appendChild(img);
+                                    imgList.appendChild(imgContainer);
+
+                                    //图片转成Buffer
+                                    function dataURItoBlob(dataURI) {
+                                        let byteString = atob(dataURI.split(',')[1]);
+                                        let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                                        let ab = new ArrayBuffer(byteString.length);
+                                        let ia = new Uint8Array(ab);
+                                        for (let i = 0; i < byteString.length; i++) {
+                                            ia[i] = byteString.charCodeAt(i);
                                         }
-
-                                    }
-                                    else{
-                                        console.log('未找到此人脸 ！！！');
+                                        return new Blob([ab], {type: mimeString});
                                     }
 
-                                },
-                                error: function (param) {
-                                    console.log('失败 ！！！');
-                                    console.log(param);
-                                },
+                                    let param = new FormData();
+                                    let blob = dataURItoBlob(imgURL);
+                                    param.append('face', blob);
+                                    param.append("csrfmiddlewaretoken",'{{ csrf_token }}');
+
+
+
+                                    $.ajax({
+                                        url: '/login/face/login',
+                                        async: false,
+                                        type: "POST",
+                                        data: param,
+                                        processData: false,
+                                        dataType: "json",
+                                        cache: false,
+                                        contentType: false,
+                                        success: function (ret) {
+                                            if (ret['state'] === true){
+                                                sum = 0;
+                                                count = 0;
+                                                ctx2.clearRect(0, 0, videoWidth, videoHeight);
+                                                video.pause();
+                                                video.srcObject = null;
+                                                if (mediaTrack) mediaTrack.stop();
+
+                                                alert('登录成功，欢迎用户 '+ ret['user_name'] + ' , 点击确定跳转到首页');
+                                                jump('index');
+
+                                            }
+                                            else{
+                                                console.log('未找到此人脸 ！！！');
+                                            }
+
+                                        },
+                                        error: function (param) {
+                                            console.log('失败 ！！！');
+                                            console.log(param);
+                                        },
+                                    });
+                                }
+
+							});
+						});
+
+
+						document.getElementById('disconnect').onclick = function () {
+							// clearInterval(id);
+                            canvas2.style.display = "none";
+                            vid.style.display = "none";
+                            stop.style.display = "none";
+                            start.style.display = "";
+                            imgTemp.style.display = '';
+
+                            stream.getTracks().forEach(track => {
+                                track.stop();
                             });
-                        }
 
-                    });
-                });
-            }
+							sum = 0;
+							count = 0;
+							ctx2.clearRect(0, 0, videoWidth, videoHeight);
 
+                            video.pause();
+							video.srcObject = null;
 
-            function drawLoop() {
-                if (msg_style.innerHTML === "系统正在识别，请保持面部在摄像头范围内"){
-                    cancelAnimationFrame(time);
-                    track();
-                }
+						};
 
-                time = requestAnimationFrame(drawLoop);
-                positions = ctracker.getCurrentPosition();
+					}).catch(console.log);
+			}
+		</script>
 
-                if (positions) {
-                    if (last_time === 0 || (new Date().getTime() - last_time > 500 && new Date().getTime() - last_time < 10000)) {
-
-                        //眼睛和鼻子距离
-                        let xdiff = positions[62][0] - positions[27][0];
-                        let ydiff = positions[62][1] - positions[27][1];
-                        let dis_eye_norse = Math.pow((xdiff * xdiff + ydiff * ydiff), 0.5);
-
-
-                        //上嘴唇 和 下嘴唇 距离
-                        let xdiff_mouse = positions[53][0] - positions[47][0];
-                        let ydiff_mouse = positions[53][1] - positions[47][1];
-                        let dis_mouse = Math.pow((xdiff_mouse * xdiff_mouse + ydiff_mouse * ydiff_mouse), 0.5);
-                        let dm = Math.abs(dis_mouse - last_dis_mouse);
-
-                        if (last_dm !== 0){
-
-                            // 检测摇头
-                            if(header_ok){
-
-                                if (last_nose_left >0 && last_nose_top >0  && last_eye_x >0 && last_eye_y >0 &&
-                                        last_mouse_x  > 0 && last_mouse_y >0  &&
-                                        Math.abs(positions[27][0] - last_eye_x) > 10 &&
-                                        Math.abs(positions[53][0] - last_mouse_x) > 10 &&
-                                        Math.abs(positions[62][0] - last_nose_left) > 10
-                                    ){
-                                        msg_style.innerHTML = "系统正在识别，请保持面部在摄像头范围内";
-                                }
-
-                            }
-
-                            // 检测张嘴
-                            else if (mouse_ok) {
-
-                                if (Math.floor(dm) >0  && last_dm>0 && ( dm-last_dm)>6){
-
-                                    header_ok = true;
-                                    msg_style.innerHTML = "摇摇头";
-
-                                }
-                            }
-
-                            // 检测不动
-                            else{
-                                //上次的眼鼻距离和这次的眼鼻距离差
-                                let dn = Math.abs(dis_eye_norse - last_dis_eye_norse);
-
-                                if (Math.floor(dn) === 0 && last_nose_left > 0
-                                    && last_nose_top > 0
-                                    && Math.abs(positions[62][0] - last_nose_left) < 20
-                                    && Math.abs(positions[62][1] - last_nose_top) < 20) {
-
-                                    mouse_ok = true;
-                                    msg_style.innerHTML = "请张合嘴巴";
-
-                                }
-
-                                else {
-                                    msg_style.innerHTML = "请保持面部不动";
-                                }
-                            }
-
-                        }
-
-                        last_time = new Date().getTime();
-                        last_dis_mouse = dis_mouse;
-                        last_dm = dm;
-                        last_dis_eye_norse = dis_eye_norse;
-
-                        last_eye_x =  positions[27][0];
-                        last_eye_y = positions[27][1];
-
-                        last_mouse_x =  positions[53][0] ;
-                        last_mouse_y =  positions[53][1];
-
-                        last_nose_left = positions[62][0];
-                        last_nose_top = positions[62][1];
-
-                    }
-
-                }
-            }
-
-            // 不动
-            function demo(){
-
-                if (Math.floor(dn) === 0 && last_nose_left > 0
-                    && last_nose_top > 0
-                    && Math.abs(positions[62][0] - last_nose_left) < 20
-                    && Math.abs(positions[62][1] - last_nose_top) < 20) {
-
-                    mouse_ok = true;
-                    msg_style.innerHTML = "请张合嘴巴";
-
-                }
-
-                else {
-                    msg_style.innerHTML = "请保持头部不动";
-                }
-            }
-
-            // 张嘴
-            function mouse(){
-
-                if (Math.floor(dm) >0  && last_dm>0 && ( dm-last_dm)>6){
-
-                    header_ok = true;
-                    msg_style.innerHTML = "摇摇头";
-
-                }
-            }
-
-            // 摇头
-            function header(){
-
-                if (last_nose_left >0 && last_nose_top >0  && last_eye_x >0 && last_eye_y >0 &&
-                        last_mouse_x  > 0 && last_mouse_y >0  &&
-                        Math.abs(positions[27][0] - last_eye_x) > 10 &&
-                        Math.abs(positions[53][0] - last_mouse_x) > 10 &&
-                        Math.abs(positions[62][0] - last_nose_left) > 10
-                    ){
-                        msg_style.innerHTML = "系统正在识别，请保持面部在摄像头范围内";
-                        track();
-                }
-
-            }
-        </script>
 
 	</body>
 
