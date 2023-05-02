@@ -7,7 +7,7 @@ import shutil
 import threading
 import uuid
 from pathlib import Path
-
+import xml.etree.ElementTree as ET
 import mediapipe as mp
 import numpy as np
 from deepface import DeepFace
@@ -15,7 +15,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-
+import re
 # 解决 Forbidden (CSRF token missing or incorrect.)
 from speech_ai import settings
 from . import models
@@ -227,6 +227,7 @@ def convert_video_to_audio(file_path):
     from pydub.exceptions import CouldntDecodeError
     import os
 
+    print('经过此函数1')
     file_ext = os.path.splitext(file_path)[1]
     try:
         audio = AudioSegment.from_file(file_path, file_ext[1:])
@@ -247,12 +248,13 @@ def convert_video_to_audio(file_path):
     filename_without_extension = os.path.splitext(filename)[0]
     new_file_path = filename_without_extension + ".wav"
     audio.export(new_file_path, format="wav")
+    print('经过此函数2', new_file_path)
     return new_file_path
 
 
 
 def audio_analyse(file_path, uid, time):
-    print('音频分析')
+    print('音频分析及发音准确度统计')
     # 提取音频
     audio_path = convert_video_to_audio(file_path)
     record = Recorder(audio_name=audio_path)
@@ -260,6 +262,7 @@ def audio_analyse(file_path, uid, time):
     temp = record.betweenness()
     final_result = record.evaluation_audio()
     affix_score = final_result[0]
+    global xml_list
     xml_list = final_result[1]
     length = len(xml_list)
 
@@ -268,18 +271,58 @@ def audio_analyse(file_path, uid, time):
     ic_list = []
     pc_list = []
     tc_list = []
+    # 解析所有的XML文件并将它们拼接起来
+    content_all = ''
     for i in range(len(xml_list)):
+        # 先读取发音准确度可视化，再读取分数
+        # 读取可视化
+        tree = ET.parse(xml_list[i])
+        root = tree.getroot()
+        content_all += root.find('read_chapter').find('rec_paper').find('read_chapter').get('content')
+        # 读取分数
         tmp_xml = record.get_xml_score(xml_list[i])
         fc_list.append(tmp_xml['fluency_score'])
         ic_list.append(tmp_xml['integrity_score'])
         pc_list.append(tmp_xml['phone_score'])
         tc_list.append(tmp_xml['tone_score'])
+    # 继续可视化操作
+    # 初始化字典，用于存储每个字的perr_msg属性
+    perr_msg_dict = {}
+    # 遍历XML文件中的所有word元素并更新字典
+    for sentence in root.findall('.//sentence'):
+        for word in sentence.findall('word'):
+            word_content = word.get('content')
+            phone_list = word.findall('syll/phone')
 
+            # 统计phone元素中perr_msg属性值为0的个数
+            perr_msg_count = sum(1 for phone in phone_list if phone.get('perr_msg') == '0')
+
+            # 根据perr_msg的个数生成一个嵌套字典
+            if perr_msg_count == 0:
+                perr_msg_dict[word_content] = {'perr_msg': 2}
+            elif perr_msg_count == 1:
+                perr_msg_dict[word_content] = {'perr_msg': 1}
+            else:
+                perr_msg_dict[word_content] = {'perr_msg': 0}
+        # 根据perr_msg属性在content_all上设置不同颜色的背景
+    content_colored = ''
+    for char in content_all:
+        if char in perr_msg_dict:
+            perr_msg = perr_msg_dict[char]['perr_msg']
+            if perr_msg == 0:
+                content_colored += f'<span style="background-color: #b7e1cd">{char}</span>'
+            elif perr_msg == 1:
+                content_colored += f'<span style="background-color: #ffec8b">{char}</span>'
+            elif perr_msg == 2:
+                content_colored += f'<span style="background-color: #dc6c64">{char}</span>'
+        else:
+            content_colored += char
+    # 继续对分数的操作 取两位小数等
     fc_list = [float(i) for i in fc_list]
     ic_list = [float(i) for i in ic_list]
     pc_list = [float(i) for i in pc_list]
     tc_list = [float(i) for i in tc_list]
-
+    
     fluency_score = round(sum(fc_list) / length, 2)
     integrity_score = round(sum(ic_list) / length, 2)
     phone_score = round(sum(pc_list) / length, 2)
@@ -291,7 +334,7 @@ def audio_analyse(file_path, uid, time):
         uid=uid, date=time, total_score=total_score,
         fluency_score=fluency_score, integrity_score=integrity_score,
         phone_score=phone_score, tone_score=tone_score, affix_score=affix_score,
-        video_path=file_path.replace('\\', '/').replace(BaseDir, ''),
+        video_path=file_path.replace('\\', '/').replace(BaseDir, ''),color_content=content_colored,
     )
     speech_temp.save()
 
@@ -516,6 +559,59 @@ def speachScore(request):
         else:
             return redirect("/login/tip/您还未登录 !/")
 
+# 生成综合评价性文字
+def generate_feedback(tone_score, phone_score, fluency_score, affix_score, body_score, accurate_ratio):
+    feedback = []
+
+    # 发音调型反馈
+    if tone_score < 80:
+        feedback.append("发音调型需要改进。请加强练习，关注声调的高低起伏，确保正确地表达每个音节的声调；")
+    elif tone_score < 90:
+        feedback.append("发音调型较好，但仍有提升空间。继续关注声调的高低起伏，提高声调掌握程度；")
+    else:
+        feedback.append("发音调型非常好。保持良好的声调掌握，确保演讲内容准确传达；")
+
+    # 发音韵律反馈
+    if phone_score < 80:
+        feedback.append("发音韵律方面存在问题。注意提高语速、音量和停顿的掌握，使演讲更具有吸引力；")
+    elif phone_score < 90:
+        feedback.append("发音韵律较好，但仍有提升空间。继续关注语速、音量和停顿的掌握，使演讲更加动听；")
+    else:
+        feedback.append("发音韵律非常好。保持良好的语速、音量和停顿掌握，为听众带来愉悦的听觉体验；")
+
+    # 演讲流畅度反馈
+    if fluency_score < 75:
+        feedback.append("演讲流畅度有待提高。多加练习，确保在演讲过程中不出现过多的停顿；")
+    elif fluency_score < 90:
+        feedback.append("演讲流畅度较好，但仍有提升空间。继续练习，确保在演讲过程中流畅自如；")
+    else:
+        feedback.append("演讲流畅度非常好。保持流畅的表达，让听众更容易理解演讲内容；")
+
+    # 演讲缀词冗余反馈
+    if affix_score < 85:
+        feedback.append("演讲中缀词和冗余表达较多。注意提高表达的简洁明了，避免使用过多的填充词；")
+    elif affix_score < 90:
+        feedback.append("演讲中缀词和冗余表达较少，但仍有改进空间。继续提高表达的简洁明了，减少填充词的使用；")
+    else:
+        feedback.append("演讲中缀词和冗余表达非常少。保持简洁明了的表达，使听众更容易理解演讲内容；")
+    
+    # 人体姿态评估反馈
+    if body_score < 60:
+        feedback.append("人体姿态需要改进。注意保持自然放松的站姿，保持眼神交流，以增强与听众的互动；")
+    elif body_score < 80:
+        feedback.append("人体姿态较好，但仍有提升空间。继续保持自然的站姿和眼神交流，提高演讲的表现力；")
+    else:
+        feedback.append("人体姿态非常好。保持良好的站姿和眼神交流，为听众带来愉悦的视觉体验；")
+
+    # 发音准确性反馈
+    if accurate_ratio < 0.6:
+        feedback.append("发音准确性较低。请加强发音练习，提高发音准确性，确保听众能更好地理解演讲内容；。")
+    elif accurate_ratio < 0.8:
+        feedback.append("发音准确性较好，但仍有提升空间。继续加强发音练习，进一步提高发音准确性。")
+    else:
+        feedback.append("发音准确性非常高。保持准确的发音，使听众更容易理解演讲内容。")
+
+    return feedback
 
 def speachDateScore(request, date):
     if request.method == 'GET':
@@ -535,14 +631,48 @@ def speachDateScore(request, date):
                 dates = [i['date'].strftime('%Y-%m-%d %H:%M:%S') for i in list(dates)]
 
                 # 语音
-                speech_table = list(models.Speach.objects.filter(uid=uid, date=date).values(
+                speech_table_value = list(models.Speach.objects.filter(uid=uid, date=date).values(
                     'content', 'fluency_score', 'integrity_score', 'phone_score', 'tone_score',
-                    'affix_score', 'total_score', 'topic_score'))
-                topic_score = speech_table[0]['topic_score']
-                speech_table = [speech_table[0]['fluency_score'], speech_table[0]['integrity_score'],
-                                speech_table[0]['phone_score'], speech_table[0]['tone_score'],
-                                speech_table[0]['affix_score'], speech_table[0]['total_score'],
+                    'affix_score', 'total_score', 'topic_score','color_content'))
+                topic_score = speech_table_value[0]['topic_score']
+                speech_table = [speech_table_value[0]['fluency_score'], speech_table_value[0]['integrity_score'],
+                                speech_table_value[0]['phone_score'], speech_table_value[0]['tone_score'],
+                                speech_table_value[0]['affix_score'], speech_table_value[0]['total_score'],
                                 ]
+                #####################################发音可视化字符串########################################
+                pro_viual = speech_table_value[0]['color_content']
+                #####################################发音可视化字符串########################################
+                #####################################输出评价文字###########################################
+                #####################################统计颜色个数###########################################
+                # 定义三个正则表达式，分别用于匹配三种颜色
+                red_pattern = re.compile(r'style="background-color: #dc6c64">(.+?)</span>')
+                green_pattern = re.compile(r'style="background-color: #b7e1cd">(.+?)</span>')
+                yellow_pattern = re.compile(r'style="background-color: #ffec8b">(.+?)</span>')
+                # 使用正则表达式匹配字符串，并计算出现次数
+                red_count = len(re.findall(red_pattern, pro_viual))
+                green_count = len(re.findall(green_pattern, pro_viual))
+                yellow_count = len(re.findall(yellow_pattern, pro_viual))
+                #####################################统计评价标准###########################################
+                # 音准反馈
+                accurate_ratio = green_count / (green_count + red_count + yellow_count)
+                # 肢体反馈/暂以total_score作为肢体评测反馈依据
+                body_score = speech_table_value[0]['total_score']
+                # 调型反馈
+                tone_score = speech_table_value[0]['tone_score']
+                # 韵律反馈
+                phone_score = speech_table_value[0]['phone_score']
+                # 流畅度反馈
+                fluency_score = speech_table_value[0]['fluency_score']
+                # 缀词反馈
+                affix_score = speech_table_value[0]['affix_score']
+                # 调用函数，获取反馈字符串
+                feedback = generate_feedback(tone_score, phone_score, fluency_score,
+                                             affix_score,body_score, accurate_ratio)
+                
+                
+
+
+
                 # 是否有主题契合度评分
                 topic_flag = 'false'
                 if topic_score is not None:
@@ -565,6 +695,7 @@ def speachDateScore(request, date):
                 count_flag = False
                 if flag.count('True') > 10:
                     count_flag = True
+                    pass
 
                 # 返回
                 return render(request, 'score/score.html',
@@ -572,8 +703,8 @@ def speachDateScore(request, date):
                                'date': date.strftime('%Y-%m-%d %H:%M:%S'), 'data': dt, 'speech_score': speech_table,
                                'content': speech_table, 'pose': pose, 'count_flag': count_flag,
                                'topic_flag': topic_flag, 'dates': dates, 'limbs': limbs, 'body': body,
-
-                               })
+                               'pro_viual':pro_viual,'feedback':feedback ,
+                               })# pro_viual是音准可视化字符串，feedback是生成的反馈字符串
             else:
                 return HttpResponse('<h1>该日期下并没有评测 !</h1>')
 
@@ -1051,3 +1182,59 @@ def page_not_found(request, exception):
 #     ]
 #     return data
 #
+
+
+
+
+######################################### 文本发音可视化 ################################
+# from django.shortcuts import render
+# import xml.etree.ElementTree as ET
+
+# def HighlightingPronunciation(request):
+#     # 获取前面函数的xml_list
+#     xml_files = xml_list
+#     # 解析所有的XML文件并将它们拼接起来
+#     content_all = ''
+#     for xml_file in xml_files:
+#         tree = ET.parse(xml_file)
+#         root = tree.getroot()
+#         content_all += root.find('read_chapter').find('rec_paper').find('read_chapter').get('content')
+
+#     # 初始化字典，用于存储每个字的perr_msg属性
+#     perr_msg_dict = {}
+
+#     # 遍历XML文件中的所有word元素并更新字典
+#     for sentence in root.findall('.//sentence'):
+#         for word in sentence.findall('word'):
+#             word_content = word.get('content')
+#             phone_list = word.findall('syll/phone')
+
+#             # 统计phone元素中perr_msg属性值为0的个数
+#             perr_msg_count = sum(1 for phone in phone_list if phone.get('perr_msg') == '0')
+
+#             # 根据perr_msg的个数生成一个嵌套字典
+#             if perr_msg_count == 0:
+#                 perr_msg_dict[word_content] = {'perr_msg': 2}
+#             elif perr_msg_count == 1:
+#                 perr_msg_dict[word_content] = {'perr_msg': 1}
+#             else:
+#                 perr_msg_dict[word_content] = {'perr_msg': 0}
+
+#     # 根据perr_msg属性在content_all上设置不同颜色的背景
+#     content_colored = ''
+#     for char in content_all:
+#         if char in perr_msg_dict:
+#             perr_msg = perr_msg_dict[char]['perr_msg']
+#             if perr_msg == 0:
+#                 content_colored += f'<span style="background-color: #b7e1cd">{char}</span>'
+#             elif perr_msg == 1:
+#                 content_colored += f'<span style="background-color: #ffec8b">{char}</span>'
+#             elif perr_msg == 2:
+#                 content_colored += f'<span style="background-color: #dc6c64">{char}</span>'
+#         else:
+#             content_colored += char
+
+#     # 将处理后的文本传递给模板进行渲染
+#     context = {'content_colored': content_colored}
+#     return render(request, 'score/score.html', context)
+

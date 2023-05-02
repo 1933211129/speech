@@ -59,6 +59,7 @@ class Speach(models.Model):
     date = models.DateTimeField(max_length=20, verbose_name='演讲时间')
     total_score = models.FloatField(max_length=10, verbose_name='总得分')
     content = models.CharField(max_length=10000, verbose_name='内容')
+    color_content = models.CharField(max_length=10000, verbose_name='演讲准确度文本', default=None)
     fluency_score = models.FloatField(max_length=10, verbose_name='流畅度')
     integrity_score = models.FloatField(max_length=10, verbose_name='完整度')
     phone_score = models.FloatField(max_length=10, verbose_name='声调')
