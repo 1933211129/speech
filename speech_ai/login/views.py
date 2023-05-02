@@ -339,28 +339,21 @@ def audio_analyse(file_path, uid, time):
     speech_temp.save()
 
 
-import torch.nn as nn
 import dlib
 from PIL import Image
-from efficientnet_pytorch import EfficientNet
 from torchvision import transforms
 
-# 加载权重
+
+
+# 加载模型
 import torch
-
-model = EfficientNet.from_pretrained('efficientnet-b0')
-num_ftrs = model._fc.in_features
-model._fc = nn.Linear(num_ftrs, 8)
-
 # 加载已保存的模型
 model_path = BaseDir + '/media/weights/MyExpression.pth'
-
-# 加载模型权重
-checkpoint = torch.load(model_path, map_location='cpu')
-model.load_state_dict(checkpoint)
+model = torch.load(model_path, map_location=torch.device('cpu'))
 
 # 设置为评估模式
 model.eval()
+
 
 def MyExpression(image_path):
     emotion = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
@@ -370,33 +363,6 @@ def MyExpression(image_path):
         # transforms.Normalize(mean=[0.5], std=[0.5])
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
-
-    # # 读取图像
-    # image = cv2.imread(image_path)
-    # image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    #
-    # # 创建 MTCNN 检测器
-    # detector = MTCNN()
-    #
-    # # 使用 MTCNN 检测人脸
-    # faces = detector.detect_faces(image_rgb)
-    #
-    # if len(faces) == 0:
-    #     return None
-    #
-    # # 遍历检测到的人脸
-    # for face in faces:
-    #     # 获取人脸区域
-    #     x, y, w, h = face['box']
-    #
-    #     # 裁剪人脸
-    #     cropped_face = image[y:y + h, x:x + w]
-    #
-    #     # 缩放到 48x48 像素
-    #     resized_face = cv2.resize(cropped_face, (48, 48), interpolation=cv2.INTER_LINEAR)
-    #
-    #     # 将图像转换为 PIL 图像
-    #     face_image = Image.fromarray(resized_face)
 
     # 装载dlib的人脸检测器
     face_detector = dlib.get_frontal_face_detector()
@@ -605,7 +571,7 @@ def generate_feedback(tone_score, phone_score, fluency_score, affix_score, body_
 
     # 发音准确性反馈
     if accurate_ratio < 0.6:
-        feedback.append("发音准确性较低。请加强发音练习，提高发音准确性，确保听众能更好地理解演讲内容；。")
+        feedback.append("发音准确性较低。请加强发音练习，提高发音准确性，确保听众能更好地理解演讲内容。")
     elif accurate_ratio < 0.8:
         feedback.append("发音准确性较好，但仍有提升空间。继续加强发音练习，进一步提高发音准确性。")
     else:
@@ -669,9 +635,6 @@ def speachDateScore(request, date):
                 feedback = generate_feedback(tone_score, phone_score, fluency_score,
                                              affix_score,body_score, accurate_ratio)
                 
-                
-
-
 
                 # 是否有主题契合度评分
                 topic_flag = 'false'
@@ -696,14 +659,13 @@ def speachDateScore(request, date):
                 if flag.count('True') > 10:
                     count_flag = True
                     pass
-
                 # 返回
                 return render(request, 'score/score.html',
                               {'login_status': True, 'user_name': user_name,
                                'date': date.strftime('%Y-%m-%d %H:%M:%S'), 'data': dt, 'speech_score': speech_table,
                                'content': speech_table, 'pose': pose, 'count_flag': count_flag,
                                'topic_flag': topic_flag, 'dates': dates, 'limbs': limbs, 'body': body,
-                               'pro_viual':pro_viual,'feedback':feedback ,
+                               'pro_viual':pro_viual,'feedback':feedback,
                                })# pro_viual是音准可视化字符串，feedback是生成的反馈字符串
             else:
                 return HttpResponse('<h1>该日期下并没有评测 !</h1>')

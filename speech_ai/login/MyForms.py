@@ -7,7 +7,7 @@ class LoginForm(forms.Form):
     MY_CHOICES = (
         ('0', '普通用户'),
         ('1', '裁判'),
-        ('2', '管理员'),
+        # ('2', '管理员'),
     )
     flag = forms.ChoiceField(widget=forms.RadioSelect(attrs={'id': 'MyRadio'}), choices=MY_CHOICES)
     username = forms.CharField(label="用户名", max_length=128,

@@ -189,7 +189,8 @@ def rsp_time(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> li
     # 定义 1000/响应时间(ms) 为响应速度 条/秒
     my_queryset = ip_path_queryset(t=t,path=path,ip=ip,t0=t0)
     rsp_time_list = []
-    if my_queryset is not None:
+    print(my_queryset is not None)
+    if len(my_queryset) > 1:
 
         max_response_time = my_queryset.aggregate(max_response_time=Max('response_time'))['max_response_time']
         min_response_time = my_queryset.aggregate(min_response_time=Min('response_time'))['min_response_time']

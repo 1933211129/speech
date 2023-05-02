@@ -428,7 +428,8 @@ def CCDefend(request):
         return redirect(reverse('WoofWaf-views-login'))
     rule = getDefault(cc)['open']
     # 3day 条/秒 list 最小值、最大值、中位数、平均值
-    rsp_speed = rsp_time(t=time.time() - (3 * 24 * 3600))
+    rsp_speed = rsp_time(t=time.time() - (24 * 3600), t0=time.time())
+
     print(rsp_speed)
 
     return render(request, "WafTemp/CCDefend.html", {'openrule': rule,

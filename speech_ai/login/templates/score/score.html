@@ -126,13 +126,34 @@
                 <div class="grid-item2" id="stand_score" style="width: auto; height:auto;"></div>
                 <div class="grid-item3" id="speech_score_bar" style="width: auto; height:auto;"></div>
                 <div class="grid-item4" id="speech_score_radar" style="width: auto; height:auto;"></div>
-                <div class="grid-item5" id="txt" style="width: 50vw; height:33vh;"></div>
-                <div class="grid-item6" id="speech" style="width: 50vw; height:33vh;"></div>
+
+
+
+                <div class="grid-item5" id="txt" style="width: 50vw; height:33vh;">
+                    <h5 style="position: relative; text-align: left"> <b>发音准确度可视化</b> </h5>
+                    <div style="border: 1px solid black; padding: 10px; margin: 50px;">
+                            {{ pro_viual|safe }}
+                    </div>
+
+                </div>
+
+                <div class="grid-item6" id="multimode" style="width: 50vw; height:33vh;">
+                     <h5 style="position:relative; text-align:left"> <b>多模态情感一致性</b> </h5>
+                    <div style="padding: 20px; margin-left: 40px; margin-top: 40px;">
+
+                        <img src="/media/中性.png" style="width: 20vw; height:auto;">
+                        <img src="/media/厌恶.png" style="width: 20vw; height:auto;">
+
+                    </div>
+
+                </div>
+
+
             </div>
 
-            <br>
+            <br><br><br>
 
-            <h3 style="position: relative; text-align: center"> 关键图片展示 </h3>
+            <h3 style="position: relative; text-align: center"> <b>关键图片展示</b> </h3>
             <h6 style="position: relative; text-align: center"> 四肢变化{{ limbs }}次, 人体位置变化{{ body }}次</h6>
 
             <div class="img-container">
@@ -162,79 +183,25 @@
 
             <div id="TextBox">
                 <div style="border: 2px solid red; padding: 30px;  margin:40px">
-                    <div style="font-weight: bold;">总结</div>
-                    <p>（1）总结过于低调主要包括两个方面：总结过度谦虚：全篇贯彻着“领导英
-                    明决策”、“同事热心帮助”这类套话，弱化个人成就，难免让人觉得言之无物。
-                    放大个人缺点：把自己的失误总结得过于细致，更会让领导怀疑你的能力。
-                    因此，总结中要增加实质内容，而非过多的官话、套话。这类话在最后的总结语中适当出现是可以的，但一定要注意频率。</p>
-                    <p>（2）总结报喜不报忧这类跟第一种则相反，只谈自己得意的事，
-                    对于错误、失误、不愉快避重就轻，甚至说些明贬暗褒的“好缺点”
-                    。但是你是否想过：如果不主动提及失误，当由领导发现你的失误时，又
-                    该如何应对呢？领导有权并且需要知道真实的情况，包括失误的原因。</p>
-                    <p>（3）总结过于格式化去网上搜一下工作总结之类的关键词，大把大把的模板，
-                    套用模板自然省事，但不同组织对工作总结的要求都不一样，套用模板就意味着千
-                    篇一律，平庸无亮点。</p>
-                    <p>（4）总结大包大揽总结要全面，但绝对不是事无巨细，
-                    更不是月总结或者周总结的堆砌。抓住这半年来的工作重点和几个突出的成绩、亮点进行阐
-                    述，不能让领导产生“事情做了不少，但都印象不深”之感。</p>
+                    <div style="font-weight: bold; align:center; ">总结</div>
+                    <br>
+                   {% for one in feedback %}
+                        <p style="align:center; ">  {{ one|safe }}</p>
+                    {% endfor %}
+
                 </div>
             </div>
 
         </div>
 
-{#        <div id="TextBox">#}
-{#               #}
-{#        </div>#}
-
-
     <script  type="text/javascript">
 
-        let score_demo = [80, 90, 76, 76, 100.0, 90];
-
-        const txtBar = echarts.init(document.getElementById('txt'));
-        let txt_option = {
-          title: {
-            text: '演讲得分'
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
-            }
-          },
-          legend: {},
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'value',
-            {#boundaryGap: [0, 0.01]#}
-            boundaryGap: [0, 0.0001]
-          },
-          yAxis: {
-            type: 'category',
-            data: ['发音流畅度', '演讲完整度', '发音韵律', '发音调型','缀词冗余',
-                {% if topic_flag|safe == 'false' %} '主题契合度', {% endif %}'总分'
-                ]
-          },
-          series: [
-            {
-              {#name: '{{ date }}',#}
-              type: 'bar',
-              data: score_demo
-            }
-          ]
-        };
-        txtBar.setOption(txt_option);
-
+       {% comment %} let score_demo = [80, 90, 76, 76, 100.0, 90];
 
         const speechBar = echarts.init(document.getElementById('speech'));
         let speech_option = {
           title: {
-            text: '演讲得分'
+            text: '发音准确'
           },
           tooltip: {
             trigger: 'axis',
@@ -268,7 +235,7 @@
             }
           ]
         };
-        speechBar.setOption(speech_option);
+        speechBar.setOption(speech_option);{% endcomment %}
 
 
 
@@ -304,7 +271,7 @@
         const speechScoreBar = echarts.init(document.getElementById('speech_score_bar'));
         let speech_score_bar_option = {
           title: {
-            text: '演讲得分'
+            text: '发音'
           },
           tooltip: {
             trigger: 'axis',
@@ -346,7 +313,7 @@
         const speechScoreRadar = echarts.init(document.getElementById('speech_score_radar'));
         let speech_score_radar_option = {
           title: {
-            text: '语音分数'
+            text: '发音'
           },
             legend: {
             data: '{{ date }}'
@@ -382,7 +349,7 @@
         const emotionCount = echarts.init(document.getElementById('emotion_count'));
         let emotionCount_option = {
           title: {
-            text: '各个表情统计'
+            text: '表情'
           },
             legend: {
             data: '{{ date }}'
@@ -422,7 +389,7 @@
         const standScore = echarts.init(document.getElementById('stand_score'));
         let standScore_option = {
           title: {
-            text: '姿态得分',
+            text: '姿态',
             {#subtext: date#}
           },
           tooltip: {

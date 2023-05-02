@@ -33,7 +33,6 @@ urlpatterns = [
     # 文本 需要完善
     re_path(r'txt/(?P<topic>[^/]+)/$',views.txt),
 
-
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
