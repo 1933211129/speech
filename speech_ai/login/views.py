@@ -347,7 +347,7 @@ from torchvision import transforms
 # 加载模型
 import torch
 # 加载已保存的模型
-model_path = BaseDir + '/media/weights/MyExpression.pth'
+model_path = BaseDir + '/media/weights/Expression.pth'
 model = torch.load(model_path, map_location=torch.device('cpu'))
 
 # 设置为评估模式

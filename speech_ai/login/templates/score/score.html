@@ -6,10 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>评测结果</title>
 
-{#        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css'%}" />#}
-{#        <link href="https://fonts.googleapis.com/css?family=Lobster|Poppins:400,600,700&display=swap" rel="stylesheet">#}
-{#        <link href="{% static 'css/style.css' %}" rel="stylesheet" />#}
-{#        <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />#}
         <link rel="icon" href="{% static 'favicon/logo.svg'%}">
 
         <link href="{% static 'css/fontCharacter.css' %}" rel="stylesheet" />
@@ -122,14 +118,12 @@
             <br>
 
             <div id="echart_container">
-                <div class="grid-item1" id="emotion_count" style="width: 50vw; height:33vh;"></div>
-                <div class="grid-item2" id="stand_score" style="width: auto; height:auto;"></div>
-                <div class="grid-item3" id="speech_score_bar" style="width: auto; height:auto;"></div>
-                <div class="grid-item4" id="speech_score_radar" style="width: auto; height:auto;"></div>
+                <div class="grid-item1" id="emotion_count" style="width: 48vw; height:33vh;"></div>
+                <div class="grid-item2" id="stand_score" style="width: 48vw; height:33vh;"></div>
+                <div class="grid-item3" id="speech_score_bar" style="width: 48vw; height:33vh;"></div>
+                <div class="grid-item4" id="speech_score_radar" style="width: 48vw; height:33vh;"></div>
 
-
-
-                <div class="grid-item5" id="txt" style="width: 50vw; height:33vh;">
+                <div class="grid-item5" id="txt" style="width: 48vw; height:33vh;">
                     <h5 style="position: relative; text-align: left"> <b>发音准确度可视化</b> </h5>
                     <div style="border: 1px solid black; padding: 10px; margin: 50px;">
                             {{ pro_viual|safe }}
@@ -137,7 +131,7 @@
 
                 </div>
 
-                <div class="grid-item6" id="multimode" style="width: 50vw; height:33vh;">
+                <div class="grid-item6" id="multimode" style="width: 48vw; height:33vh;">
                      <h5 style="position:relative; text-align:left"> <b>多模态情感一致性</b> </h5>
                     <div style="padding: 20px; margin-left: 40px; margin-top: 40px;">
 
@@ -151,7 +145,8 @@
 
             </div>
 
-            <br><br><br>
+            <br>
+{#            <br><br>#}
 
             <h3 style="position: relative; text-align: center"> <b>关键图片展示</b> </h3>
             <h6 style="position: relative; text-align: center"> 四肢变化{{ limbs }}次, 人体位置变化{{ body }}次</h6>
@@ -195,50 +190,6 @@
         </div>
 
     <script  type="text/javascript">
-
-       {% comment %} let score_demo = [80, 90, 76, 76, 100.0, 90];
-
-        const speechBar = echarts.init(document.getElementById('speech'));
-        let speech_option = {
-          title: {
-            text: '发音准确'
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
-            }
-          },
-          legend: {},
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'value',
-            {#boundaryGap: [0, 0.01]#}
-            boundaryGap: [0, 0.0001]
-          },
-          yAxis: {
-            type: 'category',
-            data: ['发音流畅度', '演讲完整度', '发音韵律', '发音调型','缀词冗余',
-                {% if topic_flag|safe == 'false' %} '主题契合度', {% endif %}'总分'
-                ]
-          },
-          series: [
-            {
-              {#name: '{{ date }}',#}
-              type: 'bar',
-              data: score_demo
-            }
-          ]
-        };
-        speechBar.setOption(speech_option);{% endcomment %}
-
-
-
 
         const dateSelect = document.getElementById('dateSelect');
         const dateForm = document.getElementById('dateForm');
