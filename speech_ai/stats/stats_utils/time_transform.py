@@ -8,8 +8,8 @@ def today_zero_clock() -> float:
     今天00:00的时间戳(昨天24:00)
     :return:
     """
-    today = datetime.today()  # 获取当前日期时间
-    midnight = datetime.combine(today, datetime.min.time())  # 将时间设置为 00:00
+    today = datetime.datetime.today()  # 获取当前日期时间
+    midnight = datetime.datetime.combine(today, datetime.datetime.min.time())  # 将时间设置为 00:00
     timestamp = int(midnight.timestamp())  # 转换为 Unix 时间戳
 
     return timestamp
@@ -88,9 +88,10 @@ def ago_day_list(n: int) -> list:
     """
     n-1天前至今的日期（一共n天），今天03-23
     :param n:
-    :return: ['03-16', '03-17', '03-18', '03-19', '03-20', '03-21', '03-22', '03-23']
+    :return: ['03-17', '03-18', '03-19', '03-20', '03-21', '03-22', '03-23']
     """
     list = []
+    n=n-1
     while (n != -1):
         list.append(nDay_ago_str(n))
         n = n - 1
@@ -118,6 +119,7 @@ def hour_list(n) -> list:
 def strat_of_this_hour() -> float:
     """
     本小时初的时间戳
+    这里不将start设置为参数可能会导致这个时间是项目启动时的时间，还没来及测试
     :return:
     """
     today = datetime.datetime.today()

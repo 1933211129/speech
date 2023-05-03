@@ -354,14 +354,13 @@ model = torch.load(model_path, map_location=torch.device('cpu'))
 # 设置为评估模式
 model.eval()
 
-
 def MyExpression(image_path):
-    emotion = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
+    emotion = ['anger', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+
     transform = transforms.Compose([
         transforms.Resize((48, 48)),
         transforms.ToTensor(),
-        # transforms.Normalize(mean=[0.5], std=[0.5])
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        transforms.Normalize(mean=[0.5], std=[0.5])
     ])
 
     # 装载dlib的人脸检测器
@@ -374,30 +373,25 @@ def MyExpression(image_path):
     if len(faces) == 0:
         return 'neutral'
 
-    # 遍历检测到的人脸
-    for face in faces:
-        # 获取人脸区域
-        x, y, w, h = face.left(), face.top(), face.width(), face.height()
+    # 获取人脸区域
+    x, y, w, h = faces[0].left(), faces[0].top(), faces[0].width(), faces[0].height()
 
-        # 裁剪人脸
-        cropped_face = image[y:y + h, x:x + w]
+    # 裁剪人脸
+    cropped_face = image[y:y + h, x:x + w]
 
-        # 缩放到48x48像素
-        resized_face = cv2.resize(cropped_face, (48, 48), interpolation=cv2.INTER_LINEAR)
+    # 将图像转换为PIL图像
+    face_image = Image.fromarray(cropped_face)
 
-        # 将图像转换为PIL图像
-        face_image = Image.fromarray(resized_face)
+    # 转换为模型所需的输入格式
+    face_image_rgb = face_image.convert('RGB')
+    face_tensor = transform(face_image_rgb).unsqueeze(0)
 
-        # 转换为模型所需的输入格式
-        face_image_rgb = face_image.convert('RGB')
-        face_tensor = transform(face_image_rgb).unsqueeze(0)
+    # 使用模型进行预测
+    output = model(face_tensor)
 
-        # 使用模型进行预测
-        output = model(face_tensor)
+    prediction = torch.argmax(output, 1)
 
-        prediction = torch.argmax(output, 1)
-
-        return emotion[prediction.item()]
+    return emotion[prediction.item()]
 
 
 # 本地视频分析

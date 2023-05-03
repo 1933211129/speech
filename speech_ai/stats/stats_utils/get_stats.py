@@ -22,7 +22,7 @@ def request_nums(t: float = 0, t0=time.time()) -> int:
     时间戳∈[t,t0] 请求的数量
     :param t0:默认现在时间
     :param t:
-    :return:ip种数
+    :return:
     """
     filtered_objects = Visit.objects.filter(time_stamp__range=(t, t0))
     return filtered_objects.count()
@@ -189,8 +189,7 @@ def rsp_time(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> li
     # 定义 1000/响应时间(ms) 为响应速度 条/秒
     my_queryset = ip_path_queryset(t=t,path=path,ip=ip,t0=t0)
     rsp_time_list = []
-    print(my_queryset is not None)
-    if len(my_queryset) > 1:
+    if my_queryset is not None:
 
         max_response_time = my_queryset.aggregate(max_response_time=Max('response_time'))['max_response_time']
         min_response_time = my_queryset.aggregate(min_response_time=Min('response_time'))['min_response_time']
@@ -199,7 +198,7 @@ def rsp_time(t: float = 0, path: str = "*", ip: str = "*", t0=time.time()) -> li
         response_times = my_queryset.values_list('response_time', flat=True)
         median_response_time = median(response_times)
         if max_response_time*min_response_time*avg_response_time*median_response_time !=0:
-            rsp_time_list.extend([1000/max_response_time,1000/min_response_time,1000/median_response_time,1000/avg_response_time])
+            rsp_time_list.extend([1000/max_response_time,min(1000/min_response_time,249.2),1000/median_response_time,1000/avg_response_time])
         else:
             rsp_time_list = [0, 0, 0, 0]
     else:

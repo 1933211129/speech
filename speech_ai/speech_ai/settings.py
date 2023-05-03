@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'stats.middleware.StatsMiddleware',
     'WoofWaf.WafMiddleware.WafMiddleware.MyTestMiddleware_first',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
