@@ -458,7 +458,7 @@ def upload_file(request):
 #     x_axis = [i for i in range(len(emo_score_list))]
 # ##################################################网络查重传参####################################################
 #     simi_score = 0.02
-#     return render(request, '../templates/texterror_visual_test_0126.html', 
+#     return render(request, '../templates/texterror_visual_test_0126.html',
 #     {"original_text": original_text, "error_info": error_info, "error_list": error_list,
 #     'emo_score':emo_score_list, 'x_axis':x_axis,'similarity':simi_score})
 
@@ -748,31 +748,31 @@ def line2(request):
 
 
 ######################################### 文本发音可视化 ################################
+from django.shortcuts import render
+import xml.etree.ElementTree as ET
 
-def HighlightingPronunciation(request):
-    from django.shortcuts import render
-    import xml.etree.ElementTree as ET
+def HighlightingPronunciation(request, xml_files):
+    # 获取前面函数的xml_list
+    # 解析所有的XML文件并将它们拼接起来
+    content_all = ''
+    for xml_file in xml_files:
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+        content_all += root.find('read_chapter').find('rec_paper').find('read_chapter').get('content')
 
-    # 解析 XML 文件
-    tree = ET.parse('E:/code_test/1.xml')
-    root = tree.getroot()
-
-    # 获取总的 content
-    content_all = root.find('read_chapter').find('rec_paper').find('read_chapter').get('content')
-
-    # 初始化字典，用于存储每个字的 perr_msg 属性
+    # 初始化字典，用于存储每个字的perr_msg属性
     perr_msg_dict = {}
 
-    # 遍历 XML 文件中的所有 word 元素并更新字典
+    # 遍历XML文件中的所有word元素并更新字典
     for sentence in root.findall('.//sentence'):
         for word in sentence.findall('word'):
             word_content = word.get('content')
             phone_list = word.findall('syll/phone')
 
-            # 统计 phone 元素中 perr_msg 属性值为 0 的个数
+            # 统计phone元素中perr_msg属性值为0的个数
             perr_msg_count = sum(1 for phone in phone_list if phone.get('perr_msg') == '0')
 
-            # 根据 perr_msg 的个数生成一个嵌套字典
+            # 根据perr_msg的个数生成一个嵌套字典
             if perr_msg_count == 0:
                 perr_msg_dict[word_content] = {'perr_msg': 2}
             elif perr_msg_count == 1:
@@ -780,7 +780,7 @@ def HighlightingPronunciation(request):
             else:
                 perr_msg_dict[word_content] = {'perr_msg': 0}
 
-    # 根据 perr_msg 属性在 content_all 上设置不同颜色的背景
+    # 根据perr_msg属性在content_all上设置不同颜色的背景
     content_colored = ''
     for char in content_all:
         if char in perr_msg_dict:

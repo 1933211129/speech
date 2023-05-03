@@ -6,7 +6,6 @@ import random
 import shutil
 import threading
 import uuid
-from pathlib import Path
 import xml.etree.ElementTree as ET
 import mediapipe as mp
 import numpy as np
@@ -27,7 +26,7 @@ import cv2
 from mtcnn import MTCNN
 from PIL import Image
 
-
+from pathlib import Path
 # 项目根目录
 BaseDir = Path(__file__).resolve().parent.parent
 BaseDir = str(BaseDir).replace('\\', '/')

@@ -6,21 +6,27 @@
     <link href="{% static 'css/upload_style.css' %}" rel="stylesheet">
 </head>
 <body>
-    <form method="post" action="" enctype="multipart/form-data">
-        {% csrf_token %}
-        <h1>上传文本文件测试</h1>
-        <input type="file" name="file"><br>
-        演讲主题<input type='text' name='topic', placeholder='演讲主题'><br>
-        <input type="submit" value="上传">
-        <br>
-    </form>
-    <div class="center">
-        <a href="TextAnalyse">
-            <button>分析</button>
-        </a>
-        {% if upload_success %}
-            <p>上传成功</p>
-        {% endif %}
+    <div class="container">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h1>上传文本文件测试</h1>
+            <input type="file" name="file"><br>
+            <input type="text" name="topic" placeholder="输入演讲主题"><br>
+            <input type="submit" value="上传">
+        </form>
+        <div class="center">
+            <a href="TextAnalyse">
+                <button>分析</button>
+            </a>
+            {% if upload_success %}
+                <p>上传成功</p>
+            {% endif %}
+        </div>
     </div>
+    <!-- Add these lines inside the "container" div after the "center" div -->
+        <div class="image-container">
+            <img src="{% static 'images/text/pdf.jpg' %}" alt="PDF" class="pdf-image">
+            <img src="{% static 'images/text/docx.jpg' %}" alt="DOCX" class="docx-image">
+        </div>
 </body>
 </html>

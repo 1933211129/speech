@@ -37,10 +37,15 @@ def finalScore(request):
                         cptr['VoiceScore'] = json.loads(cptr['VoiceScore'])
                     if cptr['PoseScore'] is not None:
                         cptr['PoseScore'] = json.loads(cptr['PoseScore'])
-                    dic[cptr['Cptr_Name']] = (np.array(cptr['HumanScore']).mean() * 1 +
-                                              np.array(cptr['VoiceScore']).mean() * 1 +
-                                              np.array(cptr['PoseScore']).mean() * 3
-                                              ) / 5
+                    if cptr['HumanScore'] == None:
+                        dic[cptr['Cptr_Name']] = (np.array(cptr['VoiceScore']).mean() * 1 +
+                                                  np.array(cptr['PoseScore']).mean() * 3
+                                                  ) / 4
+                    else:
+                        dic[cptr['Cptr_Name']] = (np.array(cptr['HumanScore']).mean() * 1 +
+                                                  np.array(cptr['VoiceScore']).mean() * 1 +
+                                                  np.array(cptr['PoseScore']).mean() * 3
+                                                  ) / 5
                 sorted_dict = {k: v for k, v in sorted(dic.items(), key=lambda item: item[1], reverse=True)}
                 name = []
                 score = []

@@ -1,5 +1,7 @@
 from pyecharts.charts import Line
 from pyecharts.components import Table
+
+
 class textanalyse():
     # 从MySQL取出最新的一条文本
     # def get_text(self):
@@ -39,54 +41,54 @@ class textanalyse():
 
         # 创建 ChromeDriver 对象
         driver = webdriver.Chrome(chrome_options=chrome_options)
-        url='https://www.baidu.com'
+        url = 'https://www.baidu.com'
         driver.get(url)
-        input=driver.find_element('id','kw')
+        input = driver.find_element('id', 'kw')
         keys = '关于' + theme + '的演讲稿'
         input.send_keys(keys)
-        search_btn=driver.find_element('id','su')
+        search_btn = driver.find_element('id', 'su')
         search_btn.click()
 
-        time.sleep(2)#在此等待 使浏览器解析并渲染到浏览器
+        time.sleep(2)  # 在此等待 使浏览器解析并渲染到浏览器
 
-        html=driver.page_source
+        html = driver.page_source
         soup = BeautifulSoup(html, "html.parser")
-        search_res_list=soup.select('.t')
+        search_res_list = soup.select('.t')
 
-        real_url_list=[]
+        real_url_list = []
         # print(search_res_list)
         for el in search_res_list:
-            js = 'window.open("'+el.a['href']+'")'
+            js = 'window.open("' + el.a['href'] + '")'
             driver.execute_script(js)
-            handle_this=driver.current_window_handle#获取当前句柄
-            handle_all=driver.window_handles#获取所有句柄
-            handle_exchange=None#要切换的句柄
-            for handle in handle_all:#不匹配为新句柄
-                if handle != handle_this:#不等于当前句柄就交换
+            handle_this = driver.current_window_handle  # 获取当前句柄
+            handle_all = driver.window_handles  # 获取所有句柄
+            handle_exchange = None  # 要切换的句柄
+            for handle in handle_all:  # 不匹配为新句柄
+                if handle != handle_this:  # 不等于当前句柄就交换
                     handle_exchange = handle
-            driver.switch_to.window(handle_exchange)#切换
-            real_url=driver.current_url
+            driver.switch_to.window(handle_exchange)  # 切换
+            real_url = driver.current_url
             # print(real_url)
-            real_url_list.append(real_url)#存储结果
+            real_url_list.append(real_url)  # 存储结果
             driver.close()
             driver.switch_to.window(handle_this)
         return real_url_list
-
 
     # 根据url获取内容
     def get_content(self, url_list):
         from urllib import response
         import requests
         from bs4 import BeautifulSoup
-        import chardet  #字符集检测
+        import chardet  # 字符集检测
         from urllib.request import urlopen
         import re
-        
+
         # 存储爬取的文本内容
         content_list = []
         for i in range(len(url_list)):
             try:
-                header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'}
+                header = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'}
                 url = url_list[i]
                 response = requests.get(url, headers=header)
                 # 判断网页编码格式
@@ -95,7 +97,7 @@ class textanalyse():
                 response.encoding = result['encoding']
                 print(response.status_code)
                 html = response.text
-                soup = BeautifulSoup(html,'lxml')
+                soup = BeautifulSoup(html, 'lxml')
                 data = soup.find_all('p')
 
                 # 临时存储单个结构
@@ -113,47 +115,46 @@ class textanalyse():
                 continue
         # 将列表展开
         flat_list = [item for sublist in content_list for item in sublist]
-        #　转换为字符串
+        # 　转换为字符串
         str_content = ''.join(flat_list)
         # 剔除Unicode分隔符空格符等
         s = re.sub(r'[\u2002\u3000\n\xa0]+', '', str_content)
         return s
-        
-    def similarity(self, s1,s2):
+
+    def similarity(self, s1, s2):
         # s1为从database中读取的
         # s2为网络爬取的
         import jieba
         import math
         import re
 
-        #利用jieba分词与停用词表，将词分好并保存到向量中
-        stopwords=[]
-        fstop=open('stopwords.txt','r',encoding='utf-8-sig')
+        # 利用jieba分词与停用词表，将词分好并保存到向量中
+        stopwords = []
+        fstop = open('stopwords.txt', 'r', encoding='utf-8-sig')
         for eachWord in fstop:
             eachWord = re.sub("\n", "", eachWord)
             stopwords.append(eachWord)
         fstop.close()
-        s1_cut = [i for i in jieba.cut(s1, cut_all=True) if (i not in stopwords) and i!='']
-        s2_cut = [i for i in jieba.cut(s2, cut_all=True) if (i not in stopwords) and i!='']
+        s1_cut = [i for i in jieba.cut(s1, cut_all=True) if (i not in stopwords) and i != '']
+        s2_cut = [i for i in jieba.cut(s2, cut_all=True) if (i not in stopwords) and i != '']
         word_set = set(s1_cut).union(set(s2_cut))
 
-        #用字典保存两篇文章中出现的所有词并编上号
+        # 用字典保存两篇文章中出现的所有词并编上号
         word_dict = dict()
         i = 0
         for word in word_set:
             word_dict[word] = i
             i += 1
 
-
-        #根据词袋模型统计词在每篇文档中出现的次数，形成向量
-        s1_cut_code = [0]*len(word_dict)
+        # 根据词袋模型统计词在每篇文档中出现的次数，形成向量
+        s1_cut_code = [0] * len(word_dict)
 
         for word in s1_cut:
-            s1_cut_code[word_dict[word]]+=1
+            s1_cut_code[word_dict[word]] += 1
 
-        s2_cut_code = [0]*len(word_dict)
+        s2_cut_code = [0] * len(word_dict)
         for word in s2_cut:
-            s2_cut_code[word_dict[word]]+=1
+            s2_cut_code[word_dict[word]] += 1
 
         # 计算余弦相似度
         sum = 0
@@ -170,20 +171,18 @@ class textanalyse():
             result = 0.0
         return result
 
-
-
     # 相似度均值函数
-    def mean_similarity(self,topic,text_mysql):
+    def mean_similarity(self, topic, text_mysql):
         import numpy as np
         obj_mean_similarity = textanalyse()
         url_list = obj_mean_similarity.get_url(topic)
         text = obj_mean_similarity.get_content(url_list)
-        
+
         length = len(text_mysql)
         split_list = []
         start = 0
         while start < len(text):
-            split_list.append(text[start:start+length])
+            split_list.append(text[start:start + length])
             start += length
         similarity = []
         for i in range(len(split_list)):
@@ -191,7 +190,7 @@ class textanalyse():
         return np.mean(similarity)
 
     def emo_txt(self, text1):
-        
+
         import re
         from jieba import lcut
         import pandas as pd
@@ -212,7 +211,7 @@ class textanalyse():
             pass
 
         # 读取停用词列表
-        with open('stopwords.txt','r') as f:
+        with open('stopwords.txt', 'r', encoding="utf8") as f:
             stop_words = f.read()
         # 对每一句话剔除停用词
         fliter_list = []
@@ -220,7 +219,14 @@ class textanalyse():
             fliter_list.append([w for w in participles_list[i] if not w in stop_words])
         # 情感评分
 
-        df = pd.read_table('E:/jupyter notebook/文本分析/BosonNLP_sentiment_score.txt', sep=" ", names=['key', 'score'])
+        from pathlib import Path
+        import os
+        # 项目根目录
+        BaseDir = Path(__file__).resolve().parent.parent.parent
+        BaseDir = str(BaseDir).replace('\\', '/')
+
+        df = pd.read_table(os.path.join(BaseDir, 'media', 'txt', 'BosonNLP_sentiment_score.txt').replace("\\", "/"),
+                           sep=" ", names=['key', 'score'])
         # 提取出词
         key = df['key'].values.tolist()
         # 提取出分数
@@ -232,11 +238,10 @@ class textanalyse():
         emo_list = []
         # 循环匹配计算单句得分
         for i in range(len(fliter_list)):
-            score_list = [score[key.index(x)] for x in fliter_list[i] if(x in key)]
+            score_list = [score[key.index(x)] for x in fliter_list[i] if (x in key)]
             emo_list.append(sum(score_list))
             pass
         return emo_list
-
 
     def emo_visual(self) -> Line:
         from pyecharts import options as opts
@@ -245,7 +250,7 @@ class textanalyse():
 
         obj_visual = textanalyse()
         emo_list = obj_visual.emo_txt()
-        visualization_df = pd.DataFrame(emo_list,columns=['score'])
+        visualization_df = pd.DataFrame(emo_list, columns=['score'])
         x_axis = list(visualization_df.index)
 
         # 背景色
@@ -254,64 +259,65 @@ class textanalyse():
         {offset: 1,color: '#cdd0d5'}])
         """
         # 线条样式
-        linestyle_dic = { 'normal': {
-                            'width': 4,  
-                            'shadowColor': '#696969', 
-                            'shadowBlur': 10,  
-                            'shadowOffsetY': 10,  
-                            'shadowOffsetX': 10,  
-                            }
-                        }
+        linestyle_dic = {'normal': {
+            'width': 4,
+            'shadowColor': '#696969',
+            'shadowBlur': 10,
+            'shadowOffsetY': 10,
+            'shadowOffsetX': 10,
+        }
+        }
 
         l1 = (
             Line(init_opts=opts.InitOpts(bg_color=JsCode(background_color_js)))
             .add_xaxis(xaxis_data=list(visualization_df.index))
             .add_yaxis(
                 series_name="emo_score",
-                y_axis=[round(float(i),3) for i in emo_list],
+                y_axis=[round(float(i), 3) for i in emo_list],
                 symbol_size=8,
                 is_smooth=True,
                 color="#009ad6",
             )
             # 系列配置项
             .set_series_opts(linestyle_opts=linestyle_dic,
-                            areastyle_opts=opts.AreaStyleOpts(opacity=0.6),
-                            label_opts=opts.LabelOpts(is_show=False),
-                            markline_opts=opts.MarkLineOpts(data=[opts.MarkLineItem(type_="average")]),
-                            markpoint_opts=opts.MarkPointOpts(
-                                data=[opts.MarkPointItem(type_="max"), opts.MarkPointItem(type_="min")],
-                                symbol_size=[65, 50],
-                                label_opts=opts.LabelOpts(position="inside", color="#fff", font_size=10)
-                                ),
-                            )
+                             areastyle_opts=opts.AreaStyleOpts(opacity=0.6),
+                             label_opts=opts.LabelOpts(is_show=False),
+                             markline_opts=opts.MarkLineOpts(data=[opts.MarkLineItem(type_="average")]),
+                             markpoint_opts=opts.MarkPointOpts(
+                                 data=[opts.MarkPointItem(type_="max"), opts.MarkPointItem(type_="min")],
+                                 symbol_size=[65, 50],
+                                 label_opts=opts.LabelOpts(position="inside", color="#fff", font_size=10)
+                             ),
+                             )
             # 通用配置项
             .set_global_opts(
                 title_opts=opts.TitleOpts(
-                        title='文章情感趋势',
-                        pos_top='2%',
-                        title_textstyle_opts=opts.TextStyleOpts(color='#4169E1', font_size=20)),
+                    title='文章情感趋势',
+                    pos_top='2%',
+                    title_textstyle_opts=opts.TextStyleOpts(color='#4169E1', font_size=20)),
                 tooltip_opts=opts.TooltipOpts(trigger="axis"),
-                xaxis_opts=opts.AxisOpts(name="",type_="category", 
-                                boundary_gap=True,
-                                axisline_opts=opts.AxisLineOpts(is_show=True,
-                                                                linestyle_opts=opts.LineStyleOpts(width=2, color='#DB7093')),
-                                axislabel_opts=opts.LabelOpts(rotate=45)),
+                xaxis_opts=opts.AxisOpts(name="", type_="category",
+                                         boundary_gap=True,
+                                         axisline_opts=opts.AxisLineOpts(is_show=True,
+                                                                         linestyle_opts=opts.LineStyleOpts(width=2,
+                                                                                                           color='#DB7093')),
+                                         axislabel_opts=opts.LabelOpts(rotate=45)),
                 yaxis_opts=opts.AxisOpts(
-                        axislabel_opts=opts.LabelOpts(formatter="{value} "),
-                        is_scale=True,
-                        name_textstyle_opts=opts.TextStyleOpts(font_size=12,font_weight='bold',color='#FF1493'),
-                        splitline_opts=opts.SplitLineOpts(is_show=True, 
-                                                        linestyle_opts=opts.LineStyleOpts(type_='dashed')),
-                        axisline_opts=opts.AxisLineOpts(is_show=False,
-                                                linestyle_opts=opts.LineStyleOpts(width=2, color='#DB7093'))
-                    ),
+                    axislabel_opts=opts.LabelOpts(formatter="{value} "),
+                    is_scale=True,
+                    name_textstyle_opts=opts.TextStyleOpts(font_size=12, font_weight='bold', color='#FF1493'),
+                    splitline_opts=opts.SplitLineOpts(is_show=True,
+                                                      linestyle_opts=opts.LineStyleOpts(type_='dashed')),
+                    axisline_opts=opts.AxisLineOpts(is_show=False,
+                                                    linestyle_opts=opts.LineStyleOpts(width=2, color='#DB7093'))
+                ),
                 # 图例样式
-                legend_opts=opts.LegendOpts(is_show=True, pos_right='1%', pos_top='2%',legend_icon='roundRect'),
+                legend_opts=opts.LegendOpts(is_show=True, pos_right='1%', pos_top='2%', legend_icon='roundRect'),
             )
         )
         return l1
 
-    def TextCorection(self,Text):
+    def TextCorection(self, Text):
         from datetime import datetime
         from wsgiref.handlers import format_date_time
         from time import mktime
@@ -325,7 +331,6 @@ class textanalyse():
             def __init__(self, msg):
                 self.message = msg
 
-
         class Url:
             def __init__(this, host, path, schema):
                 this.host = host
@@ -333,9 +338,8 @@ class textanalyse():
                 this.schema = schema
                 pass
 
-
         class WebsocketDemo:
-            def __init__(self,APPId,APISecret,APIKey,Text):
+            def __init__(self, APPId, APISecret, APIKey, Text):
                 self.appid = APPId
                 self.apisecret = APISecret
                 self.apikey = APIKey
@@ -343,14 +347,13 @@ class textanalyse():
                 self.url = 'https://api.xf-yun.com/v1/private/s9a87e3ec'
 
             # calculate sha256 and encode to base64
-            def sha256base64(self,data):
+            def sha256base64(self, data):
                 sha256 = hashlib.sha256()
                 sha256.update(data)
                 digest = base64.b64encode(sha256.digest()).decode(encoding='utf-8')
                 return digest
 
-
-            def parse_url(self,requset_url):
+            def parse_url(self, requset_url):
                 stidx = requset_url.index("://")
                 host = requset_url[stidx + 3:]
                 schema = requset_url[:stidx + 3]
@@ -362,25 +365,24 @@ class textanalyse():
                 u = Url(host, path, schema)
                 return u
 
-
             # build websocket auth request url
-            def assemble_ws_auth_url(self,requset_url, method="POST", api_key="", api_secret=""):
+            def assemble_ws_auth_url(self, requset_url, method="POST", api_key="", api_secret=""):
                 u = self.parse_url(requset_url)
                 host = u.host
                 path = u.path
                 now = datetime.now()
                 date = format_date_time(mktime(now.timetuple()))
-                #print(date)
+                # print(date)
                 # date = "Thu, 12 Dec 2019 01:57:27 GMT"
                 signature_origin = "host: {}\ndate: {}\n{} {} HTTP/1.1".format(host, date, method, path)
-                #print(signature_origin)
+                # print(signature_origin)
                 signature_sha = hmac.new(api_secret.encode('utf-8'), signature_origin.encode('utf-8'),
-                                        digestmod=hashlib.sha256).digest()
+                                         digestmod=hashlib.sha256).digest()
                 signature_sha = base64.b64encode(signature_sha).decode(encoding='utf-8')
                 authorization_origin = "api_key=\"%s\", algorithm=\"%s\", headers=\"%s\", signature=\"%s\"" % (
                     api_key, "hmac-sha256", "host date request-line", signature_sha)
                 authorization = base64.b64encode(authorization_origin.encode('utf-8')).decode(encoding='utf-8')
-                #print(authorization_origin)
+                # print(authorization_origin)
                 values = {
                     "host": host,
                     "date": date,
@@ -389,17 +391,16 @@ class textanalyse():
 
                 return requset_url + "?" + urlencode(values)
 
-
             def get_body(self):
-                body =  {
+                body = {
                     "header": {
                         "app_id": self.appid,
                         "status": 3,
-                        #"uid":"your_uid"
+                        # "uid":"your_uid"
                     },
                     "parameter": {
                         "s9a87e3ec": {
-                            #"res_id":"your_res_id",
+                            # "res_id":"your_res_id",
                             "result": {
                                 "encoding": "utf8",
                                 "compress": "raw",
@@ -421,18 +422,19 @@ class textanalyse():
 
             def get_result(self):
                 request_url = self.assemble_ws_auth_url(self.url, "POST", self.apikey, self.apisecret)
-                headers = {'content-type': "application/json", 'host':'api.xf-yun.com', 'app_id':self.appid}
+                headers = {'content-type': "application/json", 'host': 'api.xf-yun.com', 'app_id': self.appid}
                 body = self.get_body()
-                response = requests.post(request_url, data = json.dumps(body), headers = headers)
+                response = requests.post(request_url, data=json.dumps(body), headers=headers)
                 # print('onMessage：\n' + response.content.decode())
                 tempResult = json.loads(response.content.decode())
                 # print(base64.b64decode(tempResult['payload']['result']['text']).decode())
                 return base64.b64decode(tempResult['payload']['result']['text']).decode()
-        APPId = "9c231a4b"
-        APISecret = "YmNmNjU0ZTJhYmFjOWRiNjM5NGM4ZTc0"
-        APIKey = "50ccda74f1d5832d4052af24d34852a4"
-        
-        demo = WebsocketDemo(APPId,APISecret,APIKey,Text)
+
+        APPId = "7959b5ba"
+        APISecret = "NzU4NDUxNDk0NzY2MjdhOTBmMzcwODE0"
+        APIKey = "d649fc9f22c50f330b3753ba0d053a6f"
+
+        demo = WebsocketDemo(APPId, APISecret, APIKey, Text)
         result = demo.get_result()
         result_dict = json.loads(result)
         # 取出所有的键值对，判断哪些键有值并存储
@@ -454,7 +456,7 @@ class textanalyse():
         return getvalue_list
 
     # 文本纠错
-    def textcorrection(self,Text):
+    def textcorrection(self, Text):
         obj_textcorrection = textanalyse()
         if len(Text) >= 1500:
             # 计算字符串中有多少段 1500 个字符的子串
@@ -472,23 +474,24 @@ class textanalyse():
         else:
             result = obj_textcorrection.TextCorection(Text)
         return result
-# 病句绘图
+
+    # 病句绘图
     def Text_Correction_Table(self, Text) -> Table:
         from pyecharts.options import ComponentTitleOpts
         obj_Text_Correction_Table = textanalyse()
         error_list = obj_Text_Correction_Table.textcorrection(Text)
         table = Table()
 
-        headers = ['下标','原文','修改','病句类型']
+        headers = ['下标', '原文', '修改', '病句类型']
         rows = error_list
         table.add(headers, rows)
         table.set_global_opts(
-            title_opts=ComponentTitleOpts(title="文本纠错",subtitle='语病 错别字')
+            title_opts=ComponentTitleOpts(title="文本纠错", subtitle='语病 错别字')
         )
         return table
 
-# 相似度绘图
-    def Similarity_Table(self,topic) -> Table:
+    # 相似度绘图
+    def Similarity_Table(self, topic) -> Table:
         from pyecharts.options import ComponentTitleOpts
 
         obj_Similarity_Table = textanalyse()
@@ -498,6 +501,6 @@ class textanalyse():
         rows = [[similarity_value]]
         table.add(headers, rows)
         table.set_global_opts(
-            title_opts=ComponentTitleOpts(title="余弦相似度",subtitle='网络查重')
+            title_opts=ComponentTitleOpts(title="余弦相似度", subtitle='网络查重')
         )
         return table
