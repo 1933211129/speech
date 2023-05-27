@@ -32,10 +32,15 @@ class StatsMiddleware(MiddlewareMixin):
             request_bytes = request.META.get('CONTENT_LENGTH')
 
         # 计算请求和响应的字节数
-        response_bytes = len(response.get("Content-Length")) # 修改bytes 获取方式， 解决图片的前端不显示问题
-        visit.bytes_send = response_bytes
-        visit.bytes_recv = request_bytes
-        visit.save()
+        if response.get("Content-Length") is not None:
+            response_bytes = response.get("Content-Length") # 修改bytes 获取方式， 解决图片的前端不显示问题
+            visit.bytes_send = response_bytes
+            visit.bytes_recv = request_bytes
+            visit.save()
+        else:
+            visit.bytes_send = 0
+            visit.bytes_recv = 0
+            visit.save()
         return response
 
     def limit_float_length(self, num, length):

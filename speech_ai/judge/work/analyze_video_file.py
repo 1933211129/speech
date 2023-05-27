@@ -1,11 +1,17 @@
 import json
 import random
-import sys
 import threading
-
+import sys
+from pathlib import Path
 import django
 
+
+# 项目根目录
+BaseDir = Path(__file__).resolve().parent.parent.parent
+BaseDir = str(BaseDir).replace('\\', '/')
+sys.path.append(BaseDir)
 django.setup()
+
 
 from judge.models import Competitor
 from login.models import Pose, Speach, MyUser
@@ -59,9 +65,9 @@ def analyze_video_file(file_path, date_dir, userID, time, raceID):
     competitor.save()
 
     # 更改用户身份为 裁判
-    user = MyUser.objects.get(uid=userID)
-    user.status_flag = 2
-    user.save()
+    # user = MyUser.objects.get(id=userID)
+    # user.status_flag = 1
+    # user.save()
 
     print('视频分析完成.')
 

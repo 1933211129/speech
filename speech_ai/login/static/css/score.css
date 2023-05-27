@@ -1,8 +1,17 @@
+
+#multimode-container {
+    width: 85%; /* 设置容器元素宽度为原始宽度的一半 */
+    height: 85%; /* 设置容器元素高度为原始高度的一半 */
+    transform: scale(0.85); /* 缩放图表为原始大小的一半 */
+    transform-origin: center center; /* 设置缩放的基准点为左上角 */
+}
+
+
 #echart_container {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(3, 1fr); /*1fr 1fr*/
+    grid-template-rows: repeat(2, 1fr); /*1fr 1fr*/
 }
 
 .grid-item1 {
@@ -25,21 +34,19 @@
   grid-row: 2 / 3;
 }
 
-.grid-item5 {
-  grid-column: 1 / 2;
-  grid-row: 3 / 4;
-}
+/*.grid-item5 {*/
+/*  grid-row: 3 / 4;*/
+/*}*/
 
-.grid-item6 {
+/*.grid-item6 {
   grid-column: 2 / 3;
   grid-row: 3 / 4;
-}
+}*/
 
-
-.grid-item1 .grid-item2 .grid-item3 .grid-item4 .grid-item5 .grid-item6 {
+/*.grid-item5 .grid-item6*/
+.grid-item1 .grid-item2 .grid-item3 .grid-item4  {
     position: absolute;
     display: block;
-
 }
 
 .lightbox-container {

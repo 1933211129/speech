@@ -210,8 +210,14 @@ class textanalyse():
             participles_list.append(lcut(sentence_result[i]))
             pass
 
+        from pathlib import Path
+        import os
+        BaseDir = Path(__file__).resolve().parent.parent.parent
+
+        temp = os.path.join(str(BaseDir), 'media', 'txt', 'stopwords.txt').replace("\\", "/")
+
         # 读取停用词列表
-        with open('stopwords.txt', 'r', encoding="utf8") as f:
+        with open(temp, 'r', encoding="utf8") as f:
             stop_words = f.read()
         # 对每一句话剔除停用词
         fliter_list = []

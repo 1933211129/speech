@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+
     # 前端 测试
     path('temp', views.temp),
 

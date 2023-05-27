@@ -118,70 +118,79 @@
             <br>
 
             <div id="echart_container">
-                <div class="grid-item1" id="emotion_count" style="width: 48vw; height:33vh;"></div>
-                <div class="grid-item2" id="stand_score" style="width: 48vw; height:33vh;"></div>
-                <div class="grid-item3" id="speech_score_bar" style="width: 48vw; height:33vh;"></div>
-                <div class="grid-item4" id="speech_score_radar" style="width: 48vw; height:33vh;"></div>
+{#                <div class="grid-item1" id="emotion_count" style="width: 48vw; height:33vh;"></div>#}
 
-                <div class="grid-item5" id="txt" style="width: 48vw; height:33vh;">
-                    <h5 style="position: relative; text-align: left"> <b>发音准确度可视化</b> </h5>
+                <div class="grid-item1" id="speech_score_bar" style="width: 48vw; height:33vh;"></div>
+
+                <div class="grid-item2" id="speech_score_radar" style="width: 48vw; height:33vh;"></div>
+
+                <div class="grid-item3" id="txt" style="width: 48vw; height:33vh;">
+                    <b style="position: relative; text-align: left; style="font-size: 16px;> 发音准确度</b>
                     <div style="border: 1px solid black; padding: 10px; margin: 50px;">
                             {{ pro_viual|safe }}
                     </div>
-
                 </div>
 
-                <div class="grid-item6" id="multimode" style="width: 48vw; height:33vh;">
-                     <h5 style="position:relative; text-align:left"> <b>多模态情感一致性</b> </h5>
-                    <div style="padding: 20px; margin-left: 40px; margin-top: 40px;">
+                <div class="grid-item4" id="stand_score" style="width: 48vw; height:33vh;"></div>
 
-                        <img src="/media/中性.png" style="width: 20vw; height:auto;">
-                        <img src="/media/厌恶.png" style="width: 20vw; height:auto;">
-
-                    </div>
-
-                </div>
+{#                <div class="grid-item6" id="multimode" style="width: 48vw; height:33vh;"></div>#}
+{#                <div class="grid-item6" id="multimode" style="width: 48vw; height:33vh;">#}
+{#                     <h5 style="position:relative; text-align:left"> <b>多模态情感一致性</b> </h5>#}
+{#                    <div style="padding: 20px; margin-left: 40px; margin-top: 40px;">#}
+{#                    multimode#}
+{##}
+{#                        <img src="/media/中性.png" style="width: 20vw; height:auto;">#}
+{#                        <img src="/media/厌恶.png" style="width: 20vw; height:auto;">#}
+{##}
+{#                    </div>#}
+{##}
+{#                </div>#}
 
 
             </div>
 
-            <br>
-{#            <br><br>#}
+            <div id="multimode-container">
+              <div id="multimode" style="width: 98vw; height:900px;"></div>
+            </div>
+
+            <br><br><br><br>
 
             <h3 style="position: relative; text-align: center"> <b>关键图片展示</b> </h3>
-            <h6 style="position: relative; text-align: center"> 四肢变化{{ limbs }}次, 人体位置变化{{ body }}次</h6>
+            <br>
+            <h5 style="position: relative; text-align: center"> 四肢变化 <b>{{ limbs }}</b> 次, 人体位置变化 <b>{{ body }}</b> 次 </h5>
 
             <div class="img-container">
                 {% for one in pose %}
                     {% if one.flag or count_flag == False %}
                     <div class="img-item">
                         <img class="lightbox-trigger" src="{{ one.pose }}" alt="姿态图片">
-                        <figcaption>时间:{{ one.imgTime }}s &emsp;&emsp; 分数:{{ one.score }}</figcaption>
+                        <figcaption>时间:{{ one.imgTime }}s &emsp;&emsp; 分数:{{ one.score }} &emsp;&emsp;表情:{{ one.emotion }}</figcaption>
                     </div>
                     {% endif %}
                 {% endfor %}
+            <div class="lightbox-container">
 
-             <div class="lightbox-container">
-              <div class="lightbox-content">
+            <div class="lightbox-content">
                 <div>
                     <button class="lightbox-prev">&lt;</button>
                 </div>
                 <img class="lightbox-image" src="" alt="">
                 <div class="lightbox-caption"></div>
-                <div>
-                  <button class="lightbox-next">&gt;</button>
+                    <div>
+                      <button class="lightbox-next">&gt;</button>
+                    </div>
+                    <button class="lightbox-close">&times;</button>
                 </div>
-                <button class="lightbox-close">&times;</button>
-              </div>
             </div>
             </div>
 
             <div id="TextBox">
-                <div style="border: 2px solid red; padding: 30px;  margin:40px">
-                    <div style="font-weight: bold; align:center; ">总结</div>
+                <div style="border: 2px solid red; padding: 30px; margin:40px">
+{#                    <div style="font-weight: bold; align:center; ">总结</div>#}
+                    <h5 style="text-align:center"><b>总结</b></h5>
                     <br>
                    {% for one in feedback %}
-                        <p style="align:center; ">  {{ one|safe }}</p>
+                        <p style="text-align:center; ">  {{ one|safe }}</p>
                     {% endfor %}
 
                 </div>
@@ -190,6 +199,221 @@
         </div>
 
     <script  type="text/javascript">
+
+        {#    多模态    #}
+        const multimode = echarts.init(document.getElementById('multimode'));
+
+        const datas = [["2000-06-05", 116], ["2000-06-06", 129], ["2000-06-07", 135], ["2000-06-08", 86], ["2000-06-09", 73], ["2000-06-10", 85], ["2000-06-11", 73], ["2000-06-12", 68], ["2000-06-13", 92], ["2000-06-14", 130], ["2000-06-15", 245], ["2000-06-16", 139], ["2000-06-17", 115], ["2000-06-18", 111], ["2000-06-19", 309], ["2000-06-20", 206], ["2000-06-21", 137], ["2000-06-22", 128], ["2000-06-23", 85], ["2000-06-24", 94], ["2000-06-25", 71], ["2000-06-26", 106], ["2000-06-27", 84], ["2000-06-28", 93], ["2000-06-29", 85], ["2000-06-30", 73], ["2000-07-01", 83], ["2000-07-02", 125], ["2000-07-03", 107], ["2000-07-04", 82], ["2000-07-05", 44], ["2000-07-06", 72], ["2000-07-07", 106], ["2000-07-08", 107], ["2000-07-09", 66], ["2000-07-10", 91], ["2000-07-11", 92], ["2000-07-12", 113], ["2000-07-13", 107], ["2000-07-14", 131], ["2000-07-15", 111], ["2000-07-16", 64], ["2000-07-17", 69], ["2000-07-18", 88], ["2000-07-19", 77], ["2000-07-20", 83], ["2000-07-21", 111], ["2000-07-22", 57], ["2000-07-23", 55], ["2000-07-24", 60]];
+        const dateList = datas.map(function (item) {
+          return item[0];
+        });
+        const valueList = datas.map(function (item) {
+          return item[1];
+        });
+
+        const valueList1 = valueList.map(x => x * 2);
+
+        const titleNameY = ['语音分数', '文本分数', '表情分数'];
+        const titleName = ['语音', '文本', '表情'];
+        const colors = ['#EE6666', '#91CC75','#37A2FF'];
+
+        let multimode_option = {
+          dataZoom: [
+            {
+              type: 'slider',
+              xAxisIndex: [0, 1, 2],
+              filterMode: 'none'
+            },
+            {
+              type: 'inside',
+              xAxisIndex: [0, 1, 2],
+              filterMode: 'none'
+            },
+
+            {
+              type: 'slider',
+              yAxisIndex: 0,
+              filterMode: 'none'
+            },
+            {
+              type: 'slider',
+              yAxisIndex: 1,
+              filterMode: 'none'
+            },
+            {
+              type: 'slider',
+              yAxisIndex: 2,
+              filterMode: 'none'
+            },
+            {% comment %}{
+              type: 'inside',
+              yAxisIndex: 0,
+              filterMode: 'none'
+            },
+            {
+              type: 'inside',
+              yAxisIndex: 1,
+              filterMode: 'none'
+            },
+
+            {
+              type: 'inside',
+              yAxisIndex: 2,
+              filterMode: 'none'
+            }{% endcomment %}
+          ],
+          legend: {
+            type: 'scroll', // ：可滚动翻页的图例。当图例数量较多时可以使用。
+            data: titleName
+          },
+          title: [{ // 图表标题
+            top: '3%',
+            left: 'center',
+            text: '语音统计'
+          }, {
+            top: '35%',
+            left: 'center',
+            text: '文本统计'
+          }, {
+            top: '65%',
+            left: 'center',
+            text: '表情统计'
+          }],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            }
+          },
+          axisPointer: { // 同时出现提示竖线
+            link: { xAxisIndex: 'all' }
+          },
+          xAxis: [{
+            data: dateList,
+            name: '时间',
+            axisLine: {
+              show: true,
+              symbol: ['none', 'arrow'], // 显示箭头的位置
+              symbolOffset: [0, 12], // 箭头位置的偏移量
+              lineStyle: {
+                color: colors[0]
+              }
+            }
+          }, {
+            data: dateList,
+            name: '时间',
+            gridIndex: 1
+          }, {
+            data: dateList,
+            name: '时间',
+            gridIndex: 2
+          }],
+          yAxis: [
+            {
+              name: titleNameY[0],
+              axisLine: {
+                show: true,
+                symbol: ['none', 'arrow'],
+                lineStyle: {
+                  color: colors[0]
+                }
+              },
+              axisLabel: {
+                formatter: '{value} ￥'
+              }
+            }, {
+              name: titleNameY[1],
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: colors[1]
+                }
+              },
+              axisLabel: {
+                formatter: '{value} ￥'
+              },
+              gridIndex: 1
+            }, {
+              name: titleNameY[2],
+              axisLine: {
+                show: true,
+              },
+              axisLabel: {
+                formatter: '{value} ￥'
+              },
+              gridIndex: 2
+            }],
+          grid: [{ // 调整每个图表的位置
+            top: '3%',
+            bottom: '70%',
+          }, {
+            top: '40%',
+            bottom: '40%',
+          },
+          {
+            top: '70%',
+            bottom: '3%'
+          }],
+          series: [
+            {
+              name: titleName[0],
+              type: 'line',
+              areaStyle: {},
+              itemStyle: {
+                color: colors[0]
+              },
+              lineStyle: {
+                color: colors[0],
+                width: 3
+              },
+              showSymbol: false,
+              data: valueList,
+            }, {
+              name: titleName[1],
+              type: 'line',
+              showSymbol: false,
+              data: valueList1,
+              itemStyle: {
+                color: colors[1]
+              },
+              lineStyle: {
+                color: colors[1],
+                width: 3
+              },
+              xAxisIndex: 1,
+              yAxisIndex: 1
+            }, {
+              name: titleName[1],
+              type: 'bar',
+              showSymbol: false,
+              data: valueList,
+              itemStyle: {
+                color: colors[1]
+              },
+              lineStyle: {
+                color: colors[1],
+                width: 3
+              },
+              xAxisIndex: 1,
+              yAxisIndex: 1
+            }, {
+              name: titleName[2],
+              type: 'line',
+              showSymbol: false,
+              data: valueList,
+              itemStyle: {
+                color: colors[2]
+              },
+              lineStyle: {
+                color: colors[2],
+                width: 3
+              },
+              xAxisIndex: 2,
+              yAxisIndex: 2
+            }]
+        };
+        multimode.setOption(multimode_option);
+
 
         const dateSelect = document.getElementById('dateSelect');
         const dateForm = document.getElementById('dateForm');
@@ -218,11 +442,12 @@
         let max_count = Math.max.apply(null, emotion);
 
 
+        {#    语音 条形图    #}
         let speech_score = {{ speech_score }};
         const speechScoreBar = echarts.init(document.getElementById('speech_score_bar'));
         let speech_score_bar_option = {
           title: {
-            text: '发音'
+            text: '语音 条形图'
           },
           tooltip: {
             trigger: 'axis',
@@ -239,7 +464,6 @@
           },
           xAxis: {
             type: 'value',
-            {#boundaryGap: [0, 0.01]#}
             boundaryGap: [0, 0.0001]
           },
           yAxis: {
@@ -252,7 +476,14 @@
             {
               {#name: '{{ date }}',#}
               type: 'bar',
-              data: speech_score
+              data: speech_score,
+              itemStyle: {
+                  color: function(params) {
+                      // 自定义每个条形的颜色
+                      let colors = ['#FF7070', '#FFB56E', '#FFD06E', '#A6D882', '#67C2F5', '#7F93E9'];
+                      return colors[params.dataIndex % colors.length];
+                  }
+              },
             }
           ]
         };
@@ -260,11 +491,12 @@
 
 
 
+        {#    发音 雷达图    #}
         let max_speach_score = 100;
         const speechScoreRadar = echarts.init(document.getElementById('speech_score_radar'));
         let speech_score_radar_option = {
           title: {
-            text: '发音'
+            text: '语音 雷达图'
           },
             legend: {
             data: '{{ date }}'
@@ -289,15 +521,18 @@
                   value: speech_score.slice(0,-1),
                   name: date,
                 },
-              ]
+              ],
+              itemStyle: {
+                color: '#FF5722' // 设置雷达图的颜色，这里使用橙色
+              },
             }
           ]
         };
         speechScoreRadar.setOption(speech_score_radar_option);
 
 
-
-        const emotionCount = echarts.init(document.getElementById('emotion_count'));
+        {#   表情    #}
+        {% comment %}const emotionCount = echarts.init(document.getElementById('emotion_count'));
         let emotionCount_option = {
           title: {
             text: '表情'
@@ -330,17 +565,14 @@
             }
           ]
         };
-        emotionCount.setOption(emotionCount_option);
+        emotionCount.setOption(emotionCount_option);{% endcomment %}
 
 
-        {% comment %}let imgTime = {{ data.imgTime|safe }};
-        imgTime.forEach((elem)=> {
-            elem = elem + 's';
-        });{% endcomment %}
+        {#    姿态得分  折线图  #}
         const standScore = echarts.init(document.getElementById('stand_score'));
         let standScore_option = {
           title: {
-            text: '姿态',
+            text: '姿态得分 折线图',
             {#subtext: date#}
           },
           tooltip: {
@@ -385,7 +617,13 @@
               },
               markLine: {
                 data: [{ type: 'average', name: 'Avg' }]
-              }
+              },
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: '#ff6bcf' },
+                  { offset: 1, color: '#3f8cff' },
+                ])
+              },
             },
           ]
         };
