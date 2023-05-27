@@ -5,9 +5,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
 
-    # 前端 测试
-    path('temp', views.temp),
-
     # 登录注册
     path('', views.login_register),  # 登录注册
     path('login', views.login),  # 登录
@@ -22,17 +19,14 @@ urlpatterns = [
     path('speech', views.speech),  # 姿态表情分析
 
     # 用户个人界面
-    path('upload/avatar', views.upload_avatar),
-    path('show/avatar', views.show_avatar),
+    # path('upload/avatar', views.upload_avatar),
+    # path('show/avatar', views.show_avatar),
     path('user/info', views.user_info),
 
     # 得分
     path('score/', views.speachScore),
     re_path(r'score/(?P<date>[^/]+)/$', views.speachDateScore),
     # path('score/history_score', views.history_score),
-
-    # 文本 需要完善
-    re_path(r'txt/(?P<topic>[^/]+)/$',views.txt),
 
 ]
 

@@ -1,192 +1,349 @@
 ﻿<!DOCTYPE html>
+
 <html lang="zh-cn">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="OrcasThemes">
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="OrcasThemes">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="icon" href="{% static 'favicon/logo.svg' %}">
 
+    <title>评委</title>
 
-<title>评委</title>
-<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/screen.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animation.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ie.css' %}" type="text/css" media="screen, projection">
+    <link href="{% static 'css/lity.css' %}" rel="stylesheet">
 
-<link rel="stylesheet" href="{% static 'css/screen.css' %}">
-<link rel="stylesheet" href="{% static 'css/animation.css' %}">
+    <link href="{% static 'css/fontCharacter.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet"/>
 
-<link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
 
-<link rel="stylesheet" href="{% static 'css/ie.css' %}" type="text/css" media="screen, projection">
-
-<link href="{% static 'css/lity.css' %}" rel="stylesheet">
 </head>
-<body>
-<style>
-		.container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			margin-top: 50px;
-		}
-		.score-form {
-			display: none;
-			flex-direction: column;
-			align-items: center;
-			margin-top: 20px;
-		}
-		.score-form label {
-			margin-bottom: 10px;
-		}
-</style>
 
-<!-- HOME 1 -->
-<div id="home1" class="container-fluid standard-bg">
- <!-- HEADER -->
- <div class="row header-top">
-	<div class="col-lg-3 col-md-6 col-sm-5 col-xs-8">
-	   <a class="main-logo" href="#"><img src="{% static 'img/banners/main-logo.png' %}" class="main-logo img-responsive" alt="Muvee Reviews" title="Muvee Reviews"></a>
-	</div>
-	<div class="col-lg-6 hidden-md text-center hidden-sm hidden-xs">
-	   <img src="{% static 'img/banners/3banner-sm.jpg' %}" class="img-responsive" alt="Muvee Reviews Video Magazine HTML5 Bootstrap">
-	</div>
-	<div class="col-lg-3 col-md-6 col-sm-7 hidden-xs">
-	   <div class="right-box">
-		  <button type="button" onclick="window.location.href='/judge/finalScore/'" class="access-btn" data-toggle="modal" data-target="#enquirypopup">查看结果</button>
-	   </div>
-	</div>
- </div>
+<body background="{% static 'images/blue-background-img.png' %}">
+        <style>
+            .container2 {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .score-form {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 20px;
+            }
+            .score-form label {
+                margin-bottom: 10px;
+            }
 
- <!-- CORE -->
- <div class="row">
-	<!-- SIDEBAR -->
-	<div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
-	   <aside class="dark-bg">
-		  <article>
-			 <h2 class="icon"><i class="fa fa-flash" aria-hidden="true"></i>评分</h2>
-			 {% comment %} <ul class="sidebar-links">
-				<li class="fa fa-chevron-right"><a href="#">发音流畅度</a></li>
-				<li class="fa fa-chevron-right"><a href="#">发音准确度</a></li>
-				<li class="fa fa-chevron-right"><a href="#">情感饱和度</a></li>
-				<li class="fa fa-chevron-right"><a href="#">肢体动作适当</a></li>
-				<li class="fa fa-chevron-right"><a href="#">演讲逻辑性</a></li>
-				<li class="fa fa-chevron-right"><a href="#">演讲文采性</a></li>
-				<!-- <li class="fa fa-chevron-right"><a href="#">movies</a><span>15</span></li> -->
-			 </ul> {% endcomment %}
-            <script>
-                function toggleScoreForm(id) {
-                    const scoreForm = document.getElementById(`score-form-${id}`);
-                    scoreForm.style.display = scoreForm.style.display === 'none' ? 'flex' : 'none';
-                }
-            </script>
-            <div class="container">
-                {% for video in video_properties %}
-                    <div>
-                        <span>选手{{ forloop.counter }}</span>
-                        <button onclick="toggleScoreForm({{ forloop.counter }})">▼</button>
-                    </div>
-                    <form class="score-form" id="score-form-{{ forloop.counter }}">
-                        <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ video.Cptr_id }}">
+            .form-row {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+            }
 
-                        <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
-                        <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
-                        <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
-                        <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
-                        <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
-                        <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
-                        <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
-                        <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
-                        <button type="submit">提交</button>
-                    </form>
-                {% endfor %}
+            .form-row input {
+                flex-grow: 1; /* 让输入框占据剩余的空间 */
+                /* 添加一些样式 */
+                border: 1px solid #fff;
+                border-bottom: 3px solid var(--primary-color);
+                color: #595959;
+                font-size: 10px;
+                height: auto;
+                padding: 10px;
+                transition: all 0.2s linear 0s;
+                unicode-bidi: embed;
+                width: 100%;
+                background: transparent;
+                font-style: italic;
+                border-radius: 8px;
+            }
+
+            .custom-button {
+                display: inline-block;
+                background-color: #4CAF50; /* 设置按钮的背景颜色 */
+                border: none; /* 移除按钮的边框 */
+                color: white; /* 设置按钮的文字颜色 */
+                text-align: center; /* 文字居中 */
+                text-decoration: none; /* 移除文字下划线 */
+                cursor: pointer; /* 鼠标悬停时显示指针 */
+                padding: 10px 20px; /* 设置内边距 */
+                font-size: 16px; /* 设置文字大小 */
+                border-radius: 4px; /* 设置边框的圆角弧度 */
+                margin-top: 10px;
+                outline: none;
+            }
+
+            /* 鼠标悬停时改变按钮的背景颜色 */
+            .custom-button:hover {
+                background-color: #45a049;
+            }
+            .submit-button {
+                display: inline-block;
+                background-color: #67c2f5;
+                border: none;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                cursor: pointer;
+                padding: 5px 10px;
+                font-size: 12px;
+                border-radius: 2px;
+                outline: none;
+                transition: background-color 0.3s ease; /* 添加过渡效果 */
+            }
+
+            .submit-button:hover {
+                background-color: #1da8f5;
+            }
+
+            .submit-button:active {
+                background-color: #408e40; /* 设置按钮在点击时的背景颜色 */
+            }
+
+        </style>
+
+        <div class="hero_area">
+            <!-- header section strats -->
+            <header class="header_section">
+                <div class="container" style="align-items:center; text-align:center; ">
+                    <nav class="navbar navbar-expand-lg custom_nav-container " >
+                        <a class="navbar-brand" href="/index">
+                            <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                 x="0px" y="0px" viewBox="0 0 512.009 512.009"
+                                 style="enable-background:new 0 0 512.009 512.009;"
+                                 xml:space="preserve">
+                      <g>
+                        <g>
+                          <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
+                    c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
+                    c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
+                    l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
+                    c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
+                    C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
+                    c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
+                    z"></path>
+                        </g>
+                      </g>
+                                <g>
+                        <g>
+                          <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
+                    c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
+                    C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
+                        </g>
+                      </g>
+                                <g>
+                        <g>
+                          <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
+                    c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
+                    c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
+                    C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
+                        </g>
+                      </g>
+
+                    </svg>
+                    <span>
+                      Speech scoring system
+                    </span>
+                        </a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                data-target="#navbarSupportedContent"
+                                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="s-1"> </span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                                <ul class="navbar-nav  ">
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/index"> 主页 <span class="sr-only">(current)</span></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/judge/judge_homepage/">赛事广场<span class="sr-only">(current)</span></a>
+                                    </li>
+
+                                    {% if login_status %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/login/score"> 评测结果 </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link last_link" href="/login/logout"> 注销 </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link last_link" href="/judge/judge_homepage/contact/"> 联系我们 </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="nav-item">
+                                            <a class="nav-link last_link" href="/login"> 登录 </a>
+                                        </li>
+                                    {% endif %}
+
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </header>
+
+
+            <div class="row">
+
+                <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
+                   <aside class="dark-bg">
+                      <article>
+                         <h2 class="icon">评分</h2>
+
+                        <script>
+                            function toggleScoreForm(id) {
+                                const scoreForm = document.getElementById(`score-form-${id}`);
+                                scoreForm.style.display = scoreForm.style.display === 'none' ? 'flex' : 'none';
+                            }
+                        </script>
+
+                        <div class="container2">
+
+                            {% for competitor in competitors %}
+                                <div>
+
+                                    <button onclick="toggleScoreForm({{ forloop.counter }})" class="custom-button">
+                                        <span>{{ competitor.Cptr_Name }}</span>
+                                    </button>
+
+                                </div>
+
+                                <form class="score-form" id="score-form-{{ forloop.counter }}">
+                                    <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
+
+                                    <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
+                                        <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
+                                        <br>
+                                    <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
+                                        <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
+                                        <br>
+                                    <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
+                                        <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
+                                        <br>
+                                    <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
+                                        <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
+                                        <br>
+
+                                    <button type="submit" class="submit-button">提交</button>
+                                </form>
+
+                            {% endfor %}
+
+                        </div>
+                      </article>
+                      <div class="clearfix spacer"></div>
+                   </aside>
+                </div>
+
+                <div class="col-lg-10 col-md-8">
+                   <section id="home-main">
+                      <h2 class="icon">选手视频</h2>
+                      <div class="row">
+                         <!-- ARTICLES -->
+                         <div class="col-lg-9 col-md-12 col-sm-12">
+                            <div class="row auto-clear">
+                                {% for competitor in competitors %}
+                                    <article class="col-lg-3 col-md-6 col-sm-4">
+                                      <div class="post post-medium">
+                                        <div class="thumbr">
+                                          <a class="post-thumb" href="/media/{{ competitor.video_path }}" data-lity>
+                                            <span class="play-btn-border" title="Play"><i class="fa fa-play-circle headline-round" aria-hidden="true"></i></span>
+
+                                            <style>
+                                                .stretched-img {
+                                                  width: 400px;
+                                                  height: 170px;
+                                                }
+                                            </style>
+
+
+                                            <img class="img-responsive stretched-img" src="/media/{{ competitor.img_path }}" alt="{{ competitor.Cptr_Name }}">
+
+                                          </a>
+                                        </div>
+                                        <div class="infor">
+                                          <h4>
+                                            <b>{{ competitor.Cptr_Name }}</b>
+                                          </h4>
+                                        </div>
+                                      </div>
+                                    </article>
+                                {% endfor %}
+                            </div>
+                         </div>
+                     </div>
+                   </section>
+                </div>
+             </div>
             </div>
-		  </article>
-		  <div class="clearfix spacer"></div>
-	   </aside>
-	</div>
-	<!-- HOME MAIN POSTS -->
-	<div class="col-lg-10 col-md-8">
-	   <section id="home-main">
-		  <h2 class="icon"><i class="fa fa-television" aria-hidden="true"></i>选手视频</h2>
-		  <div class="row">
-			 <!-- ARTICLES -->
-			 <div class="col-lg-9 col-md-12 col-sm-12">
-				<div class="row auto-clear">
-					{% for video in video_properties %}
-					<article class="col-lg-3 col-md-6 col-sm-4">
-					  <div class="post post-medium">
-						<div class="thumbr">
-						  <a class="post-thumb" href="/media/{{ video.video_path }}" data-lity>
-							<span class="play-btn-border" title="Play"><i class="fa fa-play-circle headline-round" aria-hidden="true"></i></span>
-							<img class="img-responsive" src="/media/{{ video.img_path }}" alt="{{ video.Cptr_Name }}">
-						  </a>
-						</div>
-						<div class="infor">
-						  <h4>
-							<a class="title" href="#">{{ video.title }}</a>
-						  </h4>
-						</div>
-					  </div>
-					</article>
-					{% endfor %}
-				</div>
-				<div class="clearfix spacer"></div>
-			 </div>
-				<!-- SIDEBAR ADVERTISE BOX -->
-				<a href="" class="banner-l hidden-sm hidden-xs">
-				<img src="{% static 'img/banners/banner-l.jpg' %}" class="img-responsive" alt="Buy Now Muvee Reviews Bootstrap HTML5 Template" title="Buy Now Muvee Reviews Bootstrap HTML5 Template">
-				</a>
-			 </div>
-	   </section>
-	</div>
- </div>
-</div>
 
-    <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>
 
-    <script>
+        </div>
 
-        {#只能输入整数或一位两位小数#}
-        $('input').on('input', function() {
-          let val = this.value;
-          let regex = /^([1-9][0-9]?)(\.\d{0,2})?$|100$/;
-          if (!regex.test(val)) {
-            this.value = val.slice(0, -1);
-          }
-        });
+        <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>
 
-        {#提交表单#}
-        $(document).ready(function() {
-          $(".score-form").submit(function(event) {
-            event.preventDefault();
+        <script>
 
-            let formData = {
-              "cptrID": $(this).find("input[name='cptrID']").val(),
-              "qinggan": $(this).find("input[name='qinggan']").val(),
-              "ziti": $(this).find("input[name='ziti']").val(),
-              "luoji": $(this).find("input[name='luoji']").val(),
-              "wencai": $(this).find("input[name='wencai']").val(),
-              "csrfmiddlewaretoken": "{{ csrf_token }}"
-            };
-            console.log(formData);
-
-            $.ajax({
-              type: "POST",
-              url: "/judge/humanScore/",
-              data: formData,
-              success: function(ret) {
-                alert('提交成功');
-              },
-              error: function(ret) {
-                console.log("提交失败 !");
+            {#只能输入整数或一位两位小数#}
+            $('input').on('input', function() {
+              let val = this.value;
+              let regex = /^([1-9][0-9]?)(\.\d{0,2})?$|100$/;
+              if (!regex.test(val)) {
+                this.value = val.slice(0, -1);
               }
             });
-          });
-        });
 
-        {#console.log("{{ cptr|safe }}");#}
+            {#提交表单#}
+            $(document).ready(function() {
+              $(".score-form").submit(function(event) {
+                event.preventDefault();
 
-    </script>
+                let formData = {
+                  "cptrID": $(this).find("input[name='cptrID']").val(),
+                  "qinggan": $(this).find("input[name='qinggan']").val(),
+                  "ziti": $(this).find("input[name='ziti']").val(),
+                  "luoji": $(this).find("input[name='luoji']").val(),
+                  "wencai": $(this).find("input[name='wencai']").val(),
+                  "csrfmiddlewaretoken": "{{ csrf_token }}"
+                };
+                console.log(formData);
 
+                $.ajax({
+                  type: "POST",
+                  url: "/judge/humanScore/",
+                  data: formData,
+                  success: function(ret) {
+                    alert('提交成功');
+                  },
+                  error: function(ret) {
+                    console.log("提交失败 !");
+                  }
+                });
+              });
+            });
 
-</body>
+        </script>
+
+    </body>
 </html>

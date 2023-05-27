@@ -5,15 +5,23 @@ li {
 a {
 	text-decoration: none;
 }
+
 h2,h3,h4{
 	margin-bottom: 0;
 	margin-top:0 ;
 }
-h3{ line-height: 0;}
-.header {
-	background: #FFFFFF url(../img/bg.jpg) repeat-x top;
+
+h3{
+    line-height: 0;
 }
-ul{padding: 0;}
+
+/*.header {*/
+/*	background: #FFFFFF url(../img/bg.jpg) repeat-x top;*/
+/*}*/
+
+ul{
+    padding: 0;
+}
 
 .mainWrap {
 	/*width: 100%;*/

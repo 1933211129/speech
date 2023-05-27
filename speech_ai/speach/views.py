@@ -59,7 +59,7 @@ def radar_map_view(request):
         radar_datetime.append(datetime.strftime(radar_data.index[i], '%Y-%m-%d %H'))
         pass
     context = {'data': Radar_Value_list, 'legend': radar_datetime}
-    return render(request, '../templates/radar_test_js.html',
+    return render(request, 'speach/radar_test_js.html',
                   {'radar_data': Radar_Value_list, 'radar_legend': radar_datetime})
 
 
@@ -68,7 +68,7 @@ def bar(request):
     obj1 = visualization()
     bar = obj1.visual_bar()
     bar_content = bar.render_embed()
-    return render(request, '../templates/bar.html', {'bar_content': bar_content})
+    return render(request, 'speach/bar.html', {'bar_content': bar_content})
 
 
 def table(request):
@@ -76,7 +76,7 @@ def table(request):
     obj1 = visualization()
     bar = obj1.table_map()
     table_content = bar.render_embed()
-    return render(request, '../templates/table.html', {'table_content': table_content})
+    return render(request, 'speach/table.html', {'table_content': table_content})
 
 
 # ********************************Echarts语音评测成绩可视化测试********************************
@@ -140,7 +140,7 @@ def echarts_visualization(request):
     table = obj_echarts.table_map()
     table_content = table.render_embed()
     ################返回值##################
-    return render(request, '../templates/data_visual.html',
+    return render(request, 'speach/data_visual.html',
                   {'x_axis': x_axis,
                    'line_legend': line_legend,
                    'score_dict': score_dict,
@@ -162,7 +162,7 @@ def chart_view(request):
     x_axis = [1, 2, 3, 4, 5]
     fluency_score = [1, 2, 3, 4, 5]
 
-    return render(request, '../templates/charts.html',
+    return render(request, 'speach/charts.html',
                   {
                       'x_axis': x_axis,
                       'fluency_score': fluency_score,
@@ -172,7 +172,7 @@ def chart_view(request):
 def jsdaoru(request):
     name = [1, 2, 3, 4, 5]
     data = [6, 7, 8, 9, 10]
-    return render(request, '../templates/js_daoru.html', {"name": name, "data": data})
+    return render(request, 'speach/js_daoru.html', {"name": name, "data": data})
 
 
 # ********************************录制与结束********************************
@@ -214,26 +214,26 @@ def evaluation(request):
 
 
 def speech_ai(request):
-    return render(request, 'speech_ai.html')
+    return render(request, 'speach/speech_ai.html')
 
 
 def homepage(request):
-    return render(request, 'homepage.html')
+    return render(request, 'speach/homepage.html')
 
 
 def index(request):
     if request.session.get('is_login', None):
         user_name = request.session.get('user_name')
-        return render(request, 'index.html', {'login_status': True, 'user_name': user_name})
-    return render(request, 'index.html', {'login_status': False})
+        return render(request, 'speach/index.html', {'login_status': True, 'user_name': user_name})
+    return render(request, 'speach/index.html', {'login_status': False})
 
 
 def result_visualization(request):
-    return render(request, 'result_visualization.html')
+    return render(request, 'speach/result_visualization.html')
 
 
 def test(request):
-    return render(request, 'test.html')
+    return render(request, 'speach/test.html')
 
 
 # ***************************************上传文件和捕获参数*******************************************
@@ -308,9 +308,9 @@ def word_to_txt(file_content):
 #         # 关闭连接
 #         cursor.close()
 #         conn.close()
-#         return render(request, "../templates/upload_file.html")
+#         return render(request, "speach/upload_file.html")
 #     else:
-#         return render(request, "../templates/upload_file.html")
+#         return render(request, "speach/upload_file.html")
 from .models import text_score
 
 
@@ -348,9 +348,9 @@ def upload_file(request):
         except:
             upload_success = False
 
-        return render(request, "../templates/upload_file.html", {"upload_success": upload_success})
+        return render(request, "speach/upload_file.html", {"upload_success": upload_success})
     else:
-        return render(request, "../templates/upload_file.html")
+        return render(request, "speach/upload_file.html")
 
 
 # ***************************************上传文件和捕获参数*******************************************
@@ -458,7 +458,7 @@ def upload_file(request):
 #     x_axis = [i for i in range(len(emo_score_list))]
 # ##################################################网络查重传参####################################################
 #     simi_score = 0.02
-#     return render(request, '../templates/texterror_visual_test_0126.html',
+#     return render(request, 'speach/texterror_visual_test_0126.html',
 #     {"original_text": original_text, "error_info": error_info, "error_list": error_list,
 #     'emo_score':emo_score_list, 'x_axis':x_axis,'similarity':simi_score})
 
@@ -591,11 +591,12 @@ def TextVisualizaton(request):
     ##################################################词义相似度#####################################################
     word = subject
     keyword_list = keyword()[0]
+    print(keyword_list)
     score_list = keyword()[1]
 
     if request.session.get('is_login', None):
         user_name = request.session.get('user_name')
-        return render(request, '../templates/texterror_visual_test_0126.html',
+        return render(request, 'speach/texterror_visual_test_0126.html',
                       {"original_text": original_text, "error_info": error_info, "error_list": error_list,
                        'emo_score': emo_score_list, 'x_axis': x_axis, 'similarity': simi_score,
                        'word': word, 'keyword1': keyword_list[0], 'keyword2': keyword_list[1],
@@ -610,7 +611,7 @@ def TextVisualizaton(request):
                        'login_status': True, 'user_name': user_name})
 
     else:
-        return render(request, '../templates/texterror_visual_test_0126.html',
+        return render(request, 'speach/texterror_visual_test_0126.html',
                       {"original_text": original_text, "error_info": error_info, "error_list": error_list,
                        'emo_score': emo_score_list, 'x_axis': x_axis, 'similarity': simi_score,
                        'word': word, 'keyword1': keyword_list[0], 'keyword2': keyword_list[1],
@@ -702,8 +703,8 @@ def one_result(reqauest):
 def index_tip(request, tip):
     if request.session.get('is_login', None):
         user_name = request.session.get('user_name')
-        return render(request, 'index.html', {'login_status': True, 'user_name': user_name, 'tip': tip})
-    return render(request, 'index.html', {'login_status': False, 'tip': tip})
+        return render(request, 'speach/index.html', {'login_status': True, 'user_name': user_name, 'tip': tip})
+    return render(request, 'speach/index.html', {'login_status': False, 'tip': tip})
 
 
 # 流量统计可视化测试
@@ -717,7 +718,7 @@ def line(request):
     data_line_json = json.dumps(data_line)
 
     # 将数据传递到模板中
-    return render(request, '../templates/flow/line.html', {'data_line': data_line_json})
+    return render(request, 'flow/line.html', {'data_line': data_line_json})
 
 
 def pie(request):
@@ -728,23 +729,23 @@ def pie(request):
         {'name': 'other', 'value': 80},
     ]
 
-    return render(request, '../templates/flow/pie.html', {'data_pie': data_pie})
+    return render(request, 'flow/pie.html', {'data_pie': data_pie})
 
 
 def bar1(request):
     seriesData = [120, 200, 150, 80, 70, 110, 130]
 
-    return render(request, '../templates/flow/bar1.html', {'seriesData': seriesData})
+    return render(request, 'flow/bar1.html', {'seriesData': seriesData})
 
 
 def bar2(request):
     seriesData = [110, 230, 180, 60, 90, 210, 230]
-    return render(request, '../templates/flow/bar2.html', {'seriesData': seriesData})
+    return render(request, 'flow/bar2.html', {'seriesData': seriesData})
 
 
 def line2(request):
     seriesData = [10, 11, 13, 11, 12, 12, 9]
-    return render(request, '../templates/flow/line2.html', {'seriesData': seriesData})
+    return render(request, 'flow/line2.html', {'seriesData': seriesData})
 
 
 ######################################### 文本发音可视化 ################################

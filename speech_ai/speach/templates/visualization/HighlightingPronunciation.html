@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发音可视化测试</title>
+    <style>
+        .text-box {
+            width: 600px; /* Adjust the width as needed */
+            height: 300px; /* Adjust the height as needed */
+            overflow-y: scroll;
+            border: 6px solid #ccc;
+            padding: 0; /* Remove padding from the text-box */
+            white-space: pre-wrap;
+            position: absolute;
+            top: 50px; /* Adjust the top position as needed */
+            left: 50px; /* Adjust the left position as needed */
+        }
+
+        .text-box p {
+            margin: 0; /* Remove margin from the p element */
+            padding: 10px; /* Set padding for the p element */
+        }
+    </style>
+</head>
+<body>
+    <div class="text-box">
+        <p>{{ content_colored|safe }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charts Page</title>
+    <!-- Include ECharts library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- First chart code -->
+    <div class="left-section">
+      <div id="chart1" style="width:900px;height:635px;"></div>
+      <script>
+          var chart1 = echarts.init(document.getElementById('chart1'));
+          option1 = {
+            title: {
+              text: '演讲单项分数趋势图',
+              padding:[617,50,0,0],
+            },
+            tooltip: {
+              trigger: 'axis',
+
+            },
+            legend: {
+              data: {{line_legend|safe}},
+              "selected": {
+                '总分': true,
+                "发音流畅度": false,
+                "发音声韵": false,
+                "发音调型": false,
+                "肢体动作得分": false,
+                "缀词冗余": false,
+                "演讲完整度": false,
+                "主题契合度": false,
+            },
+            "selectedMode": " multiple",
+            },
+            toolbox: {
+              show: true,
+              orient:"vertical",    
+              feature: {
+                dataZoom: {
+                  yAxisIndex: 'none'
+                },
+                dataView: { readOnly: false },
+                magicType: { type: ['line', 'bar'] },
+                restore: {},
+                saveAsImage: {}
+              }
+            },
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            xAxis: [
+              {
+                type: 'category',
+                boundaryGap: false,
+                data: {{x_axis|safe}}
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value'
+              }
+            ],
+            series: [
+              {
+                name: '发音流畅度',
+                type: 'line',
+                stack: '',
+                emphasis: {
+                  focus: 'series'
+                },
+                data: {{fluency_score}}
+              },
+              {
+                name: '演讲完整度',
+                type: 'line',
+                stack: '',
+                emphasis: {
+                  focus: 'series'
+                },
+                data: {{integrity_score}}
+              },
+              {
+                  name: '发音声韵',
+                  type: 'line',
+                  stack: '',
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: {{phone_score}}
+                },
+                {
+                  name: '发音调型',
+                  type: 'line',
+                  stack: '',
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: {{tone_score}}
+                },
+                {
+                  name: '主题契合度',
+                  type: 'line',
+                  stack: '',
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: {{topic_score}}
+                },
+                {
+                  name: '缀词冗余',
+                  type: 'line',
+                  stack: 'none',
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: {{affix_score}}
+                },
+                {
+                  name: '肢体动作得分',
+                  type: 'line',
+                  stack: '',
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: {{body_score}}
+                },
+                {
+                  name: '总分',
+                  type: 'line',
+                  stack: '',
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: {{total_score}}
+                },
+            ]
+          };
+          chart1.setOption(option1);
+      </script>
+    </div>
+{% comment %} 雷达图 {% endcomment %}
+    <div class="left-section">
+      <div id="radar-map-container" style="width: 800px; height: 900px;"></div>
+      <script>
+          var RadarChart = echarts.init(document.getElementById('radar-map-container'));
+          var data = {{ radar_data|safe }};
+          var legend = {{ radar_legend|safe }};
+          var option_radar = {
+              radar: {
+                  name: {
+                      textStyle: {
+                          color: '#fff',
+                          backgroundColor: '#999',
+                          borderRadius: 3,
+                          padding: [3, 5]
+                      }
+                  },
+                  indicator: [
+                      { name: '发音流畅度', max: 100},
+                      { name: '演讲完整度', max: 100},
+                      { name: '发音声韵', max: 100},
+                      { name: '发音调型', max: 100},
+                      { name: '主题契合度', max: 100},
+                      { name: '缀词冗余', max: 100},
+                      { name: '肢体动作得分', max: 100}
+                  ]
+              },
+              tooltip: {
+                trigger: 'item',
+                axisPointer: {
+                    type: 'shadow',
+                }
+            },
+              series: (function () {
+                  var series = [];
+                  for (var i = 0; i < data.length; i++) {
+                      series.push({
+                          name: legend[i],
+                          type: 'radar',
+                          data: [{
+                              value: data[i],
+                              name: legend[i]
+                          }],
+                          itemStyle: {
+                              normal: {
+                                  color: echarts.color.modifyHSL('#5A94DF', Math.round(i * (360 / data.length)))
+                              }
+                          },
+                          symbolSize: 0,
+                          lineStyle: {
+                              normal: {
+                                  width: 3
+                              }
+                          },
+                          areaStyle: {
+                              normal: {
+                                  opacity: 0
+                              }
+                          }
+                      });
+                  }
+                  return series;
+              }())
+          };
+          // show the first element of the legend by default
+          option_radar.legend = {
+              data: legend,
+              selected: {},
+              selectedMode: "multiple",
+              left:'right',
+          };
+          for (var i = 0; i < legend.length; i++) {
+            option_radar.legend.selected[legend[i]] = false;
+          }
+          option_radar.legend.selected[legend[0]] = true;
+
+          RadarChart.setOption(option_radar);
+      </script>
+    </div>
+<!-- Second chart code -->
+<div id="chart2" style="width:900px;height:635px;"></div>
+<script>
+      {{ table_content|safe }}
+</script>
+
+
+<!-- Fourth chart code -->
+<div id="chart4" style="width:900px;height:635px;"></div>
+<script>
+  {{ chart_content|safe }}
+</script>
+</body>
+</html>

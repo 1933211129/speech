@@ -27,6 +27,7 @@ from mtcnn import MTCNN
 from PIL import Image
 
 from pathlib import Path
+
 # 项目根目录
 BaseDir = Path(__file__).resolve().parent.parent
 BaseDir = str(BaseDir).replace('\\', '/')
@@ -65,20 +66,6 @@ def picture(read_file, save_file=''):
 
 
 stand_pose = picture(os.path.join(settings.MEDIA_ROOT, 'pose', '1.png').replace('\\', '/'))
-
-
-# 测试网页html
-def temp(request):
-    if request.method == 'GET':
-        return render(request, 'temp/temp.html')
-
-
-# 文本评测
-def txt(request, topic):
-    # file_name = str(uuid.uuid4()).replace('-', '') + '.png'
-    file_name = str(uuid.uuid4()).replace('-', '') + '.docx'
-    if request.method == 'GET':
-        return render(request, 'temp/temp.html')
 
 
 # 开始录制
@@ -156,13 +143,13 @@ def speech(request):
             #                        enforce_detection=False)
             eps = MyExpression(file_path)
 
-            ret = {'eps': eps, 'status': True, 'tip': '成功执行'} # eps['dominant_emotion']
+            ret = {'eps': eps, 'status': True, 'tip': '成功执行'}  # eps['dominant_emotion']
 
             pose = models.Pose.objects.create(
                 uid=user.id,
                 img='/media/pose/' + user.id + '/' + time_name + '/' + file_name,
                 pose='/media/pose/' + user.id + '/' + time_name + '/' + file_name2,
-                score=score, emotion=ret['eps'],
+                score=score, emotion=eps[0], emotion_prob=eps[1],
                 flag=flag, limbsChanges=limbs, bodyDeviation=body,
                 date=time, imgTime=img_time)
             pose.save()
@@ -251,7 +238,6 @@ def convert_video_to_audio(file_path):
     return new_file_path
 
 
-
 def audio_analyse(file_path, uid, time):
     print('音频分析及发音准确度统计')
     # 提取音频
@@ -321,7 +307,7 @@ def audio_analyse(file_path, uid, time):
     ic_list = [float(i) for i in ic_list]
     pc_list = [float(i) for i in pc_list]
     tc_list = [float(i) for i in tc_list]
-    
+
     fluency_score = round(sum(fc_list) / length, 2)
     integrity_score = round(sum(ic_list) / length, 2)
     phone_score = round(sum(pc_list) / length, 2)
@@ -333,7 +319,7 @@ def audio_analyse(file_path, uid, time):
         uid=uid, date=time, total_score=total_score,
         fluency_score=fluency_score, integrity_score=integrity_score,
         phone_score=phone_score, tone_score=tone_score, affix_score=affix_score,
-        video_path=file_path.replace('\\', '/').replace(BaseDir, ''),color_content=content_colored,
+        video_path=file_path.replace('\\', '/').replace(BaseDir, ''), color_content=content_colored,
     )
     speech_temp.save()
 
@@ -341,17 +327,18 @@ def audio_analyse(file_path, uid, time):
 import dlib
 from PIL import Image
 from torchvision import transforms
-
-
+from torch.nn.functional import softmax
 
 # 加载模型
 import torch
+
 # 加载已保存的模型
 model_path = BaseDir + '/media/weights/Expression.pth'
 model = torch.load(model_path, map_location=torch.device('cpu'))
 
 # 设置为评估模式
 model.eval()
+
 
 def MyExpression(image_path):
     emotion = ['anger', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
@@ -390,7 +377,11 @@ def MyExpression(image_path):
 
     prediction = torch.argmax(output, 1)
 
-    return emotion[prediction.item()]
+    # 计算置信度
+    probabilities = softmax(output, dim=1)
+    prob = probabilities.cpu().detach().numpy().max()
+
+    return [emotion[prediction.item()], prob]
 
 
 # 本地视频分析
@@ -480,7 +471,7 @@ def video_analyse(video_path, date_dir, uid, time):
                     # 标记
                     img=file_path.replace('\\', '/').replace(BaseDir, ''),
                     pose=pose_path.replace('\\', '/').replace(BaseDir, ''),
-                    score=score, emotion=eps,  # eps['dominant_emotion']
+                    score=score, emotion=eps[0], emotion_prob=eps[1],  # eps['dominant_emotion']
                     flag=flag, limbsChanges=limbs, bodyDeviation=body,
                     date=time, imgTime=img_time)
                 pose.save()
@@ -518,6 +509,7 @@ def speachScore(request):
         else:
             return redirect("/login/tip/您还未登录 !/")
 
+
 # 生成综合评价性文字
 def generate_feedback(tone_score, phone_score, fluency_score, affix_score, body_score, accurate_ratio):
     feedback = []
@@ -553,7 +545,7 @@ def generate_feedback(tone_score, phone_score, fluency_score, affix_score, body_
         feedback.append("演讲中缀词和冗余表达较少，但仍有改进空间。继续提高表达的简洁明了，减少填充词的使用；")
     else:
         feedback.append("演讲中缀词和冗余表达非常少。保持简洁明了的表达，使听众更容易理解演讲内容；")
-    
+
     # 人体姿态评估反馈
     if body_score < 60:
         feedback.append("人体姿态需要改进。注意保持自然放松的站姿，保持眼神交流，以增强与听众的互动；")
@@ -571,6 +563,7 @@ def generate_feedback(tone_score, phone_score, fluency_score, affix_score, body_
         feedback.append("发音准确性非常高。保持准确的发音，使听众更容易理解演讲内容。")
 
     return feedback
+
 
 def speachDateScore(request, date):
     if request.method == 'GET':
@@ -592,17 +585,17 @@ def speachDateScore(request, date):
                 # 语音
                 speech_table_value = list(models.Speach.objects.filter(uid=uid, date=date).values(
                     'content', 'fluency_score', 'integrity_score', 'phone_score', 'tone_score',
-                    'affix_score', 'total_score', 'topic_score','color_content'))
+                    'affix_score', 'total_score', 'topic_score', 'color_content'))
                 topic_score = speech_table_value[0]['topic_score']
                 speech_table = [speech_table_value[0]['fluency_score'], speech_table_value[0]['integrity_score'],
                                 speech_table_value[0]['phone_score'], speech_table_value[0]['tone_score'],
                                 speech_table_value[0]['affix_score'], speech_table_value[0]['total_score'],
                                 ]
-                #####################################发音可视化字符串########################################
+                #发音可视化字符
                 pro_viual = speech_table_value[0]['color_content']
-                #####################################发音可视化字符串########################################
-                #####################################输出评价文字###########################################
-                #####################################统计颜色个数###########################################
+                #发音可视化字符串
+                #输出评价文字
+                #统计颜色个数
                 # 定义三个正则表达式，分别用于匹配三种颜色
                 red_pattern = re.compile(r'style="background-color: #dc6c64">(.+?)</span>')
                 green_pattern = re.compile(r'style="background-color: #b7e1cd">(.+?)</span>')
@@ -611,7 +604,7 @@ def speachDateScore(request, date):
                 red_count = len(re.findall(red_pattern, pro_viual))
                 green_count = len(re.findall(green_pattern, pro_viual))
                 yellow_count = len(re.findall(yellow_pattern, pro_viual))
-                #####################################统计评价标准###########################################
+                #统计评价标准
                 # 音准反馈
                 accurate_ratio = green_count / (green_count + red_count + yellow_count)
                 # 肢体反馈/暂以total_score作为肢体评测反馈依据
@@ -626,8 +619,7 @@ def speachDateScore(request, date):
                 affix_score = speech_table_value[0]['affix_score']
                 # 调用函数，获取反馈字符串
                 feedback = generate_feedback(tone_score, phone_score, fluency_score,
-                                             affix_score,body_score, accurate_ratio)
-                
+                                             affix_score, body_score, accurate_ratio)
 
                 # 是否有主题契合度评分
                 topic_flag = 'false'
@@ -637,12 +629,25 @@ def speachDateScore(request, date):
                     topic_flag = 'true'
 
                 pose = list(models.Pose.objects.filter(uid=request.session.get('user_id'), date=date)
-                            .values('score', 'imgTime', 'pose', 'flag', 'emotion', 'limbsChanges', 'bodyDeviation'))
+                            .values('score', 'imgTime', 'pose', 'flag', 'emotion',
+                                    'limbsChanges', 'bodyDeviation', 'emotion_prob'
+                                    ))
                 pose_score = [i['score'] for i in pose]
                 imgTime = [i['imgTime'] for i in pose]
                 flag = [str(i['flag']) for i in pose]
                 emotion = [i['emotion'] for i in pose]
-                dt = {'score': pose_score, 'imgTime': imgTime, 'emotion': emotion, 'flag': flag}
+
+                emotion_prob = [i['emotion_prob'] for i in pose]
+                emotion_dict = {'anger': 0.15, 'fear': 0.15, 'sad': 0.15, 'disgust': 0.15, 'neutral': 0.5, 'happy': 0.85, 'surprise': 0.85}
+                multimodal_emotion= []
+                for i in range(len(emotion)):
+                    if emotion[i] == 'neutral':
+                        multimodal_emotion.append([emotion[i], emotion_dict[emotion[i]] + (emotion_prob[i]-0.5)*0.2])
+                    else:
+                        multimodal_emotion.append([emotion[i], emotion_dict[emotion[i]] + (emotion_prob[i]-0.5)*0.15])
+
+                dt = {'score': pose_score, 'imgTime': imgTime, 'emotion': emotion, 'flag': flag,
+                      'multimodal_emotion': multimodal_emotion}
 
                 limbs = sum([i['limbsChanges'] for i in pose])
                 body = sum([i['bodyDeviation'] for i in pose])
@@ -658,8 +663,8 @@ def speachDateScore(request, date):
                                'date': date.strftime('%Y-%m-%d %H:%M:%S'), 'data': dt, 'speech_score': speech_table,
                                'content': speech_table, 'pose': pose, 'count_flag': count_flag,
                                'topic_flag': topic_flag, 'dates': dates, 'limbs': limbs, 'body': body,
-                               'pro_viual':pro_viual,'feedback':feedback,
-                               })# pro_viual是音准可视化字符串，feedback是生成的反馈字符串
+                               'pro_viual': pro_viual, 'feedback': feedback,
+                               })  # pro_viual是音准可视化字符串，feedback是生成的反馈字符串
             else:
                 return HttpResponse('<h1>该日期下并没有评测 !</h1>')
 
@@ -668,66 +673,65 @@ def speachDateScore(request, date):
 
 
 # 展示 头像
-def show_avatar(request):
-    if request.session.get('user_name'):
-        user = models.MyUser.objects.get(username=request.session.get('user_name'))
-        avatar = user.avatar
-        # user = models.Avatar.objects.filter(name='trent')[0]
-        # avatarName = str(user.avatar)
-        # avatarUrl = '%s/users/%s' % (settings.MEDIA_URL, avatarName) # 另一种写法
-        # if request.method == 'GET':
-        #     users = models.MyUser.objects.all()
-        #     return render(request, 'login/show.html', {'avatar': avatar})
-        return render(request, 'login/show.html', {'avatar': avatar, 'username': user.username})
-        # avatar = os.path.join(settings.MEDIA_URL, 'photos/demo.png')
-        # avatar_info = {'userName':str(image.user), 'avatarUrl': avatarUrl}
-        # return render(request, 'login/show.html', {'avatar':avatar})
-    else:
-        return redirect("/login/tip/您还未登录 !/")
+# def show_avatar(request):
+#     if request.session.get('user_name'):
+#         user = models.MyUser.objects.get(username=request.session.get('user_name'))
+#         avatar = user.avatar
+#         # user = models.Avatar.objects.filter(name='trent')[0]
+#         # avatarName = str(user.avatar)
+#         # avatarUrl = '%s/users/%s' % (settings.MEDIA_URL, avatarName) # 另一种写法
+#         # if request.method == 'GET':
+#         #     users = models.MyUser.objects.all()
+#         #     return render(request, 'login/show.html', {'avatar': avatar})
+#         return render(request, 'login/show.html', {'avatar': avatar, 'username': user.username})
+#         # avatar = os.path.join(settings.MEDIA_URL, 'photos/demo.png')
+#         # avatar_info = {'userName':str(image.user), 'avatarUrl': avatarUrl}
+#         # return render(request, 'login/show.html', {'avatar':avatar})
+#     else:
+#         return redirect("/login/tip/您还未登录 !/")
 
 
 # 上传头像
-def upload_avatar(request):
-    if request.method == 'POST':
-        if request.session.get('user_name', None):
-            # image = models.MyUser(
-            #     username = request.session.get('user_name'),
-            #     avatar=request.FILES.get('avatar'),
-            #     # face=request.FILES.get('face')
-            # )
-            user = models.MyUser.objects.get(username=request.session.get('user_name'))
-            dire = os.path.join(settings.MEDIA_ROOT, 'avatar')
-            img = request.FILES.get('avatar')
-            fileName = user.id + '.' + img.name.split('.')[-1]
-            filePath = os.path.join(dire, fileName).replace('\\', '/')
-            # user.avatar.delete()
-            if not os.path.isdir(dire):
-                os.mkdir(dire)
-            if os.path.exists(filePath):
-                os.remove(filePath)
-            with open(filePath, 'wb+') as f:
-                for chunk in img.chunks():
-                    f.write(chunk)
-            user.avatar = 'avatar' + '/' + fileName
-            user.save()
-            # models.MyUser.objects.filter(id=user.id).update(avatar = 'avatar' + '/'+ fileName)
-            return HttpResponse('<h1>' + request.session.get('user_name') + '</h1>')
-        else:
-            # return redirect('/login')
-            return HttpResponse('<h1>user_name为空!</h1>')
-
-    else:
-        return render(request, 'login/upload_image.html')
+# def upload_avatar(request):
+#     if request.method == 'POST':
+#         if request.session.get('user_name', None):
+#             # image = models.MyUser(
+#             #     username = request.session.get('user_name'),
+#             #     avatar=request.FILES.get('avatar'),
+#             #     # face=request.FILES.get('face')
+#             # )
+#             user = models.MyUser.objects.get(username=request.session.get('user_name'))
+#             dire = os.path.join(settings.MEDIA_ROOT, 'avatar')
+#             img = request.FILES.get('avatar')
+#             fileName = user.id + '.' + img.name.split('.')[-1]
+#             filePath = os.path.join(dire, fileName).replace('\\', '/')
+#             # user.avatar.delete()
+#             if not os.path.isdir(dire):
+#                 os.mkdir(dire)
+#             if os.path.exists(filePath):
+#                 os.remove(filePath)
+#             with open(filePath, 'wb+') as f:
+#                 for chunk in img.chunks():
+#                     f.write(chunk)
+#             user.avatar = 'avatar' + '/' + fileName
+#             user.save()
+#             # models.MyUser.objects.filter(id=user.id).update(avatar = 'avatar' + '/'+ fileName)
+#             return HttpResponse('<h1>' + request.session.get('user_name') + '</h1>')
+#         else:
+#             # return redirect('/login')
+#             return HttpResponse('<h1>user_name为空!</h1>')
+#
+#     else:
+#         return render(request, 'login/upload_image.html')
 
 
 # 用户信息
 def user_info(request):
     if request.method == 'GET':
-        if request.session.get('user_name'):
+        if request.session.get('is_login', None):
             user = models.MyUser.objects.get(username=request.session.get('user_name'))
-            return render(request, 'user/info.html', {'user': user})
-        else:
-            return redirect("/login/tip/您还未登录 !/")
+            return render(request, 'user/info.html', {'user': user, 'login_status': True, 'user_name': user.username})
+        return redirect("/login/tip/您还未登录 !/")
 
     # if request.method == 'POST':
     #     # 获取当前登录用户才能修改信息
@@ -1084,112 +1088,4 @@ def page_not_found(request, exception):
 # def page_error(request, exception):
 #     return render(request, '404.html')
 
-
-#
-# # 历史得分 页面
-# def history_score(request):
-#     if request.method == 'GET':
-#         uid = request.session.get('user_id')
-#         if uid:
-#             user_name = request.session.get('user_name')
-#
-#             dates = models.Speach.objects.filter(uid=uid).values('date').distinct()
-#             dates = [i['date'] for i in list(dates)]
-#             if len(dates) == 0:
-#                 return redirect("/index/tip/请您先评测 !/")
-#
-#             poses = []
-#             speach = []
-#             for date in dates:
-#                 poses.append(pose_query(uid, date))
-#                 speach.append(speach_query(uid, date))
-#             dates = [x.strftime('%Y-%m-%d %H:%M:%S') for x in dates]
-#
-#             return render(request, 'score/HistoryScore.html',
-#                           {'login_status': True, 'user_name': user_name, 'poses': poses, 'dates': dates,
-#                            'speach': speach})
-#         else:
-#             return redirect("/login/tip/您还未登录 !/")
-#
-#
-# # 查询pose表函数
-# def pose_query(user_id, date):
-#     data = list(
-#         (models.Pose.objects.filter(uid=user_id, date=date)).values('score', 'imgTime', 'pose', 'flag', 'emotion'))
-#     score = [i['score'] for i in data]
-#     imgTime = [i['imgTime'] for i in data]
-#     pose_img = [i['pose'] for i in data]
-#     flag = [str(i['flag']) for i in data]
-#     emotion = [i['emotion'] for i in data]
-#     dic = {'score': score, 'imgTime': imgTime, 'pose_img': pose_img, 'flag': flag, 'emotion': emotion}
-#     return dic
-#
-#
-# # 查询speach表函数
-# def speach_query(user_id, date):
-#     data = list(
-#         (models.Speach.objects.filter(uid=user_id, date=date)).values('total_score', 'content', 'fluency_score',
-#                                                                       'integrity_score', 'phone_score', 'tone_score',
-#                                                                       'topic_score', 'affix_score'))
-#     data = [data[0]['content'], data[0]['total_score'], data[0]['fluency_score'],
-#             data[0]['integrity_score'], data[0]['phone_score'], data[0]['tone_score'],
-#             data[0]['topic_score'], data[0]['affix_score'],
-#     ]
-#     return data
-#
-
-
-
-
-######################################### 文本发音可视化 ################################
-# from django.shortcuts import render
-# import xml.etree.ElementTree as ET
-
-# def HighlightingPronunciation(request):
-#     # 获取前面函数的xml_list
-#     xml_files = xml_list
-#     # 解析所有的XML文件并将它们拼接起来
-#     content_all = ''
-#     for xml_file in xml_files:
-#         tree = ET.parse(xml_file)
-#         root = tree.getroot()
-#         content_all += root.find('read_chapter').find('rec_paper').find('read_chapter').get('content')
-
-#     # 初始化字典，用于存储每个字的perr_msg属性
-#     perr_msg_dict = {}
-
-#     # 遍历XML文件中的所有word元素并更新字典
-#     for sentence in root.findall('.//sentence'):
-#         for word in sentence.findall('word'):
-#             word_content = word.get('content')
-#             phone_list = word.findall('syll/phone')
-
-#             # 统计phone元素中perr_msg属性值为0的个数
-#             perr_msg_count = sum(1 for phone in phone_list if phone.get('perr_msg') == '0')
-
-#             # 根据perr_msg的个数生成一个嵌套字典
-#             if perr_msg_count == 0:
-#                 perr_msg_dict[word_content] = {'perr_msg': 2}
-#             elif perr_msg_count == 1:
-#                 perr_msg_dict[word_content] = {'perr_msg': 1}
-#             else:
-#                 perr_msg_dict[word_content] = {'perr_msg': 0}
-
-#     # 根据perr_msg属性在content_all上设置不同颜色的背景
-#     content_colored = ''
-#     for char in content_all:
-#         if char in perr_msg_dict:
-#             perr_msg = perr_msg_dict[char]['perr_msg']
-#             if perr_msg == 0:
-#                 content_colored += f'<span style="background-color: #b7e1cd">{char}</span>'
-#             elif perr_msg == 1:
-#                 content_colored += f'<span style="background-color: #ffec8b">{char}</span>'
-#             elif perr_msg == 2:
-#                 content_colored += f'<span style="background-color: #dc6c64">{char}</span>'
-#         else:
-#             content_colored += char
-
-#     # 将处理后的文本传递给模板进行渲染
-#     context = {'content_colored': content_colored}
-#     return render(request, 'score/score.html', context)
 

@@ -6,6 +6,7 @@ from django.conf import settings
 
 
 urlpatterns = [
+
     # 视频打分
     path('video/', views.videoScore),
     path('humanScore/', views.HumanScore),
@@ -28,8 +29,6 @@ urlpatterns = [
     path('video/', views.video_index),    # 评委评分
     path('judge_homepage/contact/', views.contact),  # 联系我们
     path('judge_homepage/now/', views.show_events),  # 赛事广场——火热进行
-
-
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

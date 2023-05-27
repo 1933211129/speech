@@ -43,6 +43,7 @@ class Pose(models.Model):
     img = models.ImageField(verbose_name='图片', max_length=256)
     imgTime = models.CharField(verbose_name='图片时间', default='', max_length=128)
     emotion = models.CharField(verbose_name='表情', max_length=64)
+    emotion_prob = models.FloatField(verbose_name='表情置信度', default=0.0)
     pose = models.ImageField(verbose_name='姿态', max_length=256)
     score = models.FloatField(verbose_name='评分', default=-1.0)
     flag = models.BooleanField(verbose_name='是否变化', default=False)

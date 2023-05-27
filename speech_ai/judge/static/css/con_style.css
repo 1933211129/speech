@@ -36,7 +36,6 @@ a {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background: linear-gradient(to right, #39bcf2 0%,#39bcf2 50%,#18354a 50%,#18354a 100%);
 }
 
 .box-group{

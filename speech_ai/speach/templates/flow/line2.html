@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>一周IP访问趋势</title>
+  <!-- 引入 echarts.min.js 文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.min.js"></script>
+</head>
+<body>
+  <!-- 使用一个 div 元素作为 echarts 图表的容器 -->
+  <div id="myChart" style="width: 800px; height: 600px;"></div>
+
+  <script type="text/javascript">
+    // 从后端传递的数据
+    var data = {{ seriesData }};
+
+    // 使用 echarts.init() 方法初始化一个 echarts 实例
+    var myChart = echarts.init(document.getElementById('myChart'));
+
+    // 定义图表配置项
+    var option = {
+      title: {
+        text: '一周IP访问趋势(个)'
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {},
+      toolbox: {
+        show: true,
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          dataView: { readOnly: false },
+          magicType: { type: ['line', 'bar'] },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value',
+      },
+      series: [
+        {
+          name: 'Highest',
+          type: 'line',
+          data: data,
+          markPoint: {
+            data: [
+              { type: 'max', name: 'Max' },
+              { type: 'min', name: 'Min' }
+            ]
+          },
+          markLine: {
+            data: [{ type: 'average', name: 'Avg' }]
+          }
+        },
+        {
+
+          markLine: {
+            data: [
+              { type: 'average', name: 'Avg' },
+              [
+                {
+                  symbol: 'none',
+                  x: '90%',
+                  yAxis: 'max'
+                },
+                {
+                  symbol: 'circle',
+                  label: {
+                    position: 'start',
+                    formatter: 'Max'
+                  },
+                  type: 'max',
+                  name: '最高点'
+                }
+              ]
+            ]
+          }
+        }
+      ]
+    };
+    // 将配置项注入 echarts 实例中，并渲染图表
+    myChart.setOption(option);
+  </script>
+</body>
+</html>

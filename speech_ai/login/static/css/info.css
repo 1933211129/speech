@@ -9,8 +9,8 @@ html,body{
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url("../image/login_background.png") fixed no-repeat;  
-  background-size: cover;
+  /*background: url("../image/login_background.png") fixed no-repeat;  */
+  /*background-size: cover;*/
 }
 
 .login-form{

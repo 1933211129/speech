@@ -20,14 +20,14 @@ button{
 /*}*/
 
  /*页面整体样式*/
-/*body{*/
-/*  display: flex;*/
-/*  justify-content: center;*/
-/*  align-items: center;*/
-/*  min-height: 100vh; !* url('https://i.loli.net/2021/10/24/gkIC45ZqmLBRSAD.jpg') *!*/
-/*  background: url(../image/login_background.png) no-repeat fixed center;*/
-/*  background-size: cover;*/
-/*}*/
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* url('https://i.loli.net/2021/10/24/gkIC45ZqmLBRSAD.jpg') */
+  background: url(../image/blue-background-img.jpg) no-repeat fixed center;
+  background-size: cover;
+}
 
 input{
   border-radius: 18px;
@@ -105,6 +105,7 @@ input{
   width: 200%;
   height: 100%;  /* url('https://i.loli.net/2021/10/24/gkIC45ZqmLBRSAD.jpg') */
   background: url(../image/login_background.png) no-repeat fixed center;
+  /*background: url(../image/blue-background-img.jpg) no-repeat fixed center;*/
   background-size: cover;
   transition: transform .5s ease-in-out;
   /* 完工！ */

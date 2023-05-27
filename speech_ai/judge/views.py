@@ -97,10 +97,10 @@ def HumanScore(request):
 # 视频人工打分
 def videoScore(request):
     if request.method == 'GET':
-        uid = request.session.get('user_id')
-        if uid:
+        if request.session.get('is_login', None):
             # 已登录
             user_name = request.session.get('user_name')
+            uid = request.session.get('user_id')
 
             # 判断是否有比赛
             exist = Race.objects.filter(OrganizerID=uid).exists()
@@ -114,15 +114,16 @@ def videoScore(request):
                     'race_id', 'Cptr_id', 'Cptr_Name', 'video_path', 'img_path', 'video_upload_date').distinct()
 
                 return render(request, 'judge/judge_video.html',
-                              {'login_status': True, 'user_name': user_name, 'video_properties': competitors}
+                              {'login_status': True, 'user_name': user_name, 'competitors': competitors}
                               )
 
             else:
-                    return HttpResponse('请你先申请比赛 !')
+                return HttpResponse('请你先申请比赛 !')
 
-        else:
-            # 未登录
-            return redirect("/login/tip/您还未登录 !/")
+        # 未登录
+        return redirect("/login/tip/您还未登录 !/")
+
+
 
 
 # 视频提交页面
@@ -282,7 +283,12 @@ def Competition_application(request):
 
 
 def homepage(request):
-    return render(request, 'judge/homepage.html')
+    if request.method == 'GET':
+        if request.session.get('is_login', None):
+            user_name = request.session.get('user_name')
+            return render(request, 'judge/homepage.html', {'login_status': True, 'user_name': user_name})
+        else:
+            return redirect("/login/tip/您还未登录 !/")
 
 
 def signup(request):
@@ -290,7 +296,10 @@ def signup(request):
 
 
 def contact(request):
-    return render(request, 'judge/contact.html')
+    if request.session.get('is_login', None):
+        user_name = request.session.get('user_name')
+        return render(request, 'judge/contact.html', {'login_status': True, 'user_name': user_name})
+    return render(request, 'judge/contact.html', {'login_status': False})
 
 
 def index(request):

@@ -1,5 +1,5 @@
 
-#multimode-container {
+#multimodal-container {
     width: 85%; /* 设置容器元素宽度为原始宽度的一半 */
     height: 85%; /* 设置容器元素高度为原始高度的一半 */
     transform: scale(0.85); /* 缩放图表为原始大小的一半 */
