@@ -1,9 +1,11 @@
 .white-label {
     color: red;
 }
+
 .red-number-input {
-    color: red;
+    font-size: 30px;
 }
+
 .right-box {
     position: relative; /* 或者 'absolute' 如果适用 */
     left: 690px; /* 修改这个值，使元素靠左移动 */
@@ -13,6 +15,10 @@
     position: absolute;
     top: 320px;  /* 调整这个值来改变图像上下的位置 */
     left: 1550px; /* 调整这个值来改变图像左右的位置 */
+}
+.container2 {
+    overflow-y: scroll;  /* 当内容溢出容器时，显示垂直滚动条 */
+    max-height: 500px;   /* 设置一个最大高度，当内容超过这个高度时，滚动条就会出现 */
 }
 
 
