@@ -10,7 +10,7 @@
 
     <title>评委</title>
 
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/judge_bootstrap.css' %}"/>#}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/new_judge_video.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/screen.css' %}">
     <link rel="stylesheet" href="{% static 'css/animation.css' %}">
@@ -206,57 +206,21 @@
             </header>
 
 
+
+
+
+
+        
+                <div class="right-box">
+                   <button type="button" onclick="window.location.href='/judge/finalScore/'" class="access-btn" data-toggle="modal" data-target="#enquirypopup">查看结果</button>
+                </div>
+              
+                <div class="banner-l hidden-sm hidden-xs">
+                    <img src="{% static 'img/banners/banner.png' %}" class="img-responsive">
+                </div>
+                
+
             <div class="row">
-
-                {% comment %}<div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
-                   <aside class="dark-bg">
-                      <article>
-
-                         <h2 class="icon">评分</h2>
-
-                        <script>
-                            function toggleScoreForm(id) {
-                                const scoreForm = document.getElementById(`score-form-${id}`);
-                                scoreForm.style.display = scoreForm.style.display === 'none' ? 'flex' : 'none';
-                            }
-                        </script>
-
-                        <div class="container2">
-
-                            {% for competitor in competitors %}
-                                <div>
-
-                                    <button onclick="toggleScoreForm({{ forloop.counter }})" class="custom-button">
-                                        <span>{{ competitor.Cptr_Name }}</span>
-                                    </button>
-
-                                </div>
-
-                                <form class="score-form" id="score-form-{{ forloop.counter }}">
-                                    <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
-
-                                    <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
-                                        <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
-                                        <br>
-                                    <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
-                                        <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
-                                        <br>
-                                    <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
-                                        <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
-                                        <br>
-                                    <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
-                                        <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
-                                        <br>
-
-                                    <button type="submit" class="submit-button">提交</button>
-                                </form>
-                            {% endfor %}
-                        </div>
-                      </article>
-                      <div class="clearfix spacer"></div>
-                   </aside>
-                </div>{% endcomment %}
-
                 <div class="col-lg-10 col-md-8">
                    <section id="home-main">
                       <h2 class="icon">选手视频</h2>
@@ -286,20 +250,25 @@
 
                                         <form class="score-form" id="score-form-{{ forloop.counter }}">
                                             <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
-
-                                            <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
-                                                <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
-                                                <br>
-                                            <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
-                                                <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
-                                                <br>
-                                            <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
-                                                <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
-                                                <br>
-                                            <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
-                                                <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
-                                                <br>
-
+                                            <div class="form-row">
+                                                <label for="emotion-score-{{ forloop.counter }}" class="white-label">情感饱和度:</label>
+                                                <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100" class="red-number-input">
+                                            </div>
+                                            <br>
+                                            <div class="form-row">
+                                                <label for="movement-score-{{ forloop.counter }}" class="white-label">肢体动作适当:</label>
+                                                <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100" class="red-number-input">
+                                            </div>
+                                            <br>
+                                            <div class="form-row">
+                                                <label for="logic-score-{{ forloop.counter }}" class="white-label">演讲逻辑性:</label>
+                                                <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100" class="red-number-input">
+                                            </div>
+                                            <br>
+                                            <div class="form-row">
+                                                <label for="eloquence-score-{{ forloop.counter }}" class="white-label">演讲文采性:</label>
+                                                <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100" class="red-number-input">
+                                            </div>
                                             <button type="submit" class="submit-button">提交</button>
                                         </form>
                                     {% endfor %}
@@ -338,49 +307,16 @@
                         </div>
                       </div>
 
-                      <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
+                      {% comment %} <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
                        <aside class="dark-bg">
                           <article>
                              <h2 class="icon">成绩</h2>
                           </article>
                        </aside>
-                    </div>
+                    </div> {% endcomment %}
 
                   </section>
 
-
-
-
-            {% comment %}<aside class="dark-bg">
-              <article>
-                <div class="container2">
-
-                        {% for competitor in competitors %}
-
-                            <form class="score-form" id="score-form-{{ forloop.counter }}">
-                                <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
-
-                                <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
-                                    <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
-                                    <br>
-                                <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
-                                    <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
-                                    <br>
-                                <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
-                                    <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
-                                    <br>
-                                <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
-                                    <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
-                                    <br>
-
-                                <button type="submit" class="submit-button">提交</button>
-                            </form>
-
-                        {% endfor %}
-                        </div>
-                    </div>
-                 </article>
-             </aside>{% endcomment %}
 
         </div>
         <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>

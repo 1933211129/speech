@@ -1,0 +1,18 @@
+.white-label {
+    color: red;
+}
+.red-number-input {
+    color: red;
+}
+.right-box {
+    position: relative; /* 或者 'absolute' 如果适用 */
+    left: 690px; /* 修改这个值，使元素靠左移动 */
+    top: 50px;
+}
+.banner-l {
+    position: absolute;
+    top: 320px;  /* 调整这个值来改变图像上下的位置 */
+    left: 1550px; /* 调整这个值来改变图像左右的位置 */
+}
+
+
