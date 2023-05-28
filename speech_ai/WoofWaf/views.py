@@ -77,10 +77,20 @@ def review_fail(request, race_id):
     except Race.DoesNotExist:
         return JsonResponse({"status": "error", "message": "Race not found"})
 
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%赛事审核%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%添加临时用户%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%添加临时用户%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# 赛事审核
+# 添加临时用户
+# 添加临时用户
 def login_waf(request):
+    exists = waf_admin.objects.filter(username="admin").exists()
+    if exists:
+        admin = waf_admin.objects.get(username="admin")
+        admin.password = "admin"
+        admin.save()
+    else:
+        admin = waf_admin.objects.create_user(username="admin", password="admin")
+        admin.save()
+
     if request.user.is_authenticated:
         # 若已经登陆，跳转index
         return redirect(reverse('WoofWaf-views-index'))
@@ -117,9 +127,6 @@ def logout_waf(request):
 
 
 def secure_index(request):
-    # wa = get_user_model()
-    # admin=wa.objects.create_user(username="admin",password="admin")
-    # admin.save()
     import datetime
     import random
     # wa = get_user_model()
