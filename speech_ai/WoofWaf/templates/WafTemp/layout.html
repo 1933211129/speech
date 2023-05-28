@@ -11,7 +11,9 @@
     <meta name="keywords" content="au theme template">
 
     <!-- Title Page-->
-    <title>WoofWAF</title>
+    <title>Admin</title>
+
+    <link rel="icon" href="{% static 'favicon/logo.svg'%}">
 
     <!-- Fontfaces CSS-->
     <link href="{% static 'css/font-face.css' %}" rel="stylesheet" media="all">
@@ -180,7 +182,7 @@
 
                         <li class="{% block index_active %}{% endblock %}">
                             <a  href="{% url 'WoofWaf-views-index' %}" style="text-decoration:none">
-                                <i class="fas fa-home "></i>&nbsp;&nbsp;WAF-首页</a>
+                                <i class="fas fa-home "></i>&nbsp;&nbsp;首页</a>
 
                         </li>
 
@@ -217,22 +219,22 @@
                                     <a class="fas fa-minus-circle" href="{% url 'WoofWaf-views-CCDefend' %}" style="text-decoration:none">&nbsp;&nbsp;CC攻击防护</a>
                                 </li>
 
-                             <li class = "{% block upload_active %}{% endblock %}">
+                           {% comment %}  <li class = "{% block upload_active %}{% endblock %}">
                                     <a class="fas fa-upload" href="{% url 'WoofWaf-views-upload' %}" style="text-decoration:none ;font-style:italic;font-size: smaller">&nbsp;&nbsp;上传防护(敬请期待)</a>
-                                </li>
+                                </li>{% endcomment %}
 
 
-                             <li class = "{% block intrude_active %}{% endblock %}">
+                            {% comment %} <li class = "{% block intrude_active %}{% endblock %}">
                                     <a class="fas fa-eye" href="#" style="text-decoration:none ;font-style:italic;font-size: smaller">&nbsp;&nbsp;入侵检测(敬请期待)</a>
-                                </li>
+                                </li>{% endcomment %}
 
                             </ul>
                         </li>
 
-                        <li class=" {% block stats %}{% endblock %}">
+                        {% comment %}<li class=" {% block stats %}{% endblock %}">
                             <a href="#" style="text-decoration:none ;font-style:italic;">
                                 <i class="fas fa-chart-bar"></i>数据分析(敬请期待)</a>
-                        </li>
+                        </li>{% endcomment %}
 
                     <li class="has-sub">
                             <a class="js-arrow" href="#" style="text-decoration:none">

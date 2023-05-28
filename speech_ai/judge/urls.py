@@ -31,5 +31,6 @@ urlpatterns = [
     path('judge_homepage/now/', views.show_events),  # 赛事广场——火热进行
 
 ]
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

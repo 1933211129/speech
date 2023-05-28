@@ -131,8 +131,6 @@
             <br>
 
             <div id="echart_container">
-{#                <div class="grid-item1" id="emotion_count" style="width: 48vw; height:33vh;"></div>#}
-
                 <div class="grid-item1" id="speech_score_bar" style="width: 48vw; height:33vh;"></div>
 
                 <div class="grid-item2" id="speech_score_radar" style="width: 48vw; height:33vh;"></div>
@@ -145,20 +143,6 @@
                 </div>
 
                 <div class="grid-item4" id="stand_score" style="width: 48vw; height:33vh;"></div>
-
-{#                <div class="grid-item6" id="multimode" style="width: 48vw; height:33vh;"></div>#}
-{#                <div class="grid-item6" id="multimode" style="width: 48vw; height:33vh;">#}
-{#                     <h5 style="position:relative; text-align:left"> <b>多模态情感一致性</b> </h5>#}
-{#                    <div style="padding: 20px; margin-left: 40px; margin-top: 40px;">#}
-{#                    multimode#}
-{##}
-{#                        <img src="/media/中性.png" style="width: 20vw; height:auto;">#}
-{#                        <img src="/media/厌恶.png" style="width: 20vw; height:auto;">#}
-{##}
-{#                    </div>#}
-{##}
-{#                </div>#}
-
 
             </div>
 
@@ -200,7 +184,6 @@
 
             <div id="TextBox">
                 <div style="border: 2px solid red; padding: 30px; margin:40px">
-{#                    <div style="font-weight: bold; align:center; ">总结</div>#}
                     <h5 style="text-align:center"><b>总结</b></h5>
                     <br>
                    {% for one in feedback %}
@@ -328,7 +311,7 @@
           },
           xAxis: [{
             data: audio_emotion_dateList,
-            name: '时间',
+            name: '情感',
             axisLine: {
               show: true,
               symbol: ['none', 'arrow'], // 显示箭头的位置
@@ -339,7 +322,7 @@
             }
           }, {
             data: text_emotion_dateList,
-            name: '时间',
+            name: '情感',
             gridIndex: 1,
             axisLine: {
               show: true,
@@ -351,7 +334,7 @@
             }
           }, {
             data: expression_emotion_dateList,
-            name: '时间',
+            name: '情感',
             gridIndex: 2,
             axisLine: {
               show: true,
