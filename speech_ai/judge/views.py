@@ -286,7 +286,8 @@ def homepage(request):
             user_name = request.session.get('user_name')
             return render(request, 'judge/homepage.html', {'login_status': True, 'user_name': user_name})
         else:
-            return redirect("/login/tip/您还未登录 !/")
+            return render(request, 'judge/homepage.html', {'login_status': False})
+            # return redirect("/login/tip/您还未登录 !/")
 
 
 def signup(request):
@@ -359,8 +360,9 @@ def video_index(request):
 
 # “火热进行”页面表格
 def show_events(request):
-    # Get all competitions whose race time is after today's date
     events = Race.objects.all()
-
-    # Render the HTML template and pass the events as context
-    return render(request, 'judge/event_list.html', {'events': events})
+    if request.session.get('is_login', None):
+        user_name = request.session.get('user_name')
+        return render(request, 'judge/event_list.html', {'login_status': True, 'user_name': user_name, 'events': events})
+    return render(request, 'judge/event_list.html', {'login_status': False, 'events': events})
+    # return render(request, 'judge/event_list.html', {'events': events})
