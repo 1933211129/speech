@@ -5,13 +5,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="OrcasThemes">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
     <link rel="icon" href="{% static 'favicon/logo.svg' %}">
 
     <title>评委</title>
 
+{#    <link rel="stylesheet" type="text/css" href="{% static 'css/judge_bootstrap.css' %}"/>#}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/screen.css' %}">
     <link rel="stylesheet" href="{% static 'css/animation.css' %}">
@@ -108,10 +107,14 @@
                 background-color: #408e40; /* 设置按钮在点击时的背景颜色 */
             }
 
+            .stretched-img {
+              width: 400px;
+              height: 170px;
+            }
+
         </style>
 
         <div class="hero_area">
-            <!-- header section strats -->
             <header class="header_section">
                 <div class="container" style="align-items:center; text-align:center; ">
                     <nav class="navbar navbar-expand-lg custom_nav-container " >
@@ -123,31 +126,30 @@
                       <g>
                         <g>
                           <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
-                    c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
-                    c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
-                    l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
-                    c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
-                    C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
-                    c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
-                    z"></path>
+                            c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
+                            c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
+                            l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
+                            c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
+                            C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
+                            c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313z"></path>
                         </g>
                       </g>
-                                <g>
+                    <g>
                         <g>
                           <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
-                    c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
-                    c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
-                    C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
+                            c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
+                            c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
+                            C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
                         </g>
-                      </g>
-                                <g>
+                    </g>
+                    <g>
                         <g>
                           <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
-                    c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
-                    c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
-                    C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
+                            c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
+                            c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
+                            C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
                         </g>
-                      </g>
+                    </g>
 
                     </svg>
                     <span>
@@ -206,9 +208,10 @@
 
             <div class="row">
 
-                <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
+                {% comment %}<div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
                    <aside class="dark-bg">
                       <article>
+
                          <h2 class="icon">评分</h2>
 
                         <script>
@@ -247,19 +250,67 @@
 
                                     <button type="submit" class="submit-button">提交</button>
                                 </form>
-
                             {% endfor %}
-
                         </div>
                       </article>
                       <div class="clearfix spacer"></div>
                    </aside>
-                </div>
+                </div>{% endcomment %}
 
                 <div class="col-lg-10 col-md-8">
                    <section id="home-main">
                       <h2 class="icon">选手视频</h2>
                       <div class="row">
+
+                      <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
+                           <aside class="dark-bg">
+                              <article>
+                                 <h2 class="icon">评分</h2>
+                                <script>
+                                    function toggleScoreForm(id) {
+                                        const scoreForm = document.getElementById(`score-form-${id}`);
+                                        scoreForm.style.display = scoreForm.style.display === 'none' ? 'flex' : 'none';
+                                    }
+                                </script>
+
+                                <div class="container2">
+
+                                    {% for competitor in competitors %}
+                                        <div>
+
+                                            <button onclick="toggleScoreForm({{ forloop.counter }})" class="custom-button">
+                                                <span>{{ competitor.Cptr_Name }}</span>
+                                            </button>
+
+                                        </div>
+
+                                        <form class="score-form" id="score-form-{{ forloop.counter }}">
+                                            <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
+
+                                            <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
+                                                <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
+                                                <br>
+                                            <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
+                                                <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
+                                                <br>
+                                            <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
+                                                <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
+                                                <br>
+                                            <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
+                                                <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
+                                                <br>
+
+                                            <button type="submit" class="submit-button">提交</button>
+                                        </form>
+                                    {% endfor %}
+                                </div>
+                              </article>
+                              <div class="clearfix spacer"></div>
+                           </aside>
+                        </div>
+
+
+
                          <!-- ARTICLES -->
                          <div class="col-lg-9 col-md-12 col-sm-12">
                             <div class="row auto-clear">
@@ -269,14 +320,6 @@
                                         <div class="thumbr">
                                           <a class="post-thumb" href="/media/{{ competitor.video_path }}" data-lity>
                                             <span class="play-btn-border" title="Play"><i class="fa fa-play-circle headline-round" aria-hidden="true"></i></span>
-
-                                            <style>
-                                                .stretched-img {
-                                                  width: 400px;
-                                                  height: 170px;
-                                                }
-                                            </style>
-
 
                                             <img class="img-responsive stretched-img" src="/media/{{ competitor.img_path }}" alt="{{ competitor.Cptr_Name }}">
 
@@ -291,16 +334,57 @@
                                     </article>
                                 {% endfor %}
                             </div>
-                         </div>
-                     </div>
-                   </section>
-                </div>
-             </div>
-            </div>
+                            <div class="clearfix spacer"></div>
+                        </div>
+                      </div>
 
+                      <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
+                       <aside class="dark-bg">
+                          <article>
+                             <h2 class="icon">评分</h2>
+
+
+                          </article>
+                       </aside>
+                    </div>
+
+                  </section>
+
+
+
+
+            {% comment %}<aside class="dark-bg">
+              <article>
+                <div class="container2">
+
+                        {% for competitor in competitors %}
+
+                            <form class="score-form" id="score-form-{{ forloop.counter }}">
+                                <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
+
+                                <label for="emotion-score-{{ forloop.counter }}">情感饱和度:</label>
+                                    <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100">
+                                    <br>
+                                <label for="movement-score-{{ forloop.counter }}">肢体动作适当:</label>
+                                    <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100">
+                                    <br>
+                                <label for="logic-score-{{ forloop.counter }}">演讲逻辑性:</label>
+                                    <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100">
+                                    <br>
+                                <label for="eloquence-score-{{ forloop.counter }}">演讲文采性:</label>
+                                    <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100">
+                                    <br>
+
+                                <button type="submit" class="submit-button">提交</button>
+                            </form>
+
+                        {% endfor %}
+                        </div>
+                    </div>
+                 </article>
+             </aside>{% endcomment %}
 
         </div>
-
         <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>
 
         <script>

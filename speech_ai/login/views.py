@@ -323,7 +323,8 @@ def audio_analyse(file_path, uid, time):
     )
     speech_temp.save()
 
-#####################################语音/文本####################################################
+
+# 语音/文本
 def text_audio_emo_predict(file_path):
     from py.EGG.text_audio_emo import text_audio_emo_predict
     # 提取音频
@@ -332,6 +333,7 @@ def text_audio_emo_predict(file_path):
     obj = text_audio_emo_predict(audio_name=audio_path)
     result = obj.total_predict()
     return result[0],result[1]  # 文本；语音 二维列表
+
 
 
 import dlib
