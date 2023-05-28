@@ -6,6 +6,12 @@
     transform-origin: center center; /* 设置缩放的基准点为左上角 */
 }
 
+#final-container{
+    width: 88%; /* 设置容器元素宽度为原始宽度的一半 */
+    height: 88%; /* 设置容器元素高度为原始高度的一半 */
+    transform: scale(0.88); /* 缩放图表为原始大小的一半 */
+    transform-origin: center center; /* 设置缩放的基准点为左上角 */
+}
 
 #echart_container {
     position: relative;
