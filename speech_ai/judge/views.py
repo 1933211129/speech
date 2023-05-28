@@ -26,8 +26,7 @@ def finalScore(request):
             exist = Race.objects.filter(OrganizerID=uid).exists()
             if exist:
                 race = Race.objects.get(OrganizerID=uid)
-                cptrs = Competitor.objects.filter() \
-                    .values('Cptr_Name', 'HumanScore', 'VoiceScore', 'PoseScore').distinct()
+                cptrs = Competitor.objects.filter().values('Cptr_Name', 'HumanScore', 'VoiceScore', 'PoseScore').distinct()
 
                 dic = {}
                 for cptr in cptrs:
@@ -122,7 +121,6 @@ def videoScore(request):
 
         # 未登录
         return redirect("/login/tip/您还未登录 !/")
-
 
 
 

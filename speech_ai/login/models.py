@@ -69,5 +69,10 @@ class Speach(models.Model):
     topic_score = models.FloatField(max_length=10, verbose_name='主旨契合度', null=True, default=None)
     video_path = models.ImageField(verbose_name='视频路径', max_length=256, default=None)
 
+    # 文本情感
+    textual_emotion = models.TextField(default=None, null=True)
+    # 语音情感
+    phonetic_emotion = models.TextField(default=None, null=True)
+
     def __str__(self):
         return f'时间: {self.date}, 总分: {self.total_score}, 视频路径: {self.video_path}'

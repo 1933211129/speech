@@ -4,7 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-
     # 登录注册
     path('', views.login_register),  # 登录注册
     path('login', views.login),  # 登录

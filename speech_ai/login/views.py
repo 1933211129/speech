@@ -186,7 +186,7 @@ def video(request):
             if analyse_flag == 'true':
                 # 创建音视频分析线程
                 video_thread = threading.Thread(target=video_analyse, args=(file_path, date_dir, user.id, time))
-                audio_thread = threading.Thread(target=audio_analyse, args=(file_path, user.id, time))
+                audio_thread = threading.Thread(target=audio_analyse, args=(file_path, date_dir, user.id, time))
 
                 # print(time, type(time))
 
@@ -208,12 +208,12 @@ def video(request):
 
 
 # 音像分离
-def convert_video_to_audio(file_path):
+def convert_video_to_audio(file_path, date_dir):
     from pydub import AudioSegment
     from pydub.exceptions import CouldntDecodeError
     import os
 
-    print('经过此函数1')
+    # print('经过此函数1')
     file_ext = os.path.splitext(file_path)[1]
     try:
         audio = AudioSegment.from_file(file_path, file_ext[1:])
@@ -232,16 +232,26 @@ def convert_video_to_audio(file_path):
     # 设置文件名字为源文件的前缀
     filename = os.path.basename(file_path)
     filename_without_extension = os.path.splitext(filename)[0]
-    new_file_path = filename_without_extension + ".wav"
+    new_file_path = os.path.join(date_dir, filename_without_extension + ".wav").replace("\\", "/")
     audio.export(new_file_path, format="wav")
-    print('经过此函数2', new_file_path)
+    print('经过函数 convert_video_to_audio', new_file_path)
     return new_file_path
 
 
-def audio_analyse(file_path, uid, time):
+from .py.EGG.text_audio_emo import text_audio_emo_predict
+
+
+def audio_analyse(file_path, date_dir, uid, time):
     print('音频分析及发音准确度统计')
     # 提取音频
-    audio_path = convert_video_to_audio(file_path)
+    audio_path = convert_video_to_audio(file_path, date_dir)
+
+    # 对象声明
+    obj = text_audio_emo_predict(audio_name=audio_path)
+    result = obj.total_predict()
+    text_ret = json.dumps(result[0])
+    audio_ret = json.dumps(result[1])
+
     record = Recorder(audio_name=audio_path)
     # 执行中间过渡函数
     temp = record.betweenness()
@@ -320,20 +330,9 @@ def audio_analyse(file_path, uid, time):
         fluency_score=fluency_score, integrity_score=integrity_score,
         phone_score=phone_score, tone_score=tone_score, affix_score=affix_score,
         video_path=file_path.replace('\\', '/').replace(BaseDir, ''), color_content=content_colored,
+        textual_emotion=text_ret, phonetic_emotion=audio_ret
     )
     speech_temp.save()
-
-
-# 语音/文本
-def text_audio_emo_predict(file_path):
-    from py.EGG.text_audio_emo import text_audio_emo_predict
-    # 提取音频
-    audio_path = convert_video_to_audio(file_path)
-    # 对象声明
-    obj = text_audio_emo_predict(audio_name=audio_path)
-    result = obj.total_predict()
-    return result[0],result[1]  # 文本；语音 二维列表
-
 
 
 import dlib
@@ -398,6 +397,7 @@ def MyExpression(image_path):
 
 # 本地视频分析
 def video_analyse(video_path, date_dir, uid, time):
+    print('视频分析及表情姿态统计')
     video_path = video_path.replace('\\', '/')
     vid = cv2.VideoCapture(video_path)
 
@@ -597,17 +597,45 @@ def speachDateScore(request, date):
                 # 语音
                 speech_table_value = list(models.Speach.objects.filter(uid=uid, date=date).values(
                     'content', 'fluency_score', 'integrity_score', 'phone_score', 'tone_score',
-                    'affix_score', 'total_score', 'topic_score', 'color_content'))
+                    'affix_score', 'total_score', 'topic_score', 'color_content', 'textual_emotion',
+                    'phonetic_emotion'))
                 topic_score = speech_table_value[0]['topic_score']
                 speech_table = [speech_table_value[0]['fluency_score'], speech_table_value[0]['integrity_score'],
                                 speech_table_value[0]['phone_score'], speech_table_value[0]['tone_score'],
                                 speech_table_value[0]['affix_score'], speech_table_value[0]['total_score'],
                                 ]
-                #发音可视化字符
+                # 文本情感
+                text_emo = json.loads(speech_table_value[0]['textual_emotion'])
+                text_emotion_dict = {'negative': 0.15, 'neutral': 0.5, 'positive': 0.85}
+                text_emotion = []
+                for i in range(len(text_emo)):
+                    if text_emo[i][0] == 'neutral':
+                        text_emotion.append(
+                            [text_emo[i][0], text_emotion_dict[text_emo[i][0]] + (text_emo[i][1] - 0.5) * 0.2])
+                    else:
+                        text_emotion.append(
+                            [text_emo[i][0], text_emotion_dict[text_emo[i][0]] + (text_emo[i][1] - 0.5) * 0.15])
+                print(text_emotion)
+
+                # 语音情感
+                audio_emo = json.loads(speech_table_value[0]['phonetic_emotion'])
+                audio_emotion_dict = {'angry': 0.15, 'anger': 0.15, 'fear': 0.15, 'sad': 0.15, 'neutral': 0.5,
+                                      'happy': 0.85, 'surprise': 0.85}
+                audio_emotion = []
+                for i in range(len(audio_emo)):
+                    if audio_emo[i][0] == 'neutral':
+                        audio_emotion.append(
+                            [audio_emo[i][0], audio_emotion_dict[audio_emo[i][0]] + (audio_emo[i][1] - 0.5) * 0.2])
+                    else:
+                        audio_emotion.append(
+                            [audio_emo[i][0], audio_emotion_dict[audio_emo[i][0]] + (audio_emo[i][1] - 0.5) * 0.15])
+                print(audio_emotion)
+
+                # 发音可视化字符
                 pro_viual = speech_table_value[0]['color_content']
-                #发音可视化字符串
-                #输出评价文字
-                #统计颜色个数
+                # 发音可视化字符串
+                # 输出评价文字
+                # 统计颜色个数
                 # 定义三个正则表达式，分别用于匹配三种颜色
                 red_pattern = re.compile(r'style="background-color: #dc6c64">(.+?)</span>')
                 green_pattern = re.compile(r'style="background-color: #b7e1cd">(.+?)</span>')
@@ -616,7 +644,7 @@ def speachDateScore(request, date):
                 red_count = len(re.findall(red_pattern, pro_viual))
                 green_count = len(re.findall(green_pattern, pro_viual))
                 yellow_count = len(re.findall(yellow_pattern, pro_viual))
-                #统计评价标准
+                # 统计评价标准
                 # 音准反馈
                 accurate_ratio = green_count / (green_count + red_count + yellow_count)
                 # 肢体反馈/暂以total_score作为肢体评测反馈依据
@@ -650,16 +678,21 @@ def speachDateScore(request, date):
                 emotion = [i['emotion'] for i in pose]
 
                 emotion_prob = [i['emotion_prob'] for i in pose]
-                emotion_dict = {'anger': 0.15, 'fear': 0.15, 'sad': 0.15, 'disgust': 0.15, 'neutral': 0.5, 'happy': 0.85, 'surprise': 0.85}
-                multimodal_emotion= []
+                expression_emotion_dict = {'angry': 0.15, 'anger': 0.15, 'fear': 0.15, 'sad': 0.15, 'disgust': 0.15,
+                                           'neutral': 0.5,
+                                           'happy': 0.85, 'surprise': 0.85}
+                expression_emotion = []
                 for i in range(len(emotion)):
                     if emotion[i] == 'neutral':
-                        multimodal_emotion.append([emotion[i], emotion_dict[emotion[i]] + (emotion_prob[i]-0.5)*0.2])
+                        expression_emotion.append(
+                            [emotion[i], expression_emotion_dict[emotion[i]] + (emotion_prob[i] - 0.5) * 0.2])
                     else:
-                        multimodal_emotion.append([emotion[i], emotion_dict[emotion[i]] + (emotion_prob[i]-0.5)*0.15])
+                        expression_emotion.append(
+                            [emotion[i], expression_emotion_dict[emotion[i]] + (emotion_prob[i] - 0.5) * 0.15])
 
                 dt = {'score': pose_score, 'imgTime': imgTime, 'emotion': emotion, 'flag': flag,
-                      'multimodal_emotion': multimodal_emotion}
+                      'expression_emotion': expression_emotion, 'text_emotion': text_emotion,
+                      'audio_emotion': audio_emotion}
 
                 limbs = sum([i['limbsChanges'] for i in pose])
                 body = sum([i['bodyDeviation'] for i in pose])
@@ -675,7 +708,7 @@ def speachDateScore(request, date):
                                'date': date.strftime('%Y-%m-%d %H:%M:%S'), 'data': dt, 'speech_score': speech_table,
                                'content': speech_table, 'pose': pose, 'count_flag': count_flag,
                                'topic_flag': topic_flag, 'dates': dates, 'limbs': limbs, 'body': body,
-                               'pro_viual': pro_viual, 'feedback': feedback,
+                               'pro_viual': pro_viual, 'feedback': feedback
                                })  # pro_viual是音准可视化字符串，feedback是生成的反馈字符串
             else:
                 return HttpResponse('<h1>该日期下并没有评测 !</h1>')
@@ -1099,5 +1132,3 @@ def page_not_found(request, exception):
 # 500
 # def page_error(request, exception):
 #     return render(request, '404.html')
-
-

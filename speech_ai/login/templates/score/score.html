@@ -216,21 +216,28 @@
 
         {#    多模态    #}
         const multimodal = echarts.init(document.getElementById('multimodal'));
-        const datas = [["2000-06-05", 116], ["2000-06-06", 129], ["2000-06-07", 135], ["2000-06-08", 86], ["2000-06-09", 73], ["2000-06-10", 85], ["2000-06-11", 73], ["2000-06-12", 68], ["2000-06-13", 92], ["2000-06-14", 130], ["2000-06-15", 245], ["2000-06-16", 139], ["2000-06-17", 115], ["2000-06-18", 111], ["2000-06-19", 309], ["2000-06-20", 206], ["2000-06-21", 137], ["2000-06-22", 128], ["2000-06-23", 85], ["2000-06-24", 94], ["2000-06-25", 71], ["2000-06-26", 106], ["2000-06-27", 84], ["2000-06-28", 93], ["2000-06-29", 85], ["2000-06-30", 73], ["2000-07-01", 83], ["2000-07-02", 125], ["2000-07-03", 107], ["2000-07-04", 82], ["2000-07-05", 44], ["2000-07-06", 72], ["2000-07-07", 106], ["2000-07-08", 107], ["2000-07-09", 66], ["2000-07-10", 91], ["2000-07-11", 92], ["2000-07-12", 113], ["2000-07-13", 107], ["2000-07-14", 131], ["2000-07-15", 111], ["2000-07-16", 64], ["2000-07-17", 69], ["2000-07-18", 88], ["2000-07-19", 77], ["2000-07-20", 83], ["2000-07-21", 111], ["2000-07-22", 57], ["2000-07-23", 55], ["2000-07-24", 60]];
-        const dateList = datas.map(function (item) {
+
+        let expression_emotion = {{ data.expression_emotion|safe }};
+        const expression_emotion_dateList = expression_emotion.map(function (item) {
           return item[0];
         });
-        const valueList = datas.map(function (item) {
+        const expression_emotion_valueList = expression_emotion.map(function (item) {
           return item[1];
         });
 
-        let multimodal_emotion = {{ data.multimodal_emotion|safe }};
-        const emotion_dateList = multimodal_emotion.map(function (item) {
+        let text_emotion = {{ data.text_emotion|safe }};
+        const text_emotion_dateList = text_emotion.map(function (item) {
           return item[0];
         });
-        console.log(multimodal_emotion);
+        const text_emotion_valueList = text_emotion.map(function (item) {
+          return item[1];
+        });
 
-        const emotion_valueList = multimodal_emotion.map(function (item) {
+        let audio_emotion = {{ data.audio_emotion|safe }};
+        const audio_emotion_dateList = audio_emotion.map(function (item) {
+          return item[0];
+        });
+        const audio_emotion_valueList = audio_emotion.map(function (item) {
           return item[1];
         });
 
@@ -287,7 +294,17 @@
             type: 'scroll', // ：可滚动翻页的图例。当图例数量较多时可以使用。
             data: titleName
           },
-          title: [{ // 图表标题
+          title: [// 图表标题
+            {
+                text: '多模态情感',
+                textStyle: {
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                },
+                top: '0%',
+                left: 'left',
+            },
+          {
             top: '3%',
             left: 'center',
             text: '语音统计'
@@ -310,7 +327,7 @@
             link: { xAxisIndex: 'all' }
           },
           xAxis: [{
-            data: emotion_dateList,
+            data: audio_emotion_dateList,
             name: '时间',
             axisLine: {
               show: true,
@@ -321,13 +338,29 @@
               }
             }
           }, {
-            data: emotion_dateList,
+            data: text_emotion_dateList,
             name: '时间',
-            gridIndex: 1
+            gridIndex: 1,
+            axisLine: {
+              show: true,
+              symbol: ['none', 'arrow'],
+              symbolOffset: [0, 12],
+              lineStyle: {
+                color: colors[1]
+              }
+            }
           }, {
-            data: emotion_dateList,
+            data: expression_emotion_dateList,
             name: '时间',
-            gridIndex: 2
+            gridIndex: 2,
+            axisLine: {
+              show: true,
+              symbol: ['none', 'arrow'],
+              symbolOffset: [0, 12],
+              lineStyle: {
+                color: colors[2]
+              }
+            }
           }],
           yAxis: [
             {
@@ -453,13 +486,13 @@
                 width: 3
               },
               showSymbol: false,
-              data: emotion_valueList,
+              data: audio_emotion_valueList,
             },
             {
               name: titleName[1],
               type: 'bar',
               showSymbol: false,
-              data: emotion_valueList,
+              data: text_emotion_valueList,
               itemStyle: {
                 color: colors[1]
               },
@@ -474,7 +507,7 @@
               name: titleName[2],
               type: 'line',
               showSymbol: false,
-              data: emotion_valueList,
+              data: expression_emotion_valueList,
               itemStyle: {
                 color: colors[2]
               },
