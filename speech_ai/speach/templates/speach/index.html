@@ -66,47 +66,20 @@
                                     <a class="nav-link" href="/login/score"> 评测结果 </a>
                                 </li>
 
-                                {% comment %}<li class="nav-item">
+                                <li class="nav-item">
                                     <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link last_link" href="/login/logout"> 注销 </a>
-                                </li>{% endcomment %}
+                                </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link last_link" href="/judge/judge_homepage/contact/"> 联系我们 </a>
                                 </li>
 
-                                {% comment %}<li class="nav-item">
-                                    <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
-                                </li>{% endcomment %}
-                                {% comment %}<li class="nav-item">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/login/face/upload">人脸录入</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link last_link" href="/login/logout">注销</a>
-                                    </li>
-                                </li>{% endcomment %}
-
                                 <li class="nav-item">
-                                    <div class="dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            {{ user_name }}
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                                            <li>
-                                                <a class="dropdown-item" href="/login/face/upload">人脸录入</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="/login/logout">注销</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
                                 </li>
 
                             {% else %}
