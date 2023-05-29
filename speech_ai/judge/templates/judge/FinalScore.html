@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>最终成绩</title>
+        <title>赛事选手得分情况</title>
 
         <link rel="icon" href="{% static 'favicon/logo.svg'%}">
 
@@ -20,50 +20,20 @@
 
     </head>
 
-    <body>
+    <body background="{% static 'images/blue-background-img.png' %}">
         <div class="hero_area">
             <!-- header section strats -->
             <header class="header_section">
               <div class="container">
                 <nav class="navbar navbar-expand-lg custom_nav-container ">
                   <a class="navbar-brand" href="/index">
-                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                      x="0px" y="0px" viewBox="0 0 512.009 512.009" style="enable-background:new 0 0 512.009 512.009;"
-                      xml:space="preserve">
-                      <g>
-                        <g>
-                          <path d="M370.634,395.38l4.715-0.917c5.547-1.067,136.661-26.773,136.661-95.808c0-21.461-6.933-36.8-20.651-45.611
-                    c-19.797-12.757-47.531-7.168-64.683-1.707v-16.683c0-17.643-14.357-32-32-32H96.009c-17.643,0-32,14.357-32,32v21.333
-                    c0,63.637,29.675,122.027,78.827,160H10.676c-4.309,0-8.213,2.603-9.856,6.592c-1.664,3.989-0.747,8.576,2.304,11.627
-                    l23.915,23.915c14.123,14.101,32.875,21.867,52.8,21.867h330.987c19.648,0,38.891-7.979,52.8-21.867l23.915-23.915
-                    c3.051-3.051,3.968-7.637,2.304-11.627c-1.664-3.989-5.547-6.592-9.856-6.592H347.807
-                    C356.02,409.673,363.593,402.783,370.634,395.38z M425.418,274.313c13.483-5.12,40.405-12.373,54.4-3.307
-                    c7.317,4.672,10.859,13.739,10.859,27.648c0,35.477-59.307,59.221-98.496,69.931C410.783,340.809,422.324,308.596,425.418,274.313
-                    z"></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path d="M328.415,113.332c17.344-21.675,17.344-55.616,0-77.291c-3.733-4.608-10.432-5.312-14.997-1.664
-                    c-4.608,3.669-5.333,10.389-1.664,14.997c11.008,13.717,11.008,36.907-0.043,50.667c-17.365,21.653-17.365,55.616-0.021,77.291
-                    c2.133,2.645,5.205,4.011,8.341,4.011c2.347,0,4.715-0.768,6.677-2.347c4.608-3.669,5.333-10.389,1.664-14.997
-                    C317.364,150.281,317.364,127.092,328.415,113.332z"></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path d="M264.308,113.332c17.365-21.675,17.365-55.616,0-77.291c-3.669-4.587-10.368-5.333-14.997-1.664
-                    c-4.608,3.669-5.333,10.389-1.664,14.997c10.987,13.717,10.987,36.907-0.021,50.667c-17.365,21.653-17.365,55.616,0,77.291
-                    c2.112,2.645,5.205,4.011,8.341,4.011c2.325,0,4.693-0.768,6.656-2.347c4.587-3.669,5.333-10.389,1.664-14.997
-                    C253.3,150.281,253.3,127.092,264.308,113.332z"></path>
-                        </g>
-                      </g>
+                        <svg t="1685327063583" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                            p-id="2074" width="60px" height="60px">
+                            <path d="M840.51491965 202.02394239l-19.48151603-19.48151604c-49.1751171-49.1751171-128.51516225-49.1751171-177.53317036-0.15710901l-52.00307912 52.00307911L788.51184055 431.24597383l52.0030791-52.0030791c49.01800811-48.8608991 49.01800811-128.35805326 0-177.21895234zM566.3597141 259.52583649C530.69597103 295.18957957 521.42654002 346.72133168 537.60876705 391.02606977l-0.157109 0.15710898-284.99572656 285.30994457c-5.49881501 5.49881501-5.49881501 14.61113702 0 20.26706105l27.49407505 27.49407505-64.57179914 64.57179914L233.91706944 807.36492059l64.41469013-64.41469014 27.49407506 27.49407508c2.82796201 2.82796201 6.28436002 4.08483399 10.05497602 4.08483399 4.08483399 0 7.54123201-1.25687199 10.36919402-4.08483399l142.34075427-142.34075431v213.66824043h65.98578015V561.96066209L631.40284023 485.29146996c44.46184709 16.33933604 96.15070819 6.91279601 131.81445127-28.75094707l0.78554499-0.785545L566.9881501 258.74029149l-0.628436 0.785545zM554.73364807 521.42654002l-65.98578011 65.98578012-152.70994831 152.70994831-53.4170601-53.57416911 268.34217254-268.34217253c4.39905201 6.59857803 9.58364903 12.88293803 15.39668201 18.85308005l19.48151604 19.48151603c5.81303301 5.81303301 12.09739302 10.84052103 18.53886204 15.23957304L554.73364807 521.42654002z" fill="#2c2c2c" p-id="2075"></path></svg>
 
-                    </svg>
-                    <span>
-                      Speech scoring system
-{#                        {{ date }}#}
-                    </span>
+                        <span>
+                          Speech scoring system
+                        </span>
                   </a>
 
 
@@ -76,27 +46,31 @@
                     <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
                       <ul class="navbar-nav">
 
-                        <li class="nav-item">
-                          <a class="nav-link" href="/index"> 主页 <span class="sr-only">(current)</span></a>
-                        </li>
-                        {% if login_status %}
-                        <li class="nav-item">
-                          <a class="nav-link" href="/login/score"> 评测结果 </a>
-                        </li>
-                          <li class="nav-item">
-                            <a class="nav-link" href="/login/face/upload"> 人脸录入 </a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link last_link" href="/login/logout"> 注销 </a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link" href="/login/user/info">{{ user_name }}</a>
-                          </li>
-                        {% else %}
-                          <li class="nav-item">
-                            <a class="nav-link last_link" href="/login"> 登录 </a>
-                          </li>
-                        {% endif %}
+                            {% if login_status %}
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/judge/video/"> 比赛打分 </a>
+                                </li>
+
+                                <li class="nav-item active">
+                                    <a class="nav-link" href="/judge/finalScore/"> 赛事结果 </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link last_link" href="/login/logout"> 注销 </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">{{ user_name }}(评委)</a>
+                                </li>
+
+                            {% else %}
+
+                                <li class="nav-item">
+                                    <a class="nav-link last_link" href="/login"> 登录 </a>
+                                </li>
+
+                            {% endif %}
 
                       </ul>
                     </div>
@@ -105,12 +79,12 @@
               </div>
             </header>
 
-            <div id="echart_container">
+            {% comment %}<div id="echart_container">
                 <div id="sort" style="width: 90vw; height: 80vh; left:5%"></div>
-{#                <div class="grid-item1" id="emotion_count" style="width: 50vw; height:50vh;"></div>#}
-{#                <div class="grid-item2" id="stand_score" style="width: auto; height:auto;"></div>#}
-{#                <div class="grid-item3" id="speech_score_bar" style="width: auto; height:auto;"></div>#}
-{#                <div class="grid-item4" id="speech_score_radar" style="width: auto; height:auto;"></div>#}
+            </div>{% endcomment %}
+
+            <div id="final-container">
+              <div id="final" style="width: 95vw; height:900px;"></div>
             </div>
 
         </div>
@@ -118,7 +92,285 @@
     <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/echarts.min.js' %}"></script>
 
-    <script  type="text/javascript">
+
+    <script>
+
+        const final = echarts.init(document.getElementById('final'));
+        let name = {{ name|safe }};
+        let total_score = {{ total_score|safe }};
+        let human_score = {{ human_score|safe }};
+        let machine_score = {{ machine_score|safe }};
+
+        const titleNameY = ['机器评分', '人工评分', '最终分数'];
+        const titleName = ['机器', '人工', '总分'];
+        const colors = ['#EE6666', '#91CC75','#37A2FF'];
+
+        let final_option = {
+          dataZoom: [
+            {
+              type: 'slider',
+              xAxisIndex: [0, 1, 2],
+              filterMode: 'none'
+            },
+            {
+              type: 'inside',
+              xAxisIndex: [0, 1, 2],
+              filterMode: 'none'
+            },
+
+            {
+              type: 'slider',
+              yAxisIndex: 0,
+              filterMode: 'none'
+            },
+            {
+              type: 'slider',
+              yAxisIndex: 1,
+              filterMode: 'none'
+            },
+            {
+              type: 'slider',
+              yAxisIndex: 2,
+              filterMode: 'none'
+            },
+          ],
+          legend: {
+            type: 'scroll',
+            data: titleName
+          },
+          title: [// 图表标题
+            {
+                text: '赛事选手得分',
+                textStyle: {
+                    fontSize: 21,
+                    fontWeight: 'bold',
+                },
+                top: '0%',
+                left: 'left',
+            },
+          {
+            top: '3%',
+            left: 'center',
+            text: '机器评分'
+          }, {
+            top: '35%',
+            left: 'center',
+            text: '人工评分'
+          }, {
+            top: '65%',
+            left: 'center',
+            text: '最终分数'
+          }],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            }
+          },
+          axisPointer: {
+            link: { xAxisIndex: 'all' }
+          },
+          xAxis: [{
+            data: name,
+            name: '姓名',
+            axisLine: {
+              show: true,
+              symbol: ['none', 'arrow'],
+              symbolOffset: [0, 12],
+              lineStyle: {
+                color: colors[0]
+              }
+            }
+          }, {
+            data: name,
+            name: '姓名',
+            gridIndex: 1,
+            axisLine: {
+              show: true,
+              symbol: ['none', 'arrow'],
+              symbolOffset: [0, 12],
+              lineStyle: {
+                color: colors[1]
+              }
+            }
+          }, {
+            data: name,
+            name: '姓名',
+            gridIndex: 2,
+            axisLine: {
+              show: true,
+              symbol: ['none', 'arrow'],
+              symbolOffset: [0, 12],
+              lineStyle: {
+                color: colors[2]
+              }
+            }
+          }],
+          yAxis: [
+            {
+              name: titleNameY[0],
+              axisLine: {
+                show: true,
+              },
+              splitNumber: 10,
+              {% comment %}axisLabel: {
+                formatter: function (value) {
+                  if (value === 0 || value === 0.3 || value === 0.7 || value === 1) {
+                    return value.toString();
+                  }
+                  return '';
+                }
+              },{% endcomment %}
+              splitLine: {
+                show: true,
+                lineStyle: {
+                  type: 'dashed'
+                },
+              },
+              gridIndex: 0,
+              min: 0,
+              max: 100,
+              axisTick: {
+                show: true,
+                lineStyle: {
+                  type: 'dashed',
+                  color: colors[0]
+                }
+              }
+            },
+
+            {
+              name: titleNameY[1],
+              axisLine: {
+                show: true,
+              },
+              splitNumber: 10,
+              {% comment %}axisLabel: {
+                formatter: function (value) {
+                  if (value === 0 || value === 0.3 || value === 0.7 || value === 1) {
+                    return value.toString();
+                  }
+                  return '';
+                }
+              },{% endcomment %}
+              splitLine: {
+                show: true,
+                lineStyle: {
+                  type: 'dashed'
+                },
+              },
+              gridIndex: 1,
+
+              min: 0,
+              max: 100,
+              axisTick: {
+                show: true,
+                lineStyle: {
+                  type: 'dashed',
+                  color: colors[1]
+                }
+              }
+            },
+
+            {
+              name: titleNameY[2],
+              axisLine: {
+                show: true,
+              },
+              splitNumber: 10,
+              {% comment %}axisLabel: {
+                formatter: function (value) {
+                  if (value === 0 || value === 0.3 || value === 0.7 || value === 1) {
+                    return value.toString();
+                  }
+                  return '';
+                }
+              },{% endcomment %}
+              splitLine: {
+                show: true,
+                lineStyle: {
+                  type: 'dashed'
+                },
+              },
+              gridIndex: 2,
+              min: 0,
+              max: 100,
+              axisTick: {
+                show: true,
+                lineStyle: {
+                  type: 'dashed',
+                  color: colors[2]
+                }
+              }
+            }
+          ],
+          grid: [
+              { // 调整每个图表的位置
+                top: '3%',
+                bottom: '70%',
+              }, {
+                top: '40%',
+                bottom: '40%',
+              },
+              {
+                top: '70%',
+                bottom: '3%'
+              }
+          ],
+          series: [
+            {
+              name: titleName[0],
+              type: 'bar',
+              areaStyle: {},
+              itemStyle: {
+                color: colors[0]
+              },
+              lineStyle: {
+                color: colors[0],
+                width: 3
+              },
+              showSymbol: false,
+              data: machine_score,
+            },
+            {
+              name: titleName[1],
+              type: 'bar',
+              showSymbol: false,
+              data: human_score,
+              itemStyle: {
+                color: colors[1]
+              },
+              lineStyle: {
+                color: colors[1],
+                width: 3
+              },
+              xAxisIndex: 1,
+              yAxisIndex: 1
+            },
+            {
+              name: titleName[2],
+              type: 'bar',
+              showSymbol: false,
+              data: total_score,
+              itemStyle: {
+                color: colors[2]
+              },
+              lineStyle: {
+                color: colors[2],
+                width: 3
+              },
+              xAxisIndex: 2,
+              yAxisIndex: 2
+            },
+          ]
+        };
+        final.setOption(final_option);
+
+
+    </script>
+
+
+    {% comment %}<script  type="text/javascript">
         let chartDom = document.getElementById('sort');
         let myChart = echarts.init(chartDom);
         let option;
@@ -162,7 +414,7 @@
             ]
         };
         myChart.setOption(option);
-    </script>
+    </script>{% endcomment %}
 
     </body>
 

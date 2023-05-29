@@ -615,7 +615,6 @@ def speachDateScore(request, date):
                     else:
                         text_emotion.append(
                             [text_emo[i][0], text_emotion_dict[text_emo[i][0]] + (text_emo[i][1] - 0.5) * 0.15])
-                print(text_emotion)
 
                 # 语音情感
                 audio_emo = json.loads(speech_table_value[0]['phonetic_emotion'])
@@ -629,7 +628,6 @@ def speachDateScore(request, date):
                     else:
                         audio_emotion.append(
                             [audio_emo[i][0], audio_emotion_dict[audio_emo[i][0]] + (audio_emo[i][1] - 0.5) * 0.15])
-                print(audio_emotion)
 
                 # 发音可视化字符
                 pro_viual = speech_table_value[0]['color_content']

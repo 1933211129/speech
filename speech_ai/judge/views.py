@@ -20,49 +20,79 @@ BaseDir = str(BaseDir).replace('\\', '/')
 # 最终分数
 def finalScore(request):
     if request.method == 'GET':
-        uid = request.session.get('user_id')
-        if uid:
+        if request.session.get('user_id', None):
+            uid = request.session.get('user_id')
             user_name = request.session.get('user_name')
-            exist = Race.objects.filter(OrganizerID=uid).exists()
-            if exist:
+
+            if Race.objects.filter(OrganizerID=uid).exists():
                 race = Race.objects.get(OrganizerID=uid)
-                cptrs = Competitor.objects.filter().values('Cptr_Name', 'HumanScore', 'VoiceScore', 'PoseScore').distinct()
+                cptrs = Competitor.objects.filter().values('Cptr_Name', 'HumanScore', 'VoiceScore',
+                                                           'PoseScore').distinct()
 
-                dic = {}
-                for cptr in cptrs:
-                    if cptr['HumanScore'] is not None:
-                        cptr['HumanScore'] = json.loads(cptr['HumanScore'])
-                    if cptr['VoiceScore'] is not None:
-                        cptr['VoiceScore'] = json.loads(cptr['VoiceScore'])
-                    if cptr['PoseScore'] is not None:
-                        cptr['PoseScore'] = json.loads(cptr['PoseScore'])
-                    if cptr['HumanScore'] == None:
-                        dic[cptr['Cptr_Name']] = (np.array(cptr['VoiceScore']).mean() * 1 +
-                                                  np.array(cptr['PoseScore']).mean() * 3
-                                                  ) / 4
-                    else:
-                        dic[cptr['Cptr_Name']] = (np.array(cptr['HumanScore']).mean() * 1 +
-                                                  np.array(cptr['VoiceScore']).mean() * 1 +
-                                                  np.array(cptr['PoseScore']).mean() * 3
-                                                  ) / 5
-                sorted_dict = {k: v for k, v in sorted(dic.items(), key=lambda item: item[1], reverse=True)}
                 name = []
-                score = []
-                for k, v in sorted_dict.items():
-                    name.append(k)
-                    score.append(v)
+                human_score = []
+                machine_score = []
+                total_score = []
+                for cptr in cptrs:
+                    # 选手姓名
+                    name.append(cptr['Cptr_Name'])
+                    print(cptr)
+                    print(cptr['HumanScore'] == '')
 
-                return render(request, 'judge/FinalScore.html', {'login_status': True, 'user_name': user_name,
-                                                                 'race_name': race.race_name, 'name': name,
-                                                                 'score': score})
+                    if cptr['HumanScore'] != '' and cptr['HumanScore'] is not None:
+                        human = json.loads(cptr['HumanScore'])
+                        human = np.array(human).mean()
+                    else:
+                        human = 0
+                    if cptr['VoiceScore'] != '' and cptr['VoiceScore'] is not None:
+                        voice = json.loads(cptr['VoiceScore'])
+                        voice = np.array(voice).mean()
+                    else:
+                        voice = 0
+                    if cptr['PoseScore'] != '' and cptr['PoseScore'] is not None:
+                        pose = json.loads(cptr['PoseScore'])
+                        pose = np.array(pose).mean()
+                    else:
+                        pose = 0
+
+                    # 人工评分
+                    if human == 0:
+                        human_score.append(0)
+                    else:
+                        human_score.append(human)
+
+                    # 机器评分
+                    if pose == 0 or voice == 0:
+                        machine_score.append(max(pose, voice))
+                    else:
+                        machine_score.append((pose * 1 + voice * 3) / 4)
+
+                    # 总分
+                    if human == 0:
+                        total_score.append(0)
+                    elif pose == 0 or voice == 0:
+                        total_score.append((max(pose, voice) * 2 + human * 3) / 5)
+                    else:
+                        total_score.append((pose * 1 + voice * 1 + human * 3) / 5)
+
+                    sorted_list = sorted(zip(machine_score, human_score, total_score), key=lambda x: x[2], reverse=True)
+                    machine_score = [item[0] for item in sorted_list]
+                    human_score = [item[1] for item in sorted_list]
+                    total_score = [item[2] for item in sorted_list]
+
+                return render(request,
+                              'judge/FinalScore.html',
+                              {'login_status': True, 'user_name': user_name, 'race_name': race.race_name,
+                               'name': name,
+                               'total_score': total_score,
+                               'human_score': human_score,
+                               'machine_score': machine_score
+                               })
 
             else:
                 return HttpResponse('您并不是赛事组织者')
-
-
-
         else:
-            return HttpResponse('请先登录 !')
+            redirect("/login/tip/您还未登录 !/")
 
 
 # 人工评分上传
@@ -121,7 +151,6 @@ def videoScore(request):
 
         # 未登录
         return redirect("/login/tip/您还未登录 !/")
-
 
 
 # 视频提交页面
@@ -286,7 +315,8 @@ def homepage(request):
             user_name = request.session.get('user_name')
             return render(request, 'judge/homepage.html', {'login_status': True, 'user_name': user_name})
         else:
-            return redirect("/login/tip/您还未登录 !/")
+            return render(request, 'judge/homepage.html', {'login_status': False})
+            # return redirect("/login/tip/您还未登录 !/")
 
 
 def signup(request):
@@ -359,8 +389,10 @@ def video_index(request):
 
 # “火热进行”页面表格
 def show_events(request):
-    # Get all competitions whose race time is after today's date
     events = Race.objects.all()
-
-    # Render the HTML template and pass the events as context
-    return render(request, 'judge/event_list.html', {'events': events})
+    if request.session.get('is_login', None):
+        user_name = request.session.get('user_name')
+        return render(request, 'judge/event_list.html',
+                      {'login_status': True, 'user_name': user_name, 'events': events})
+    return render(request, 'judge/event_list.html', {'login_status': False, 'events': events})
+    # return render(request, 'judge/event_list.html', {'events': events})

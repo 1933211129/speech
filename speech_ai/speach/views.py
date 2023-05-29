@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import os
 import json
 import pymysql
@@ -316,41 +316,50 @@ from .models import text_score
 
 def upload_file(request):
     if request.method == "POST":
-        uploaded_file = request.FILES.get('file')
-        if not uploaded_file or uploaded_file.size == 0:
-            return HttpResponse("请上传有内容的文件！")
+        if request.session.get('is_login', None):
+            user_name = request.session.get('user_name')
 
-        _, file_extension = os.path.splitext(uploaded_file.name)
-        if file_extension not in ['.pdf', '.docx']:
-            return f'错误：{file_extension}类型的文件暂不支持,请上传.docx文件或.pdf文件'
+            uploaded_file = request.FILES.get('file')
+            if not uploaded_file or uploaded_file.size == 0:
+                return HttpResponse("请上传有内容的文件！")
 
-        # 读取文件的内容
-        file_content = uploaded_file.read()
-        if file_extension == '.pdf':
-            text_list = convert_pdf_to_txt(file_content)
+            _, file_extension = os.path.splitext(uploaded_file.name)
+            if file_extension not in ['.pdf', '.docx']:
+                return f'错误：{file_extension}类型的文件暂不支持,请上传.docx文件或.pdf文件'
+
+            # 读取文件的内容
+            file_content = uploaded_file.read()
+            if file_extension == '.pdf':
+                text_list = convert_pdf_to_txt(file_content)
+            else:
+                text_list = word_to_txt(file_content)
+
+            # 将文本列表转换为字符串
+            text_str = '\n'.join(text_list)
+
+            # 获取主题
+            global topic_
+            topic_ = request.POST.get('topic')
+            print(topic_)
+            if not topic_:
+                topic_ = ''
+
+            # 将数据保存到数据库
+            try:
+                text_score.objects.create(text=text_str, subject=topic_)
+                upload_success = True
+            except:
+                upload_success = False
+            return render(request, "speach/upload_file.html", {"upload_success": upload_success, 'login_status': True, 'user_name': user_name})
         else:
-            text_list = word_to_txt(file_content)
-
-        # 将文本列表转换为字符串
-        text_str = '\n'.join(text_list)
-
-        # 获取主题
-        global topic_
-        topic_ = request.POST.get('topic')
-        print(topic_)
-        if not topic_:
-            topic_ = ''
-
-        # 将数据保存到数据库
-        try:
-            text_score.objects.create(text=text_str, subject=topic_)
-            upload_success = True
-        except:
-            upload_success = False
-
-        return render(request, "speach/upload_file.html", {"upload_success": upload_success})
-    else:
-        return render(request, "speach/upload_file.html")
+            return redirect("/login/tip/您还未登录 !")
+    elif request.method == "GET":
+        if request.session.get('is_login', None):
+            user_name = request.session.get('user_name')
+            return render(request, 'speach/upload_file.html', {'login_status': True, 'user_name': user_name})
+        return redirect("/login/tip/您还未登录 !")
+        # else:
+        #     return render(request, "speach/upload_file.html")
 
 
 # ***************************************上传文件和捕获参数*******************************************
