@@ -8,17 +8,23 @@
 
 .right-box {
     position: relative; /* 或者 'absolute' 如果适用 */
-    left: 690px; /* 修改这个值，使元素靠左移动 */
-    top: 50px;
+    left: 38%; /* 修改这个值，使元素靠左移动 */
+    top: 2%;
 }
 .banner-l {
     position: absolute;
-    top: 320px;  /* 调整这个值来改变图像上下的位置 */
-    left: 1550px; /* 调整这个值来改变图像左右的位置 */
+    top: 15%;  /* 调整这个值来改变图像上下的位置 */
+    left: 85.5%; /* 调整这个值来改变图像左右的位置 */
 }
 .container2 {
     overflow-y: scroll;  /* 当内容溢出容器时，显示垂直滚动条 */
-    max-height: 500px;   /* 设置一个最大高度，当内容超过这个高度时，滚动条就会出现 */
+    max-height: 90vh;   /* 设置一个最大高度，当内容超过这个高度时，滚动条就会出现 */
+}
+
+.container3 {
+    max-height: 80vh;   /* 设置一个最大高度，当内容超过这个高度时，滚动条就会出现 */
+    /*overflow-y: scroll;  !* 当内容溢出容器时，显示垂直滚动条 *!*/
+    overflow: scroll;
 }
 
 

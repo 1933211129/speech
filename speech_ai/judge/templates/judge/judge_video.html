@@ -20,101 +20,99 @@
 
     <link href="{% static 'css/fontCharacter.css' %}" rel="stylesheet"/>
     <link href="{% static 'css/style.css' %}" rel="stylesheet"/>
-
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+    <style>
+        .container2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .score-form {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .score-form label {
+            margin-bottom: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-row input {
+            flex-grow: 1;
+            border: 1px solid #fff;
+            border-bottom: 3px solid var(--primary-color);
+            color: #595959;
+            font-size: 10px;
+            height: auto;
+            padding: 10px;
+            transition: all 0.2s linear 0s;
+            unicode-bidi: embed;
+            width: 100%;
+            background: transparent;
+            font-style: italic;
+            border-radius: 8px;
+        }
+
+        .custom-button {
+            display: inline-block;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            margin-top: 10px;
+            outline: none;
+        }
+
+        /* 鼠标悬停时改变按钮的背景颜色 */
+        .custom-button:hover {
+            background-color: #45a049;
+        }
+        .submit-button {
+            display: inline-block;
+            background-color: #67c2f5;
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 2px;
+            outline: none;
+            transition: background-color 0.3s ease; /* 添加过渡效果 */
+        }
+
+        .submit-button:hover {
+            background-color: #1da8f5;
+        }
+
+        .submit-button:active {
+            background-color: #408e40; /* 设置按钮在点击时的背景颜色 */
+        }
+
+        .stretched-img {
+          width: 400px;
+          height: 170px;
+        }
+
+    </style>
 
 </head>
 
 <body background="{% static 'images/blue-background-img.png' %}">
-        <style>
-            .container2 {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-            .score-form {
-                display: none;
-                flex-direction: column;
-                align-items: center;
-                margin-top: 20px;
-            }
-            .score-form label {
-                margin-bottom: 10px;
-            }
-
-            .form-row {
-                display: flex;
-                align-items: center;
-                margin-bottom: 10px;
-            }
-
-            .form-row input {
-                flex-grow: 1; /* 让输入框占据剩余的空间 */
-                /* 添加一些样式 */
-                border: 1px solid #fff;
-                border-bottom: 3px solid var(--primary-color);
-                color: #595959;
-                font-size: 10px;
-                height: auto;
-                padding: 10px;
-                transition: all 0.2s linear 0s;
-                unicode-bidi: embed;
-                width: 100%;
-                background: transparent;
-                font-style: italic;
-                border-radius: 8px;
-            }
-
-            .custom-button {
-                display: inline-block;
-                background-color: #4CAF50; /* 设置按钮的背景颜色 */
-                border: none; /* 移除按钮的边框 */
-                color: white; /* 设置按钮的文字颜色 */
-                text-align: center; /* 文字居中 */
-                text-decoration: none; /* 移除文字下划线 */
-                cursor: pointer; /* 鼠标悬停时显示指针 */
-                padding: 10px 20px; /* 设置内边距 */
-                font-size: 16px; /* 设置文字大小 */
-                border-radius: 4px; /* 设置边框的圆角弧度 */
-                margin-top: 10px;
-                outline: none;
-            }
-
-            /* 鼠标悬停时改变按钮的背景颜色 */
-            .custom-button:hover {
-                background-color: #45a049;
-            }
-            .submit-button {
-                display: inline-block;
-                background-color: #67c2f5;
-                border: none;
-                color: white;
-                text-align: center;
-                text-decoration: none;
-                cursor: pointer;
-                padding: 5px 10px;
-                font-size: 12px;
-                border-radius: 2px;
-                outline: none;
-                transition: background-color 0.3s ease; /* 添加过渡效果 */
-            }
-
-            .submit-button:hover {
-                background-color: #1da8f5;
-            }
-
-            .submit-button:active {
-                background-color: #408e40; /* 设置按钮在点击时的背景颜色 */
-            }
-
-            .stretched-img {
-              width: 400px;
-              height: 170px;
-            }
-
-        </style>
-
-        <div class="hero_area">
+        <div class="hero_area" style="overflow-y: scroll;">
             <header class="header_section">
                 <div class="container" style="align-items:center; text-align:center; ">
                     <nav class="navbar navbar-expand-lg custom_nav-container " >
@@ -169,120 +167,98 @@
                 </div>
             </header>
 
+            <h2 class="icon">选手视频</h2>
 
-
-
-
-
-        
-                <div class="right-box">
-                   <button type="button" onclick="window.location.href='/judge/finalScore/'" class="access-btn" data-toggle="modal" data-target="#enquirypopup">查看结果</button>
-                </div>
-              
-                <div class="banner-l hidden-sm hidden-xs">
-                    <img src="{% static 'img/banners/banner.png' %}" class="img-responsive">
-                </div>
+            <div class="banner-l hidden-sm hidden-xs">
+                <img src="{% static 'img/banners/banner.png' %}" class="img-responsive">
+            </div>
                 
 
             <div class="row">
-                <div class="col-lg-10 col-md-8">
-                   <section id="home-main">
-                      <h2 class="icon">选手视频</h2>
-                      <div class="row">
+                <div class="col-lg-2 col-md-4 hidden-sm hidden-xs" style="padding-left:20px;">
+                   <aside class="dark-bg">
+                      <article>
+                         <h2 class="icon" style="font-size: 24px;">评分</h2>
+                        <script>
+                            function toggleScoreForm(id) {
+                                const scoreForm = document.getElementById(`score-form-${id}`);
+                                scoreForm.style.display = scoreForm.style.display === 'none' ? 'flex' : 'none';
+                            }
+                        </script>
 
-                      <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
-                           <aside class="dark-bg">
-                              <article>
-                                 <h2 class="icon">评分</h2>
-                                <script>
-                                    function toggleScoreForm(id) {
-                                        const scoreForm = document.getElementById(`score-form-${id}`);
-                                        scoreForm.style.display = scoreForm.style.display === 'none' ? 'flex' : 'none';
-                                    }
-                                </script>
+                        <div class="container2">
 
-                                <div class="container2">
+                            {% for competitor in competitors %}
+                                <div>
 
-                                    {% for competitor in competitors %}
-                                        <div>
+                                    <button onclick="toggleScoreForm({{ forloop.counter }})" class="custom-button">
+                                        <span>{{ competitor.Cptr_Name }}</span>
+                                    </button>
 
-                                            <button onclick="toggleScoreForm({{ forloop.counter }})" class="custom-button">
-                                                <span>{{ competitor.Cptr_Name }}</span>
-                                            </button>
-
-                                        </div>
-
-                                        <form class="score-form" id="score-form-{{ forloop.counter }}">
-                                            <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
-                                            <div class="form-row">
-                                                <label for="emotion-score-{{ forloop.counter }}" class="white-label">情感饱和度:</label>
-                                                <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100" class="red-number-input">
-                                            </div>
-                                            <br>
-                                            <div class="form-row">
-                                                <label for="movement-score-{{ forloop.counter }}" class="white-label">肢体动作适当:</label>
-                                                <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100" class="red-number-input">
-                                            </div>
-                                            <br>
-                                            <div class="form-row">
-                                                <label for="logic-score-{{ forloop.counter }}" class="white-label">演讲逻辑性:</label>
-                                                <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100" class="red-number-input">
-                                            </div>
-                                            <br>
-                                            <div class="form-row">
-                                                <label for="eloquence-score-{{ forloop.counter }}" class="white-label">演讲文采性:</label>
-                                                <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100" class="red-number-input">
-                                            </div>
-                                            <button type="submit" class="submit-button">提交</button>
-                                        </form>
-                                    {% endfor %}
                                 </div>
-                              </article>
-                              <div class="clearfix spacer"></div>
-                           </aside>
+
+                                <form class="score-form" id="score-form-{{ forloop.counter }}">
+                                    <input type="text" style="display:none" id="cptrID" name="cptrID" value="{{ competitor.Cptr_id }}">
+                                    <div class="form-row">
+                                        <label for="emotion-score-{{ forloop.counter }}" class="white-label">情感饱和度:</label>
+                                        <input type="number" id="emotion-score-{{ forloop.counter }}" name="qinggan" min="0" max="100" class="red-number-input">
+                                    </div>
+                                    <br>
+                                    <div class="form-row">
+                                        <label for="movement-score-{{ forloop.counter }}" class="white-label">肢体动作适当:</label>
+                                        <input type="number" id="movement-score-{{ forloop.counter }}" name="ziti" min="0" max="100" class="red-number-input">
+                                    </div>
+                                    <br>
+                                    <div class="form-row">
+                                        <label for="logic-score-{{ forloop.counter }}" class="white-label">演讲逻辑性:</label>
+                                        <input type="number" id="logic-score-{{ forloop.counter }}" name="luoji" min="0" max="100" class="red-number-input">
+                                    </div>
+                                    <br>
+                                    <div class="form-row">
+                                        <label for="eloquence-score-{{ forloop.counter }}" class="white-label">演讲文采性:</label>
+                                        <input type="number" id="eloquence-score-{{ forloop.counter }}" name="wencai" min="0" max="100" class="red-number-input">
+                                    </div>
+                                    <button type="submit" class="submit-button">提交</button>
+                                </form>
+                            {% endfor %}
                         </div>
+                      </article>
+                      <div class="clearfix spacer"></div>
+                   </aside>
+                </div>
 
+                <div class="col-lg-8 col-md-10">
+                    <div class="container3">
+                        <div class="row auto-clear">
+                            {% for competitor in competitors %}
+                                <article class="col-lg-3 col-md-6 col-sm-4">
+                                  <div class="post post-medium">
+                                    <div class="thumbr">
+                                      <a class="post-thumb" href="/media/{{ competitor.video_path }}" data-lity>
+                                        <span class="play-btn-border" title="Play"><i class="fa fa-play-circle headline-round" aria-hidden="true"></i></span>
 
+                                        <img class="img-responsive stretched-img" src="/media/{{ competitor.img_path }}" alt="{{ competitor.Cptr_Name }}">
 
-                         <!-- ARTICLES -->
-                         <div class="col-lg-9 col-md-12 col-sm-12">
-                            <div class="row auto-clear">
-                                {% for competitor in competitors %}
-                                    <article class="col-lg-3 col-md-6 col-sm-4">
-                                      <div class="post post-medium">
-                                        <div class="thumbr">
-                                          <a class="post-thumb" href="/media/{{ competitor.video_path }}" data-lity>
-                                            <span class="play-btn-border" title="Play"><i class="fa fa-play-circle headline-round" aria-hidden="true"></i></span>
+                                      </a>
+                                    </div>
+                                    <div class="infor">
+                                      <h4>
+                                        <b style="font-size: 15px;">{{ competitor.Cptr_Name }}</b>
+                                      </h4>
+                                    </div>
+                                  </div>
+                                </article>
+                            {% endfor %}
+                         </div>
+                    </div>
+                </div>
 
-                                            <img class="img-responsive stretched-img" src="/media/{{ competitor.img_path }}" alt="{{ competitor.Cptr_Name }}">
-
-                                          </a>
-                                        </div>
-                                        <div class="infor">
-                                          <h4>
-                                            <b>{{ competitor.Cptr_Name }}</b>
-                                          </h4>
-                                        </div>
-                                      </div>
-                                    </article>
-                                {% endfor %}
-                            </div>
-                            <div class="clearfix spacer"></div>
-                        </div>
-                      </div>
-
-                      {% comment %} <div class="col-lg-2 col-md-4 hidden-sm hidden-xs">
-                       <aside class="dark-bg">
-                          <article>
-                             <h2 class="icon">成绩</h2>
-                          </article>
-                       </aside>
-                    </div> {% endcomment %}
-
-                  </section>
-
+               {% comment %} <div class="col-lg-1 col-md-0" style="height:auto; width:auto;">
+                    <img src="{% static 'img/banners/banner.png' %}" class="img-responsive" >
+                </div>{% endcomment %}
 
         </div>
+
         <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js'%}"></script>
 
         <script>

@@ -2694,8 +2694,7 @@ span.join-date {
 }*/
 
 
-
-@media (min-width: 64vw) and (max-width: 85.33333333vw) {
+@media (min-width: 68vw) and (max-width: 89.33333333vw) {
     .right-box {
         padding: 3.33333333% 7.5% 0 0;
     }
@@ -2846,7 +2845,7 @@ span.join-date {
 }
 
 /* Medium Devices, Desktops */
-@media only screen and (max-width: 82.66666667vw) {
+@media only screen and (max-width: 86.66666667vw) {
 
     .subscribe-box {
         display: block;
@@ -2913,7 +2912,7 @@ span.join-date {
 }
 
 /* Small Devices, Tablets */
-@media only screen and (max-width: 64vw) {
+@media only screen and (max-width: 68vw) {
     .footer-logo {
         margin-left: 29.16666667%;
     }
@@ -2975,7 +2974,7 @@ span.join-date {
 }
 
 /* Extra Small Devices, Phones */
-@media only screen and (max-width: 37.5vw) {
+@media only screen and (max-width: 41.5vw) {
     .footer-logo {
         margin-left: 16.66666667%;
     }
@@ -2997,7 +2996,7 @@ span.join-date {
 }
 
 /* Custom, iPhone Retina */
-@media only screen and (max-width: 26.66666667vw) {
+@media only screen and (max-width: 30.66666667vw) {
 
 }
 
@@ -3023,7 +3022,7 @@ span.join-date {
     }
 }
 
-@media (min-width: 83.2vw) and (max-width: 99.2vw) {
+@media (min-width: 87.2vw) and (max-width: 99.5vw) {
     .auto-clear .col-md-1:nth-child(12n+1) {
         clear: left;
     }
@@ -3045,7 +3044,7 @@ span.join-date {
     }
 }
 
-@media (min-width: 64vw) and (max-width: 80vw) {
+@media (min-width: 68vw) and (max-width: 84vw) {
     .auto-clear .col-sm-1:nth-child(12n+1) {
         clear: left;
     }
@@ -3067,7 +3066,7 @@ span.join-date {
     }
 }
 
-@media (max-width: 37.5vw) {
+@media (max-width: 41.5vw) {
     .auto-clear .col-xs-1:nth-child(12n+1) {
         clear: left;
     }
