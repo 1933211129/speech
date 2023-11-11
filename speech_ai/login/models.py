@@ -1,7 +1,6 @@
 from django.db import models
 import uuid
 
-
 # 获取压缩成22位的UUID
 def uid():
     # return uuid.UUID(str(uuid.uuid4()).replace('-', ''))
