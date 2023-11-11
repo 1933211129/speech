@@ -1,6 +1,5 @@
 setuptools==57.5.0
 django-celery
-
 absl-py==1.2.0
 amqp==1.4.9
 api==0.0.7
