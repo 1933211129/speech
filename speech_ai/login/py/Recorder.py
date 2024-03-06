@@ -112,8 +112,8 @@ class Recorder:
                 return None, None
 
         # 用户信息
-        access_key_id = 'LTAI5tDmPLjzT4yJ9xaNPu34'
-        access_key_secret = '2rG2MD6hXanAdpeyOADtkLl2vLhbpv'
+        access_key_id = 'xxxx'
+        access_key_secret = 'xxxxx'
         token, expire_time = AccessToken.create_token(access_key_id, access_key_secret)
         return token
     ######################################时长&音频分割##################################
@@ -423,8 +423,8 @@ class Recorder:
         # 测试时候在此处正确填写相关信息即可运行
         time1 = datetime.now()
         # APPID、APISecret、APIKey信息在控制台——语音评测了（流式版）——服务接口认证信息处即可获取
-        wsParam = Ws_Param(APPID='fc8e1805', APISecret='MDljNTdkM2FmODFlN2MxYTFlYzU2YmYw',
-                           APIKey='62f577753706bb60bf488b36822f6a0a',
+        wsParam = Ws_Param(APPID='fcxxxx', APISecret='xxxx2xxxw',
+                           APIKey='62fxxxxxxxxxxxxxxxx2xxxa0a',
                            AudioFile=audio, Text=TEXT)
         websocket.enableTrace(False)
         wsUrl = wsParam.create_url()
