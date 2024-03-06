@@ -192,8 +192,8 @@ class text_audio_emo_predict:
                 return None, None
 
         # 用户信息
-        access_key_id = 'LTAI5tDmPLjzT4yJ9xaNPu34'
-        access_key_secret = '2rG2MD6hXanAdpeyOADtkLl2vLhbpv'
+        access_key_id = 'LTxxxxxxxxxx34'
+        access_key_secret = 'xxxxxxxxx'
         token, expire_time = AccessToken.create_token(access_key_id, access_key_secret)
         return token
 
