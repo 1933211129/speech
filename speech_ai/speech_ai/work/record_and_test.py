@@ -230,8 +230,8 @@ class RT:
         # 注意：如果出现requests模块报错："NoneType" object has no attribute 'read', 请尝试将requests模块更新到2.20.0或以上版本(本demo测试版本为2.20.0)
         # 输入讯飞开放平台的appid，secret_key和待转写的文件路径
 
-        APP_ID = "fc8e1805"
-        SECRET_KEY = "a8f97f1715ad0d6079c6f79924ceb271"
+        APP_ID = "xxxxxx"
+        SECRET_KEY = "xxxxxxxxxxxxxxxxxxxxxx"
         file_path = txt_audio_path  # 在这里更改 音频文件路径 这里直接使用录音函数返回的path
         api = RequestApi(appid=APP_ID, secret_key=SECRET_KEY, upload_file_path=file_path)
         api.all_api_request()
@@ -411,8 +411,8 @@ class RT:
         # 测试时候在此处正确填写相关信息即可运行
         time1 = datetime.now()
         # APPID、APISecret、APIKey信息在控制台——语音评测了（流式版）——服务接口认证信息处即可获取
-        wsParam = Ws_Param(APPID='fc8e1805', APISecret='MDljNTdkM2FmODFlN2MxYTFlYzU2YmYw',
-                           APIKey='62f577753706bb60bf488b36822f6a0a',
+        wsParam = Ws_Param(APPID='xxxxxx', APISecret='xxxxxxxxxxxxx',
+                           APIKey='xxxxxxxxxxxxxxxxxxxxx',
                            AudioFile=audio_path, Text=TEXT)
         websocket.enableTrace(False)
         wsUrl = wsParam.create_url()
