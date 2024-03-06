@@ -436,9 +436,9 @@ class textanalyse():
                 # print(base64.b64decode(tempResult['payload']['result']['text']).decode())
                 return base64.b64decode(tempResult['payload']['result']['text']).decode()
 
-        APPId = "7959b5ba"
-        APISecret = "NzU4NDUxNDk0NzY2MjdhOTBmMzcwODE0"
-        APIKey = "d649fc9f22c50f330b3753ba0d053a6f"
+        APPId = "xxxx"
+        APISecret = "xxxx"
+        APIKey = "xxxxxx"
 
         demo = WebsocketDemo(APPId, APISecret, APIKey, Text)
         result = demo.get_result()
