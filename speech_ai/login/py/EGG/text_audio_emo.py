@@ -32,7 +32,7 @@ class text_audio_emo_predict:
 
         # 初始化tokenizer和模型
         tokenizer = BertTokenizerFast.from_pretrained(tokenizer_path)
-        model = BertForSequenceClassification.from_pretrained(model_path, num_labels=3)  # 修改为你的模型文件路径
+        model = BertForSequenceClassification.from_pretrained(model_path, num_labels=3) 
         model.to(device)
         # 输入：一系列的文本
         # 输出：二维列表，每个子列表包含两个元素，第一个元素是预测结果，第二个元素是预测概率
